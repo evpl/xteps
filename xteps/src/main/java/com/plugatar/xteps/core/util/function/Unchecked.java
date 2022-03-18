@@ -43,6 +43,7 @@ public final class Unchecked {
      * Returns given consumer as unchecked consumer.
      *
      * @param consumer the consumer
+     * @param <T>      the type of the {@code consumer} input argument
      * @return unchecked consumer
      */
     @SuppressWarnings("unchecked")
@@ -56,6 +57,7 @@ public final class Unchecked {
      * Returns given supplier as unchecked supplier.
      *
      * @param supplier the supplier
+     * @param <T>      the type of the {@code supplier} result
      * @return unchecked supplier
      */
     @SuppressWarnings("unchecked")
@@ -69,6 +71,8 @@ public final class Unchecked {
      * Returns given function as unchecked function.
      *
      * @param function the function
+     * @param <T>      the type of the {@code function} input argument
+     * @param <R>      the type of the {@code function} result
      * @return unchecked function
      */
     @SuppressWarnings("unchecked")
