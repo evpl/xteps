@@ -1,36 +1,19 @@
 # Xteps
 
-***
+*High-level contextual steps in your tests for any reporting tool.*
 
-Xteps
-
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)
-[![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps)
-[![Source code](https://img.shields.io/badge/Source%20code-1.0-brightgreen)](https://github.com/evpl/xteps/tree/master/xteps)
-
-Allure listener
-
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)
-[![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)
-[![Source code](https://img.shields.io/badge/Source%20code-1.0-brightgreen)](https://github.com/evpl/xteps/tree/master/xteps-allure)
-
-Report Portal listener
-
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal)
-[![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal)
-[![Source code](https://img.shields.io/badge/Source%20code-1.0-brightgreen)](https://github.com/evpl/xteps/tree/master/xteps-reportportal)
-***
-
-High-level contextual steps in your tests for any reporting tool.
+|  | Licence | Maven Central | Javadoc |
+| --- | --- | --- | --- |
+| Xteps              | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps) | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps) |
+| Xteps Allure       | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure) | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure) |
+| Xteps ReportPortal | [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal) |
 
 ## How to use
 
 The library has no dependencies. Requires Java 8+ version.
+***
 
-Add a dependency first
+Add a dependency first.
 
 Maven:
 
@@ -51,9 +34,14 @@ dependencies {
 }
 ```
 
-Then, if you don't use a multi-module java project, add a listener dependency. Listener is automatically found using the
-Service Provider Interface mechanism.
+If you don't use a multi-module Java project, you should add a listener dependency. Listener will be automatically found
+using the Service Provider Interface mechanism.
 
+For multi-module projects you need to add listener to `module-info.java` file. For example:
+```
+provides com.plugatar.xteps.core.StepListener with com.plugatar.xteps.allure.AllureStepListener;
+```
+Or just use property `xteps.listeners` to specify listeners.
 ***
 
 ### Allure listener
@@ -95,7 +83,7 @@ dependencies {
 ```
 ***
 
-Ready. Now you can use Xteps.
+You’re all set! Now you can use Xteps.
 
 ## Code example
 
@@ -192,7 +180,7 @@ stepsOf(Pair.of("left value","right value")).emptyStep("Step 1 {context.getRight
 This code reports step with the name `Step 1 right value`.
 ***
 
-Method-field chain is unlimited
+Method-field chain is unlimited.
 
 ```java
 context.method1().field1.method2().method3().field2
