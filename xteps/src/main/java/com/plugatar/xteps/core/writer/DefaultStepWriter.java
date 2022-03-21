@@ -19,11 +19,13 @@ import com.plugatar.xteps.core.StepListener;
 import com.plugatar.xteps.core.StepWriter;
 import com.plugatar.xteps.core.exception.ArgumentException;
 import com.plugatar.xteps.core.exception.StepWriteException;
+import com.plugatar.xteps.core.exception.XtepsException;
 import com.plugatar.xteps.core.util.function.ThrowingConsumer;
 import com.plugatar.xteps.core.util.function.ThrowingFunction;
 import com.plugatar.xteps.core.util.function.ThrowingRunnable;
 import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -104,6 +106,7 @@ public class DefaultStepWriter implements StepWriter {
         try {
             result = function.apply(input);
         } catch (final Throwable stepEx) {
+            cleanStackTrace(stepEx);
             try {
                 this.listener.stepFailed(uuid, stepName, stepEx);
             } catch (final Exception listenerEx) {
@@ -112,7 +115,7 @@ public class DefaultStepWriter implements StepWriter {
                 stepWritingEx.addSuppressed(stepEx);
                 throw stepWritingEx;
             }
-            throw stepEx;
+            return sneakyThrow(stepEx);
         }
         try {
             this.listener.stepPassed(uuid, stepName);
@@ -120,5 +123,18 @@ public class DefaultStepWriter implements StepWriter {
             throw new StepWriteException("Listener stepPassed method threw exception " + listenerEx, listenerEx);
         }
         return result;
+    }
+
+    private static void cleanStackTrace(final Throwable th) {
+        if (!(th instanceof XtepsException)) {
+            th.setStackTrace(Arrays.stream(th.getStackTrace())
+                .filter(element -> !element.getClassName().startsWith("com.plugatar.xteps"))
+                .toArray(StackTraceElement[]::new));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <R, TH extends Throwable> R sneakyThrow(final Throwable th) throws TH {
+        throw (TH) th;
     }
 }
