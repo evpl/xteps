@@ -17,7 +17,7 @@ package com.plugatar.xteps;
 
 import com.plugatar.xteps.core.NoCtxSteps;
 import com.plugatar.xteps.core.StepListener;
-import com.plugatar.xteps.core.exception.XtepsException;
+import com.plugatar.xteps.core.XtepsBase;
 import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,10 +68,16 @@ final class XtepsTest {
     }
 
     @Test
+    void xtepsBaseMethod() {
+        final XtepsBase base = Xteps.xtepsBase();
+        base.steps().step("apiMethod", () -> {});
+        assertThat(StaticStepListener.lastStepName()).isEqualTo("apiMethod");
+    }
+
+    @Test
     void ofMethod() {
         final NoCtxSteps noCtxSteps = Xteps.of();
         assertThat(Xteps.steps()).isSameAs(noCtxSteps);
-
         noCtxSteps.step("ofMethod", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("ofMethod");
     }
@@ -80,7 +86,6 @@ final class XtepsTest {
     void stepsMethod() {
         final NoCtxSteps noCtxSteps = Xteps.steps();
         assertThat(Xteps.steps()).isSameAs(noCtxSteps);
-
         noCtxSteps.step("stepsMethod", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsMethod");
     }
@@ -158,73 +163,16 @@ final class XtepsTest {
         assertThat(StaticStepListener.lastStepName()).isEqualTo("nestedStepsToMethod");
     }
 
-    @Test
-    void configExceptionClassIsFinal() {
-        assertThat(Xteps.ConfigException.class).isFinal();
-    }
-
-    @Test
-    void configExceptionExtendsXtepsException() {
-        assertThat(Xteps.ConfigException.class)
-            .hasSuperclass(XtepsException.class);
-    }
-
-    @Test
-    void configExceptionAllDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = Xteps.ConfigException.class;
-        assertThat(cls.getMethods())
-            .filteredOn(method -> method.getDeclaringClass() == cls)
-            .allMatch(method -> Modifier.isFinal(method.getModifiers()));
-    }
-
-    @Test
-    void configExceptionEmptyCtor() {
-        final Xteps.ConfigException exception = new Xteps.ConfigException();
-
-        assertThat(exception)
-            .hasMessage(null)
-            .hasCause(null);
-    }
-
-    @Test
-    void configExceptionMessageCtor() {
-        final String message = "message";
-        final Xteps.ConfigException exception = new Xteps.ConfigException(message);
-
-        assertThat(exception)
-            .hasMessage(message)
-            .hasCause(null);
-    }
-
-    @Test
-    void configExceptionCauseCtor() {
-        final Throwable cause = new RuntimeException("cause message");
-        final Xteps.ConfigException exception = new Xteps.ConfigException(cause);
-
-        assertThat(exception)
-            .hasMessage("java.lang.RuntimeException: cause message")
-            .hasCause(cause);
-    }
-
-    @Test
-    void configExceptionMessageAndCauseCtor() {
-        final String message = "message";
-        final Throwable cause = new RuntimeException("cause message");
-        final Xteps.ConfigException exception = new Xteps.ConfigException(message, cause);
-
-        assertThat(exception)
-            .hasMessage(message)
-            .hasCause(cause);
-    }
-
-    static final class StaticStepListener implements StepListener {
+    public static final class StaticStepListener implements StepListener {
         private static String lastStepName = null;
 
         public StaticStepListener() {
         }
 
         static String lastStepName() {
-            return StaticStepListener.lastStepName;
+            final String last = lastStepName;
+            lastStepName = null;
+            return last;
         }
 
         @Override

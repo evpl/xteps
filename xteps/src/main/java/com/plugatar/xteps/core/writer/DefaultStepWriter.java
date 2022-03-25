@@ -106,7 +106,7 @@ public class DefaultStepWriter implements StepWriter {
         try {
             result = function.apply(input);
         } catch (final Throwable stepEx) {
-            cleanStackTrace(stepEx);
+            cleanStackTrace(stepEx, "com.plugatar.xteps");
             try {
                 this.listener.stepFailed(uuid, stepName, stepEx);
             } catch (final Exception listenerEx) {
@@ -115,7 +115,7 @@ public class DefaultStepWriter implements StepWriter {
                 stepWritingEx.addSuppressed(stepEx);
                 throw stepWritingEx;
             }
-            return sneakyThrow(stepEx);
+            throw stepEx;
         }
         try {
             this.listener.stepPassed(uuid, stepName);
@@ -125,16 +125,15 @@ public class DefaultStepWriter implements StepWriter {
         return result;
     }
 
-    private static void cleanStackTrace(final Throwable th) {
+    private static void cleanStackTrace(final Throwable th, final String ignoredClassesStartWith) {
         if (!(th instanceof XtepsException)) {
-            th.setStackTrace(Arrays.stream(th.getStackTrace())
-                .filter(element -> !element.getClassName().startsWith("com.plugatar.xteps"))
-                .toArray(StackTraceElement[]::new));
+            final StackTraceElement[] originStackTrace = th.getStackTrace();
+            final StackTraceElement[] cleanStackTrace = Arrays.stream(originStackTrace)
+                .filter(element -> !element.getClassName().startsWith(ignoredClassesStartWith))
+                .toArray(StackTraceElement[]::new);
+            if (cleanStackTrace.length != originStackTrace.length) {
+                th.setStackTrace(cleanStackTrace);
+            }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <R, TH extends Throwable> R sneakyThrow(final Throwable th) throws TH {
-        throw (TH) th;
     }
 }

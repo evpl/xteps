@@ -17,10 +17,13 @@ package com.plugatar.xteps;
 
 import com.plugatar.xteps.core.CtxSteps;
 import com.plugatar.xteps.core.NoCtxSteps;
+import com.plugatar.xteps.core.XtepsBase;
+import com.plugatar.xteps.core.base.supplier.XtepsBaseSupplier;
 import com.plugatar.xteps.core.exception.ArgumentException;
+import com.plugatar.xteps.core.exception.ConfigException;
 import com.plugatar.xteps.core.exception.StepNameFormatException;
 import com.plugatar.xteps.core.exception.StepWriteException;
-import com.plugatar.xteps.core.exception.XtepsException;
+import com.plugatar.xteps.core.util.function.CachedSupplier;
 import com.plugatar.xteps.core.util.function.ThrowingConsumer;
 import com.plugatar.xteps.core.util.function.ThrowingFunction;
 import com.plugatar.xteps.core.util.function.ThrowingRunnable;
@@ -29,37 +32,32 @@ import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 import java.util.function.Supplier;
 
 /**
- * Utility class. Xteps API.
+ * Utility class. Main Xteps API.
  *
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class Xteps {
 
     /**
-     * Cached NoCtxSteps instance supplier.
+     * Cached XtepsBase instance supplier.
      */
-    private static final Supplier<NoCtxSteps> NO_CTX_STEPS = new Supplier<NoCtxSteps>() {
-        private NoCtxSteps instance = null;
-
-        @Override
-        public NoCtxSteps get() {
-            NoCtxSteps result;
-            if ((result = this.instance) == null) {
-                synchronized (this) {
-                    if ((result = this.instance) == null) {
-                        result = StepsProvider.stepsByConfig();
-                        this.instance = result;
-                    }
-                }
-            }
-            return result;
-        }
-    };
+    private static final Supplier<XtepsBase> CACHED_BASE =
+        new CachedSupplier<>(() -> new XtepsBaseSupplier().get());
 
     /**
      * Utility class ctor.
      */
     private Xteps() {
+    }
+
+    /**
+     * Returns XtepsBase instance.
+     *
+     * @return XtepsBase instance
+     * @throws ConfigException if Xteps configuration is incorrect
+     */
+    public static XtepsBase xtepsBase() {
+        return CACHED_BASE.get();
     }
 
     /**
@@ -79,7 +77,7 @@ public final class Xteps {
      * @throws ConfigException if Xteps configuration is incorrect
      */
     public static NoCtxSteps of() {
-        return NO_CTX_STEPS.get();
+        return Xteps.steps();
     }
 
     /**
@@ -101,7 +99,7 @@ public final class Xteps {
      * @throws ConfigException if Xteps configuration is incorrect
      */
     public static NoCtxSteps steps() {
-        return NO_CTX_STEPS.get();
+        return CACHED_BASE.get().steps();
     }
 
     /**
@@ -123,7 +121,7 @@ public final class Xteps {
      * @throws ConfigException if Xteps configuration is incorrect
      */
     public static <T> CtxSteps<T> of(final T context) {
-        return NO_CTX_STEPS.get().toContext(context);
+        return Xteps.stepsOf(context);
     }
 
     /**
@@ -147,7 +145,7 @@ public final class Xteps {
      * @throws ConfigException if Xteps configuration is incorrect
      */
     public static <T> CtxSteps<T> stepsOf(final T context) {
-        return NO_CTX_STEPS.get().toContext(context);
+        return CACHED_BASE.get().steps().toContext(context);
     }
 
     /**
@@ -174,7 +172,7 @@ public final class Xteps {
     public static <T, TH extends Throwable> CtxSteps<T> of(
         final ThrowingSupplier<? extends T, ? extends TH> contextSupplier
     ) throws TH {
-        return NO_CTX_STEPS.get().toContext(contextSupplier);
+        return Xteps.stepsOf(contextSupplier);
     }
 
     /**
@@ -203,7 +201,7 @@ public final class Xteps {
     public static <T, TH extends Throwable> CtxSteps<T> stepsOf(
         final ThrowingSupplier<? extends T, ? extends TH> contextSupplier
     ) throws TH {
-        return NO_CTX_STEPS.get().toContext(contextSupplier);
+        return CACHED_BASE.get().steps().toContext(contextSupplier);
     }
 
     /**
@@ -223,7 +221,7 @@ public final class Xteps {
      * @throws ConfigException         if Xteps configuration is incorrect
      */
     public static NoCtxSteps emptyStep(final String stepName) {
-        return NO_CTX_STEPS.get().emptyStep(stepName);
+        return CACHED_BASE.get().steps().emptyStep(stepName);
     }
 
     /**
@@ -255,7 +253,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingRunnable<? extends TH> step
     ) throws TH {
-        return NO_CTX_STEPS.get().step(stepName, step);
+        return CACHED_BASE.get().steps().step(stepName, step);
     }
 
     /**
@@ -288,7 +286,7 @@ public final class Xteps {
         String stepName,
         ThrowingSupplier<? extends T, ? extends TH> step
     ) throws TH {
-        return NO_CTX_STEPS.get().stepToContext(stepName, step);
+        return CACHED_BASE.get().steps().stepToContext(stepName, step);
     }
 
     /**
@@ -315,7 +313,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingSupplier<? extends R, ? extends TH> step
     ) throws TH {
-        return NO_CTX_STEPS.get().stepTo(stepName, step);
+        return CACHED_BASE.get().steps().stepTo(stepName, step);
     }
 
     /**
@@ -363,7 +361,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingConsumer<NoCtxSteps, ? extends TH> steps
     ) throws TH {
-        return NO_CTX_STEPS.get().nestedSteps(stepName, steps);
+        return CACHED_BASE.get().steps().nestedSteps(stepName, steps);
     }
 
     /**
@@ -408,48 +406,6 @@ public final class Xteps {
         final String stepName,
         final ThrowingFunction<NoCtxSteps, ? extends R, ? extends TH> steps
     ) throws TH {
-        return NO_CTX_STEPS.get().nestedStepsTo(stepName, steps);
-    }
-
-    /**
-     * Thrown to indicate incorrect Xteps configuration.
-     */
-    public static final class ConfigException extends XtepsException {
-
-        /**
-         * Ctor.
-         */
-        ConfigException() {
-            super();
-        }
-
-        /**
-         * Ctor.
-         *
-         * @param message the message
-         */
-        ConfigException(final String message) {
-            super(message);
-        }
-
-        /**
-         * Ctor.
-         *
-         * @param cause the cause
-         */
-        ConfigException(final Throwable cause) {
-            super(cause);
-        }
-
-        /**
-         * Ctor.
-         *
-         * @param message the message
-         * @param cause   the cause
-         */
-        ConfigException(final String message,
-                        final Throwable cause) {
-            super(message, cause);
-        }
+        return CACHED_BASE.get().steps().nestedStepsTo(stepName, steps);
     }
 }
