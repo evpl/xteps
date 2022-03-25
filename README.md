@@ -250,7 +250,7 @@ xteps.properties file example:
 
 ```properties
 xteps.enabled=true
-xteps.replacementPattern=left([^right]*)right
+xteps.replacementPattern=l([^r]*)r
 xteps.fieldForceAccess=true
 xteps.methodForceAccess=true
 xteps.useSPIListeners=true
