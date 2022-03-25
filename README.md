@@ -34,7 +34,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testRuntimeOnly 'com.plugatar:xteps:xteps:1.0'
+    testRuntimeOnly 'com.plugatar:xteps:xteps:1.1'
 }
 ```
 
