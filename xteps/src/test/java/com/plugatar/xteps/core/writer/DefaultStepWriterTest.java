@@ -18,6 +18,7 @@ package com.plugatar.xteps.core.writer;
 import com.plugatar.xteps.core.StepListener;
 import com.plugatar.xteps.core.exception.ArgumentException;
 import com.plugatar.xteps.core.exception.StepWriteException;
+import com.plugatar.xteps.core.exception.XtepsException;
 import com.plugatar.xteps.core.util.function.ThrowingConsumer;
 import com.plugatar.xteps.core.util.function.ThrowingFunction;
 import com.plugatar.xteps.core.util.function.ThrowingRunnable;
@@ -361,6 +362,42 @@ final class DefaultStepWriterTest {
             .isInstanceOf(StepWriteException.class)
             .hasCause(listenerException)
             .hasSuppressedException(runnableException);
+    }
+
+    @Test
+    void cleanStackTraceForNonXtepsException() {
+        final StepListener stepListener = mock(StepListener.class);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw new RuntimeException(); };
+
+        Throwable ex = null;
+        try {
+            sw.writeFunctionStep("step name", "input", function);
+        } catch (final Throwable th) {
+            ex = th;
+        }
+        assertThat(ex).isNotNull();
+        assertThat(ex.getStackTrace())
+            .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
+            .isEmpty();
+    }
+
+    @Test
+    void notCleanStackTraceForXtepsException() {
+        final StepListener stepListener = mock(StepListener.class);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw new XtepsException(); };
+
+        Throwable ex = null;
+        try {
+            sw.writeFunctionStep("step name", "input", function);
+        } catch (final Throwable th) {
+            ex = th;
+        }
+        assertThat(ex).isNotNull();
+        assertThat(ex.getStackTrace())
+            .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
+            .isNotEmpty();
     }
 
     private static ArgumentMatcher<String> notEmptyString() {

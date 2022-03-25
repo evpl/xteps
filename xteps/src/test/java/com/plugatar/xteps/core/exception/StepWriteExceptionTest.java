@@ -21,6 +21,9 @@ import java.lang.reflect.Modifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for {@link StepWriteException}.
+ */
 final class StepWriteExceptionTest {
 
     @Test

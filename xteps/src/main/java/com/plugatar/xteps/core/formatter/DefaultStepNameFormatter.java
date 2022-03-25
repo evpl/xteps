@@ -150,9 +150,9 @@ public class DefaultStepNameFormatter implements StepNameFormatter {
             return cls.getMethod(methodName);
         } catch (final NoSuchMethodException ignored) { }
         if (forceAccess) {
-            for (Class<?> current = cls; current != null; current = current.getSuperclass()) {
+            for (Class<?> currentCls = cls; currentCls != null; currentCls = currentCls.getSuperclass()) {
                 try {
-                    return current.getDeclaredMethod(methodName);
+                    return currentCls.getDeclaredMethod(methodName);
                 } catch (NoSuchMethodException ignored) { }
             }
         }
@@ -202,9 +202,9 @@ public class DefaultStepNameFormatter implements StepNameFormatter {
             return cls.getField(fieldName);
         } catch (final NoSuchFieldException ignored) { }
         if (forceAccess) {
-            for (Class<?> current = cls; current != null; current = current.getSuperclass()) {
+            for (Class<?> currentCls = cls; currentCls != null; currentCls = currentCls.getSuperclass()) {
                 try {
-                    return current.getDeclaredField(fieldName);
+                    return currentCls.getDeclaredField(fieldName);
                 } catch (NoSuchFieldException ignored) { }
             }
         }

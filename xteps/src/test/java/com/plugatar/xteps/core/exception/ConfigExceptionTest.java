@@ -22,18 +22,24 @@ import java.lang.reflect.Modifier;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link XtepsException}.
+ * Tests for {@link ConfigException}.
  */
-final class XtepsExceptionTest {
+final class ConfigExceptionTest {
 
     @Test
     void classIsNotFinal() {
-        assertThat(XtepsException.class).isNotFinal();
+        assertThat(ConfigException.class).isNotFinal();
+    }
+
+    @Test
+    void extendsXtepsException() {
+        assertThat(ConfigException.class)
+            .hasSuperclass(XtepsException.class);
     }
 
     @Test
     void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = XtepsException.class;
+        final Class<?> cls = ConfigException.class;
         assertThat(cls.getMethods())
             .filteredOn(method -> method.getDeclaringClass() == cls)
             .allMatch(method -> Modifier.isFinal(method.getModifiers()));
@@ -41,7 +47,7 @@ final class XtepsExceptionTest {
 
     @Test
     void emptyCtor() {
-        final XtepsException exception = new XtepsException();
+        final ConfigException exception = new ConfigException();
 
         assertThat(exception)
             .hasMessage(null)
@@ -51,7 +57,7 @@ final class XtepsExceptionTest {
     @Test
     void messageCtor() {
         final String message = "message";
-        final XtepsException exception = new XtepsException(message);
+        final ConfigException exception = new ConfigException(message);
 
         assertThat(exception)
             .hasMessage(message)
@@ -61,7 +67,7 @@ final class XtepsExceptionTest {
     @Test
     void causeCtor() {
         final Throwable cause = new RuntimeException("cause message");
-        final XtepsException exception = new XtepsException(cause);
+        final ConfigException exception = new ConfigException(cause);
 
         assertThat(exception)
             .hasMessage("java.lang.RuntimeException: cause message")
@@ -72,7 +78,7 @@ final class XtepsExceptionTest {
     void messageAndCauseCtor() {
         final String message = "message";
         final Throwable cause = new RuntimeException("cause message");
-        final XtepsException exception = new XtepsException(message, cause);
+        final ConfigException exception = new ConfigException(message, cause);
 
         assertThat(exception)
             .hasMessage(message)
