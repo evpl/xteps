@@ -21,7 +21,7 @@ Maven:
 <dependency>
     <groupId>com.plugatar.xteps</groupId>
     <artifactId>xteps</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -239,7 +239,7 @@ overridden by system properties.
 
 Maven test run command example:
 
-`mvn test -Denabled=true -DreplacementPattern="left([^right]*)right" -DfieldForceAccess=true -DmethodForceAccess=true -DuseSPIListeners=true -Dlisteners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
+`mvn test -Denabled=true -DreplacementPattern="l([^r]*)r" -DfieldForceAccess=true -DmethodForceAccess=true -DuseSPIListeners=true -Dlisteners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
 ***
 
 xteps.properties file example:
