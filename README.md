@@ -92,60 +92,57 @@ You’re all set! Now you can use Xteps.
 ## Code example
 
 ```java
+import static com.plugatar.xteps.Xteps.emptyStep;
+import static com.plugatar.xteps.Xteps.nestedSteps;
+import static com.plugatar.xteps.Xteps.nestedStepsTo;
 import static com.plugatar.xteps.Xteps.step;
+import static com.plugatar.xteps.Xteps.stepTo;
+import static com.plugatar.xteps.Xteps.stepsOf;
 
 class ExampleTest {
 
     @Test
-    void test1() {
+    void withoutContextTest() {
         step("Step 1", () -> {
             ...
-        }).step("Step 2", () -> {
-            ...
-        }).step("Step 3", () -> {
-            ...
-        }).nestedSteps("Step 4", steps -> steps
-            .step("Inner step 1", () -> {
+        });
+        emptyStep("Step 3");
+        nestedSteps("Step 4", () -> {
+            step("Inner step 1", () -> {
                 ...
-            })
-            .step("Inner step 2", () -> {
-                ...
-            })
-        ).step("Step 5", () -> {
+            });
+            emptyStep("Inner step 2");
+        });
+        String step5Result = stepTo("Step 5", () -> {
             ...
+            return "step 5 result";
+        });
+        String step6Result = nestedStepsTo("Step 6", () ->{
+            step("Inner step 1", () -> {
+                ...
+            });
+            return stepTo("Inner step 2", () -> {
+                ...
+                return "step 6 result";
+            });
         });
     }
 
     @Test
-    void test2() {
-        String result =
-            step("Step 1", () -> {
-                ...
-            }).step("Step 2", () -> {
-                ...
-            }).step("Step 3", () -> {
-                ...
-            }).stepTo("Step 4", () -> "result");
-    }
-
-    @Test
-    void test3() {
+    void contextSteps() {
         stepsOf("context")
             .step("Step 1", context -> {
                 ...
             })
-            .step("Step 2", context -> {
-                ...
-            })
-            .stepToContext("Step 3", context -> {
+            .stepToContext("Step 2, context hash = {context.hash}", context -> {
                 ...
                 return "new context";
             })
-            .step("Step 4", newContext -> {
+            .step("Step 3, context = {context.toUpperCase()}", newContext -> {
                 ...
             })
             .previous()
-            .step("Step 5", previousContext -> {
+            .step("Step 4", previousContext -> {
                 ...
             });
     }

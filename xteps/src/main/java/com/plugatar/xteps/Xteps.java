@@ -24,8 +24,6 @@ import com.plugatar.xteps.core.exception.ConfigException;
 import com.plugatar.xteps.core.exception.StepNameFormatException;
 import com.plugatar.xteps.core.exception.StepWriteException;
 import com.plugatar.xteps.core.util.function.CachedSupplier;
-import com.plugatar.xteps.core.util.function.ThrowingConsumer;
-import com.plugatar.xteps.core.util.function.ThrowingFunction;
 import com.plugatar.xteps.core.util.function.ThrowingRunnable;
 import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 
@@ -210,18 +208,17 @@ public final class Xteps {
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.emptyStep;
      *
-     * emptyStep("Step 1").emptyStep("Step 2");
+     * emptyStep("Step 1");
      * }</pre>
      *
      * @param stepName the step name
-     * @return no context steps
      * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
      * @throws StepNameFormatException if it's impossible to correctly format the step name
      * @throws StepWriteException      if it's impossible to correctly report the step
      * @throws ConfigException         if Xteps configuration is incorrect
      */
-    public static NoCtxSteps emptyStep(final String stepName) {
-        return CACHED_BASE.get().steps().emptyStep(stepName);
+    public static void emptyStep(final String stepName) {
+        CACHED_BASE.get().steps().emptyStep(stepName);
     }
 
     /**
@@ -232,28 +229,23 @@ public final class Xteps {
      *
      * step("Step 1", () -> {
      *     ...
-     * }).step("Step 2", () -> {
-     *     ...
-     * }).step("Step 3", () -> {
-     *     ...
      * });
      * }</pre>
      *
      * @param stepName the step name
      * @param step     the step
      * @param <TH>     the {@code step} exception type
-     * @return no context steps
      * @throws TH                      if {@code step} threw exception
      * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
      * @throws StepNameFormatException if it's impossible to correctly format the step name
      * @throws StepWriteException      if it's impossible to correctly report the step
      * @throws ConfigException         if Xteps configuration is incorrect
      */
-    public static <TH extends Throwable> NoCtxSteps step(
+    public static <TH extends Throwable> void step(
         final String stepName,
         final ThrowingRunnable<? extends TH> step
     ) throws TH {
-        return CACHED_BASE.get().steps().step(stepName, step);
+        CACHED_BASE.get().steps().step(stepName, step);
     }
 
     /**
@@ -318,76 +310,48 @@ public final class Xteps {
 
     /**
      * Performs the step with given name and nested steps and returns no context steps.<br>
-     * Code example 1:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.nestedSteps;
-     *
-     * nestedSteps("Step 1", steps -> steps
-     *     .emptyStep("Inner step 1")
-     *     .step("Inner step 2", () -> {
-     *         ...
-     *     })
-     * ).step("Step 2", () -> {
-     *     ...
-     * });
-     * }</pre>
-     * Code example 2:
+     * Code example:
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.nestedSteps;
      * import static com.plugatar.xteps.Xteps.emptyStep;
      * import static com.plugatar.xteps.Xteps.step;
      *
-     * nestedSteps("Step 1", ignored -> {
+     * nestedSteps("Step 1", () -> {
      *     emptyStep("Inner step 1");
      *     step("Inner step 2", () -> {
      *         ...
      *     });
-     * }).step("Step 2", () -> {
-     *     ...
      * });
      * }</pre>
      *
      * @param stepName the step name
      * @param steps    the nested steps
      * @param <TH>     the {@code steps} exception type
-     * @return no context steps
      * @throws TH                      if {@code steps} threw exception
      * @throws ArgumentException       if {@code stepName} is null or empty or if {@code steps} is null
      * @throws StepNameFormatException if it's impossible to correctly format the step name
      * @throws StepWriteException      if it's impossible to correctly report the steps
      * @throws ConfigException         if Xteps configuration is incorrect
      */
-    public static <TH extends Throwable> NoCtxSteps nestedSteps(
+    public static <TH extends Throwable> void nestedSteps(
         final String stepName,
-        final ThrowingConsumer<NoCtxSteps, ? extends TH> steps
+        final ThrowingRunnable<? extends TH> steps
     ) throws TH {
-        return CACHED_BASE.get().steps().nestedSteps(stepName, steps);
+        CACHED_BASE.get().steps().nestedSteps(stepName, s -> steps.run());
     }
 
     /**
      * Performs step with given name and nested steps and returns the nested steps result.<br>
-     * Code example 1:
+     * Code example:
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.nestedStepsTo;
      *
-     * String stepResult = nestedStepsTo("Step 1", steps -> {
-     *     steps
-     *         .emptyStep("Inner step 1")
-     *         .step("Inner step 2", () -> {
-     *             ...
-     *         });
+     * String stepResult = nestedStepsTo("Step 1", () -> {
+     *     emptyStep("Inner step 1")
+     *     step("Inner step 2", () -> {
+     *         ...
+     *     });
      *     return "result";
-     * });
-     * }</pre>
-     * Code example 2:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.nestedStepsTo;
-     *
-     * nestedStepsTo("Step 1", steps -> steps
-     *     .emptyStep("Inner step 1")
-     *     .stepToContext("Inner step 2", () -> context)
-     * ).step("Step 2", ctx -> {
-     *     ...
      * });
      * }</pre>
      *
@@ -404,8 +368,8 @@ public final class Xteps {
      */
     public static <R, TH extends Throwable> R nestedStepsTo(
         final String stepName,
-        final ThrowingFunction<NoCtxSteps, ? extends R, ? extends TH> steps
+        final ThrowingSupplier<? extends R, ? extends TH> steps
     ) throws TH {
-        return CACHED_BASE.get().steps().nestedStepsTo(stepName, steps);
+        return CACHED_BASE.get().steps().nestedStepsTo(stepName, s -> steps.get());
     }
 }

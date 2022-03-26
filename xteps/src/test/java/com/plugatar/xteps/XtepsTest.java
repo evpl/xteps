@@ -153,7 +153,7 @@ final class XtepsTest {
     @Test
     void nestedStepsMethod() {
         final AtomicBoolean isExecuted = new AtomicBoolean();
-        Xteps.nestedSteps("nestedStepsMethod", steps -> isExecuted.set(true));
+        Xteps.nestedSteps("nestedStepsMethod", () -> isExecuted.set(true));
         assertThat(isExecuted).isTrue();
         assertThat(StaticStepListener.lastStepName()).isEqualTo("nestedStepsMethod");
     }
@@ -161,7 +161,7 @@ final class XtepsTest {
     @Test
     void nestedStepsToMethod() {
         final AtomicBoolean isExecuted = new AtomicBoolean();
-        final Object result = Xteps.nestedStepsTo("nestedStepsToMethod", steps -> {
+        final Object result = Xteps.nestedStepsTo("nestedStepsToMethod", () -> {
             isExecuted.set(true);
             return 111;
         });
