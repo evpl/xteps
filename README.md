@@ -230,12 +230,13 @@ overridden by system properties.
 
 ### Properties list
 
-| Property name            | Type    | Default value | Description                                                  |
-| ------------------------ | ------- | ------------- | ------------------------------------------------------------ |
-| xteps.enabled            | Boolean | `true`        | Enable/disable steps logging                                 |
+| Property name            | Type    | Default value | Description                                                                         |
+| ------------------------ | ------- | ------------- | ----------------------------------------------------------------------------------- |
+| xteps.enabled            | Boolean | `true`        | Enable/disable steps logging                                                        |
 | xteps.replacementPattern | String  | `\\{([^}]*)}` | The pattern that is used to replace pointers in the step name. Pattern should contain at least one group. Only the first group is used for replacement. (!) Don't forget to escape special symbols. |
-| xteps.fieldForceAccess   | Boolean | `false`       | Tries to get field value even if this field is inaccessible. |
-| xteps.methodForceAccess  | Boolean | `false`       | Tries to invoke method even if this method is inaccessible.  |
+| xteps.fieldForceAccess   | Boolean | `false`       | Tries to get field value even if this field is inaccessible.                        |
+| xteps.methodForceAccess  | Boolean | `false`       | Tries to invoke method even if this method is inaccessible.                         |
+| xteps.cleanStackTrace    | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException. |
 | xteps.useSPIListeners    | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.core.StepListener` implementations. Implementations should have zero-argument public constructor. |
 | xteps.listeners          | String  |               | List of `com.plugatar.xteps.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
 
@@ -243,7 +244,7 @@ overridden by system properties.
 
 Maven test run command example:
 
-`mvn test -Denabled=true -DreplacementPattern="l([^r]*)r" -DfieldForceAccess=true -DmethodForceAccess=true -DuseSPIListeners=true -Dlisteners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
+`mvn test -Denabled=true -DreplacementPattern="l([^r]*)r" -DfieldForceAccess=true -DmethodForceAccess=true -DcleanStackTrace=true -DuseSPIListeners=true -Dlisteners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
 ***
 
 xteps.properties file example:
@@ -253,6 +254,7 @@ xteps.enabled=true
 xteps.replacementPattern=l([^r]*)r
 xteps.fieldForceAccess=true
 xteps.methodForceAccess=true
+xteps.cleanStackTrace=true
 xteps.useSPIListeners=true
 xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 ```
