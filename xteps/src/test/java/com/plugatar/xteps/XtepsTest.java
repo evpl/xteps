@@ -39,16 +39,22 @@ final class XtepsTest {
 
     @BeforeAll
     static void beforeAll() {
-        System.clearProperty("xteps.enabled");
-        System.clearProperty("xteps.replacementPattern");
-        System.clearProperty("xteps.fieldForceAccess");
-        System.clearProperty("xteps.methodForceAccess");
-        System.clearProperty("xteps.useSPIListeners");
+        clearProperties();
         System.setProperty("xteps.listeners", "com.plugatar.xteps.XtepsTest$StaticStepListener");
     }
 
     @AfterAll
     static void afterAll() {
+        clearProperties();
+    }
+
+    private static void clearProperties() {
+        System.clearProperty("xteps.enabled");
+        System.clearProperty("xteps.replacementPattern");
+        System.clearProperty("xteps.fieldForceAccess");
+        System.clearProperty("xteps.methodForceAccess");
+        System.clearProperty("xteps.cleanStackTrace");
+        System.clearProperty("xteps.useSPIListeners");
         System.clearProperty("xteps.listeners");
     }
 

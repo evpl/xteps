@@ -26,6 +26,8 @@ import com.plugatar.xteps.core.util.function.ThrowingRunnable;
 import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -33,6 +35,7 @@ import java.util.UUID;
  */
 public class DefaultStepWriter implements StepWriter {
     private final StepListener listener;
+    private final boolean cleanStackTrace;
 
     /**
      * Ctor.
@@ -40,9 +43,10 @@ public class DefaultStepWriter implements StepWriter {
      * @param listener the listener
      * @throws ArgumentException if {@code listener} is null
      */
-    public DefaultStepWriter(final StepListener listener) {
+    public DefaultStepWriter(final StepListener listener, final boolean cleanStackTrace) {
         if (listener == null) { throw new ArgumentException("listener arg is null"); }
         this.listener = listener;
+        this.cleanStackTrace = cleanStackTrace;
     }
 
     @Override
@@ -106,7 +110,9 @@ public class DefaultStepWriter implements StepWriter {
         try {
             result = function.apply(input);
         } catch (final Throwable stepEx) {
-            cleanStackTrace(stepEx, "com.plugatar.xteps");
+            if (this.cleanStackTrace) {
+                cleanStackTrace(stepEx);
+            }
             try {
                 this.listener.stepFailed(uuid, stepName, stepEx);
             } catch (final Exception listenerEx) {
@@ -125,15 +131,40 @@ public class DefaultStepWriter implements StepWriter {
         return result;
     }
 
-    private static void cleanStackTrace(final Throwable th, final String ignoredClassesStartWith) {
-        if (!(th instanceof XtepsException)) {
-            final StackTraceElement[] originStackTrace = th.getStackTrace();
-            final StackTraceElement[] cleanStackTrace = Arrays.stream(originStackTrace)
-                .filter(element -> !element.getClassName().startsWith(ignoredClassesStartWith))
-                .toArray(StackTraceElement[]::new);
-            if (cleanStackTrace.length != originStackTrace.length) {
-                th.setStackTrace(cleanStackTrace);
+    private static void cleanStackTrace(final Throwable mainTh) {
+        final Set<Throwable> uniqueThrowables = new HashSet<>();
+        addCauses(uniqueThrowables, mainTh);
+        final String ignoredClassesStartWith = "com.plugatar.xteps";
+        for (final Throwable th : uniqueThrowables) {
+            if (!(th instanceof XtepsException)) {
+                final StackTraceElement[] originStackTrace = th.getStackTrace();
+                final StackTraceElement[] cleanStackTrace = Arrays.stream(originStackTrace)
+                    .filter(element -> !element.getClassName().startsWith(ignoredClassesStartWith))
+                    .toArray(StackTraceElement[]::new);
+                if (cleanStackTrace.length != originStackTrace.length) {
+                    th.setStackTrace(cleanStackTrace);
+                }
             }
+        }
+    }
+
+    private static void addCauses(final Set<Throwable> uniqueThrowables, Throwable mainTh) {
+        for (Throwable currentTh = mainTh; currentTh != null; currentTh = currentTh.getCause()) {
+            if (uniqueThrowables.contains(currentTh)) {
+                break;
+            }
+            uniqueThrowables.add(currentTh);
+            addSuppressed(uniqueThrowables, currentTh);
+        }
+    }
+
+    private static void addSuppressed(final Set<Throwable> uniqueThrowables, Throwable mainTh) {
+        for (final Throwable currentTh : mainTh.getSuppressed()) {
+            if (uniqueThrowables.contains(currentTh)) {
+                break;
+            }
+            uniqueThrowables.add(currentTh);
+            addCauses(uniqueThrowables, currentTh);
         }
     }
 }

@@ -28,6 +28,7 @@ import org.mockito.ArgumentMatcher;
 
 import java.lang.reflect.Modifier;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -63,14 +64,14 @@ final class DefaultStepWriterTest {
 
     @Test
     void ctorThrowsExceptionForNullStepListener() {
-        assertThatCode(() -> new DefaultStepWriter(null))
+        assertThatCode(() -> new DefaultStepWriter(null, false))
             .isInstanceOf(ArgumentException.class);
     }
 
     @Test
     void writeEmptyStepMethodThrowsExceptionForNullStepName() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeEmptyStep(null))
             .isInstanceOf(ArgumentException.class);
@@ -80,7 +81,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeEmptyStepMethodReportInfo() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
 
         sw.writeEmptyStep(stepName);
@@ -92,7 +93,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeRunnableStepMethodThrowsExceptionForNullStepName() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeRunnableStep(null, () -> {}))
             .isInstanceOf(ArgumentException.class);
@@ -102,7 +103,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeRunnableStepMethodThrowsExceptionForNullRunnable() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeRunnableStep("step name", null))
             .isInstanceOf(ArgumentException.class);
@@ -112,7 +113,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeRunnableStepMethodReportInfoIfNoException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> runnable = mock(ThrowingRunnable.class);
@@ -127,7 +128,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeRunnableStepMethodReportInfoForException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
@@ -145,7 +146,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeConsumerStepMethodThrowsExceptionForNullStepName() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeConsumerStep(null, "input", x -> {}))
             .isInstanceOf(ArgumentException.class);
@@ -155,7 +156,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeConsumerStepMethodNotThrowsExceptionForNullInput() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeConsumerStep("step name", null, x -> {}))
             .doesNotThrowAnyException();
@@ -164,7 +165,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeConsumerStepMethodThrowsExceptionForNullConsumer() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeConsumerStep("step name", "input", null))
             .isInstanceOf(ArgumentException.class);
@@ -174,7 +175,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeConsumerStepMethodReportInfoIfNoException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         @SuppressWarnings("unchecked")
         final ThrowingConsumer<String, RuntimeException> consumer = mock(ThrowingConsumer.class);
@@ -189,7 +190,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeConsumerStepMethodReportInfoForException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
@@ -207,7 +208,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeSupplierStepMethodThrowsExceptionForNullStepName() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeSupplierStep(null, () -> "result"))
             .isInstanceOf(ArgumentException.class);
@@ -217,7 +218,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeSupplierStepMethodThrowsExceptionForNullSupplier() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeSupplierStep("step name", null))
             .isInstanceOf(ArgumentException.class);
@@ -227,7 +228,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeSupplierStepMethodReportInfoIfNoException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final String supplierResult = UUID.randomUUID().toString();
         @SuppressWarnings("unchecked")
@@ -245,7 +246,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeSupplierStepMethodReportInfoForException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
@@ -264,7 +265,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeFunctionStepMethodThrowsExceptionForNullStepName() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeFunctionStep(null, "input", x -> "result"))
             .isInstanceOf(ArgumentException.class);
@@ -274,7 +275,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeFunctionStepMethodNotThrowsExceptionForNullInput() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeConsumerStep("step name", null, x -> {}))
             .doesNotThrowAnyException();
@@ -283,7 +284,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeFunctionStepMethodThrowsExceptionForNullFunction() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
 
         assertThatCode(() -> sw.writeFunctionStep("step name", "input", null))
             .isInstanceOf(ArgumentException.class);
@@ -293,7 +294,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeFunctionStepMethodReportInfoIfNoException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final String functionResult = UUID.randomUUID().toString();
         @SuppressWarnings("unchecked")
@@ -311,7 +312,7 @@ final class DefaultStepWriterTest {
     @Test
     void writeFunctionStepMethodReportInfoForException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final String stepName = UUID.randomUUID().toString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
@@ -329,7 +330,7 @@ final class DefaultStepWriterTest {
     @Test
     void writerCatchListenerStartMethodException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final RuntimeException listenerException = new RuntimeException();
         doThrow(listenerException).when(stepListener).stepStarted(any(), any());
 
@@ -341,7 +342,7 @@ final class DefaultStepWriterTest {
     @Test
     void writerCatchListenerFinishMethodException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final RuntimeException listenerException = new RuntimeException();
         doThrow(listenerException).when(stepListener).stepPassed(any(), any());
 
@@ -353,7 +354,7 @@ final class DefaultStepWriterTest {
     @Test
     void writerCatchListenerFailMethodException() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
         final RuntimeException listenerException = new RuntimeException();
         doThrow(listenerException).when(stepListener).stepFailed(any(), any(), any());
         final RuntimeException runnableException = new RuntimeException();
@@ -365,39 +366,59 @@ final class DefaultStepWriterTest {
     }
 
     @Test
-    void cleanStackTraceForNonXtepsException() {
+    void cleanStackTraceArgumentTrue() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
-        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw new RuntimeException(); };
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
+        final RuntimeException ex1 = new RuntimeException();
+        final RuntimeException ex2 = new XtepsException();
+        final RuntimeException ex3 = new RuntimeException();
+        final RuntimeException ex4 = new XtepsException();
+        ex1.initCause(ex2);
+        ex2.addSuppressed(ex3);
+        ex3.initCause(ex4);
+        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw ex1; };
 
-        Throwable ex = null;
+        Throwable actualEx = null;
         try {
             sw.writeFunctionStep("step name", "input", function);
         } catch (final Throwable th) {
-            ex = th;
+            actualEx = th;
         }
-        assertThat(ex).isNotNull();
-        assertThat(ex.getStackTrace())
-            .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
-            .isEmpty();
+        assertThat(actualEx).isSameAs(ex1);
+        final Predicate<StackTraceElement> elementWithXtepsInfoPredicate =
+            stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps");
+        assertThat(ex1.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
+        assertThat(ex2.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex3.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
+        assertThat(ex4.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
     }
 
     @Test
-    void notCleanStackTraceForXtepsException() {
+    void cleanStackTraceArgumentFalse() {
         final StepListener stepListener = mock(StepListener.class);
-        final DefaultStepWriter sw = new DefaultStepWriter(stepListener);
-        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw new XtepsException(); };
+        final DefaultStepWriter sw = new DefaultStepWriter(stepListener, false);
+        final RuntimeException ex1 = new RuntimeException();
+        final RuntimeException ex2 = new XtepsException();
+        final RuntimeException ex3 = new RuntimeException();
+        final RuntimeException ex4 = new XtepsException();
+        ex1.initCause(ex2);
+        ex2.addSuppressed(ex3);
+        ex3.initCause(ex4);
+        final ThrowingFunction<String, String, RuntimeException> function = str -> { throw ex1; };
 
-        Throwable ex = null;
+        Throwable actualEx = null;
         try {
             sw.writeFunctionStep("step name", "input", function);
         } catch (final Throwable th) {
-            ex = th;
+            actualEx = th;
         }
-        assertThat(ex).isNotNull();
-        assertThat(ex.getStackTrace())
-            .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
-            .isNotEmpty();
+        assertThat(actualEx).isSameAs(ex1);
+        final Predicate<StackTraceElement> elementWithXtepsInfoPredicate =
+            stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps");
+        assertThat(ex1.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex2.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex3.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex4.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
     }
 
     private static ArgumentMatcher<String> notEmptyString() {

@@ -69,6 +69,8 @@ public class XtepsBaseSupplier implements Supplier<XtepsBase> {
             booleanProperty(this.properties, "xteps.fieldForceAccess", false);
         final boolean methodForceAccess =
             booleanProperty(this.properties, "xteps.methodForceAccess", false);
+        final boolean cleanStackTrace =
+            booleanProperty(this.properties, "xteps.cleanStackTrace", true);
         final boolean useSPIListeners =
             booleanProperty(this.properties, "xteps.useSPIListeners", true);
         final List<String> listenersNames =
@@ -93,7 +95,7 @@ public class XtepsBaseSupplier implements Supplier<XtepsBase> {
             return new XtepsBaseOf(
                 this.properties,
                 new DefaultStepNameFormatter(replacementPattern, fieldForceAccess, methodForceAccess),
-                new DefaultStepWriter(listener)
+                new DefaultStepWriter(listener, cleanStackTrace)
             );
         } catch (final Exception ex) {
             throw new ConfigException("Cannot instantiate XtepsBase cause " + ex, ex);
