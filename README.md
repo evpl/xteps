@@ -196,9 +196,9 @@ is defined by the step body.
 @Test
 void test() throws MalformedURLException {
     step("Step 1", () -> {
-    new URL("abc");
+        new URL("abc");
     });
-    }
+}
 ```
 
 You can choose a mechanism to cheat checked exceptions if you don't like them. Xteps give you the built-in static
@@ -210,9 +210,9 @@ import static com.plugatar.xteps.core.util.function.Unchecked.uncheckedRunnable;
 @Test
 void test() {
     step("Step 1", uncheckedRunnable(() -> {
-    new URL("abc");
+        new URL("abc");
     }));
-    }
+}
 ```
 
 ## How to provide parameters
@@ -263,7 +263,7 @@ You may run into a problem if you use Java 8. The problem is caused by generic e
 ```java
 Xteps.nestedStepsTo("Step 1", steps -> steps
     .step("Inner step 1", () -> {})
-    );
+);
 ```
 
 This code can fail to build with this
@@ -277,5 +277,5 @@ import static com.plugatar.xteps.core.util.function.Unchecked.uncheckedFunction;
 
 Xteps.nestedStepsTo("Step 1", uncheckedFunction(steps -> steps
     .step("Inner step 1", () -> {})
-    ));
+));
 ```
