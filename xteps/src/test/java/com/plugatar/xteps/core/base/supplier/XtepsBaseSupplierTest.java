@@ -52,6 +52,7 @@ final class XtepsBaseSupplierTest {
         System.clearProperty("xteps.replacementPattern");
         System.clearProperty("xteps.fieldForceAccess");
         System.clearProperty("xteps.methodForceAccess");
+        System.clearProperty("xteps.cleanStackTrace");
         System.clearProperty("xteps.useSPIListeners");
         System.clearProperty("xteps.listeners");
     }
@@ -278,6 +279,59 @@ final class XtepsBaseSupplierTest {
     }
 
     @Test
+    void cleanStackTracePropertyCorrectValueTrue() {
+        System.setProperty("xteps.cleanStackTrace", "true");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+
+        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        try {
+            xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
+        } catch (final Throwable th) {
+            assertThat(th.getStackTrace())
+                .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
+                .isEmpty();
+        }
+    }
+
+    @Test
+    void cleanStackTracePropertyCorrectValueFalse() {
+        System.setProperty("xteps.cleanStackTrace", "false");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+
+        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        try {
+            xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
+        } catch (final Throwable th) {
+            assertThat(th.getStackTrace())
+                .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
+                .isNotEmpty();
+        }
+    }
+
+    @Test
+    void cleanStackTracePropertyDefaultValue() {
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+
+        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        try {
+            xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
+        } catch (final Throwable th) {
+            assertThat(th.getStackTrace())
+                .filteredOn(stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps"))
+                .isEmpty();
+        }
+    }
+
+    @Test
+    void cleanStackTracePropertyIncorrectValue() {
+        System.setProperty("xteps.cleanStackTrace", "value");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+
+        assertThatCode(() -> new XtepsBaseSupplier().get())
+            .isInstanceOf(ConfigException.class);
+    }
+
+    @Test
     void useSPIListenersPropertyCorrectValueTrue() {
         System.setProperty("xteps.useSPIListeners", "true");
         System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
@@ -303,7 +357,6 @@ final class XtepsBaseSupplierTest {
         assertThatCode(() -> new XtepsBaseSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
-
 
     @Test
     void listenersPropertyCorrectValue1Listener() {
