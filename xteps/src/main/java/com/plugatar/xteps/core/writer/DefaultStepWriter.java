@@ -40,7 +40,8 @@ public class DefaultStepWriter implements StepWriter {
     /**
      * Ctor.
      *
-     * @param listener the listener
+     * @param listener        the listener
+     * @param cleanStackTrace the clean stack trace flag
      * @throws ArgumentException if {@code listener} is null
      */
     public DefaultStepWriter(final StepListener listener, final boolean cleanStackTrace) {

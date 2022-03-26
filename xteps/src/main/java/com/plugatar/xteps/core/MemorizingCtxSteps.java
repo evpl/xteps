@@ -47,6 +47,7 @@ public interface MemorizingCtxSteps<T, P extends BaseCtxSteps<?>>
      * Apply context to given function and returns result. Non-reporting method.
      *
      * @param function the function
+     * @param <R>      the {@code function} result type
      * @param <TH>     the {@code function} exception type
      * @return {@code function} result
      * @throws TH                if {@code function} threw exception

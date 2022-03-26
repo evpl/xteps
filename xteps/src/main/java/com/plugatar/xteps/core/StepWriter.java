@@ -55,6 +55,7 @@ public interface StepWriter {
      * Writes a consumer step.
      *
      * @param stepName the step name
+     * @param input    the {@code consumer} input
      * @param consumer the consumer
      * @param <T>      the type of the {@code consumer} input argument
      * @param <TH>     the {@code consumer} exception type
@@ -75,6 +76,7 @@ public interface StepWriter {
      * @param supplier the supplier
      * @param <T>      the type of the {@code supplier} result
      * @param <TH>     the {@code supplier} exception type
+     * @return the {@code supplier} result
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code supplier} is null
      * @throws StepWriteException if it's impossible to correctly report the step
@@ -88,10 +90,12 @@ public interface StepWriter {
      * Writes a function step and returns result.
      *
      * @param stepName the step name
+     * @param input    the {@code function} input
      * @param function the function
      * @param <T>      the type of the {@code function} input argument
      * @param <R>      the type of the {@code function} result
      * @param <TH>     the {@code function} exception type
+     * @return the {@code function} result
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code function} is null
      * @throws StepWriteException if it's impossible to correctly report the step
