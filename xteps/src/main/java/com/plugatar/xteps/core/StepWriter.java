@@ -41,6 +41,7 @@ public interface StepWriter {
      *
      * @param stepName the step name
      * @param runnable the runnable
+     * @param <TH>     the {@code runnable} exception type
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code runnable} is null
      * @throws StepWriteException if it's impossible to correctly report the step
@@ -55,6 +56,8 @@ public interface StepWriter {
      *
      * @param stepName the step name
      * @param consumer the consumer
+     * @param <T>      the type of the {@code consumer} input argument
+     * @param <TH>     the {@code consumer} exception type
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code consumer} is null
      * @throws StepWriteException if it's impossible to correctly report the step
@@ -70,6 +73,8 @@ public interface StepWriter {
      *
      * @param stepName the step name
      * @param supplier the supplier
+     * @param <T>      the type of the {@code supplier} result
+     * @param <TH>     the {@code supplier} exception type
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code supplier} is null
      * @throws StepWriteException if it's impossible to correctly report the step
@@ -84,6 +89,9 @@ public interface StepWriter {
      *
      * @param stepName the step name
      * @param function the function
+     * @param <T>      the type of the {@code function} input argument
+     * @param <R>      the type of the {@code function} result
+     * @param <TH>     the {@code function} exception type
      * @throws TH                 if {@code step} threw exception
      * @throws ArgumentException  if {@code stepName} or {@code function} is null
      * @throws StepWriteException if it's impossible to correctly report the step
