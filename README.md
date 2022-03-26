@@ -25,7 +25,7 @@ Maven:
 <dependency>
     <groupId>com.plugatar.xteps</groupId>
     <artifactId>xteps</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -34,7 +34,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testRuntimeOnly 'com.plugatar:xteps:xteps:1.1'
+    testRuntimeOnly 'com.plugatar:xteps:xteps:1.2'
 }
 ```
 

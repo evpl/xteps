@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Xteps 1.2 *(2022-03-26)*
+-------------------------------
+* Added cleanStackTrace setting, now cleared all causes and suppressed exceptions (issue #5, PR #7)
+* Added generic types description to `StepWriter` javadoc (issue #4, PR #8)
+* Removed input lambda argument from `Xteps` static methods - `nestedSteps` and `nestedStepsTo` (issue #6, PR #9)
+
 Xteps 1.1 *(2022-03-25)*
 -------------------------------
 * Removed redundant information from the stack trace (issue #1, PR #2)
