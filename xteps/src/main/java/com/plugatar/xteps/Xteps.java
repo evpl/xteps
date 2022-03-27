@@ -49,7 +49,7 @@ public final class Xteps {
     }
 
     /**
-     * Returns XtepsBase instance.
+     * Returns XtepsBase instance. Non-reporting method.
      *
      * @return XtepsBase instance
      * @throws ConfigException if Xteps configuration is incorrect
@@ -59,16 +59,23 @@ public final class Xteps {
     }
 
     /**
-     * Returns no context steps. Alias for {@link #steps()} method.<br>
+     * Returns no context steps. Non-reporting method. Alias for {@link #steps()} method.<br>
      * Code example:
      * <pre>{@code
+     * import com.plugatar.xteps.Xteps;
+     *
      * Xteps.of()
      *     .step("Step 1", () -> {
      *         ...
      *     })
-     *     .step("Step 2", () -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", () -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", () -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @return no context steps
@@ -79,7 +86,7 @@ public final class Xteps {
     }
 
     /**
-     * Returns no context steps.<br>
+     * Returns no context steps. Non-reporting method.<br>
      * Code example:
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.steps;
@@ -88,9 +95,14 @@ public final class Xteps {
      *     .step("Step 1", () -> {
      *         ...
      *     })
-     *     .step("Step 2", () -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", () -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", () -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @return no context steps
@@ -101,16 +113,24 @@ public final class Xteps {
     }
 
     /**
-     * Returns a context steps of given context. Alias for {@link #stepsOf(Object)} method.<br>
+     * Returns a context steps of given context. Non-reporting method.
+     * Alias for {@link #stepsOf(Object)} method.<br>
      * Code example:
      * <pre>{@code
-     * Xteps.of(context)
+     * import com.plugatar.xteps.Xteps;
+     *
+     * stepsOf("context")
      *     .step("Step 1", ctx -> {
      *         ...
      *     })
-     *     .step("Step 2", ctx -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", ctx -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", ctx -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @param context the context
@@ -123,18 +143,23 @@ public final class Xteps {
     }
 
     /**
-     * Returns a context steps of given context.<br>
+     * Returns a context steps of given context. Non-reporting method.<br>
      * Code example:
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.stepsOf;
      *
-     * stepsOf(context)
+     * stepsOf("context")
      *     .step("Step 1", ctx -> {
      *         ...
      *     })
-     *     .step("Step 2", ctx -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", ctx -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", ctx -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @param context the context
@@ -147,16 +172,24 @@ public final class Xteps {
     }
 
     /**
-     * Returns a context steps of given context. Alias for {@link #stepsOf(ThrowingSupplier)} method.<br>
+     * Returns a context steps of given context. Non-reporting method.
+     * Alias for {@link #stepsOf(ThrowingSupplier)} method.<br>
      * Code example:
      * <pre>{@code
+     * import com.plugatar.xteps.Xteps;
+     *
      * Xteps.of(() -> context)
      *     .step("Step 1", ctx -> {
      *         ...
      *     })
-     *     .step("Step 2", ctx -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", ctx -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", ctx -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @param contextSupplier the context supplier
@@ -174,7 +207,7 @@ public final class Xteps {
     }
 
     /**
-     * Returns a context steps of given context.<br>
+     * Returns a context steps of given context. Non-reporting method.<br>
      * Code example:
      * <pre>{@code
      * import static com.plugatar.xteps.Xteps.stepsOf;
@@ -183,9 +216,14 @@ public final class Xteps {
      *     .step("Step 1", ctx -> {
      *         ...
      *     })
-     *     .step("Step 2", ctx -> {
-     *         ...
-     *     });
+     *     .nestedSteps("Step 2", steps -> steps
+     *         .step("Inner step 1", ctx -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", ctx -> {
+     *             ...
+     *         })
+     *     );
      * }</pre>
      *
      * @param contextSupplier the context supplier
@@ -209,6 +247,7 @@ public final class Xteps {
      * import static com.plugatar.xteps.Xteps.emptyStep;
      *
      * emptyStep("Step 1");
+     * emptyStep("Step 2");
      * }</pre>
      *
      * @param stepName the step name
@@ -230,6 +269,14 @@ public final class Xteps {
      * step("Step 1", () -> {
      *     ...
      * });
+     * step("Step 2", () -> {
+     *     step("Inner step 1", () -> {
+     *         ...
+     *     });
+     *     step("Inner step 2", () -> {
+     *         ...
+     *     });
+     * });
      * }</pre>
      *
      * @param stepName the step name
@@ -249,45 +296,25 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name and returns a context steps.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.stepToContext;
-     *
-     * stepToContext("Step 1", () -> context)
-     *     .step("Step 2", ctx -> {
-     *         ...
-     *     })
-     *     .step("Step 3", ctx -> {
-     *         ...
-     *     });
-     * }</pre>
-     *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <T>      the context type
-     * @param <TH>     the {@code step} exception type
-     * @return context steps
-     * @throws TH                      if {@code step} threw exception
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the step
-     * @throws ConfigException         if Xteps configuration is incorrect
-     */
-    public static <T, TH extends Throwable> CtxSteps<T> stepToContext(
-        String stepName,
-        ThrowingSupplier<? extends T, ? extends TH> step
-    ) throws TH {
-        return CACHED_BASE.get().steps().stepToContext(stepName, step);
-    }
-
-    /**
      * Performs given step with given name and returns the step result.<br>
      * Code example:
      * <pre>{@code
+     * import static com.plugatar.xteps.Xteps.step;
      * import static com.plugatar.xteps.Xteps.stepTo;
      *
-     * String stepResult = stepTo("Step 1", () -> "result");
+     * String step1Result = stepTo("Step 1", () -> {
+     *     ...
+     *     return "result";
+     * });
+     * String step2Result = stepTo("Step 2", () -> {
+     *     step("Inner step 1", () -> {
+     *         ...
+     *     });
+     *     return stepTo("Inner step 2", () -> {
+     *         ...
+     *         return "result";
+     *     });
+     * });
      * }</pre>
      *
      * @param stepName the step name
@@ -306,70 +333,5 @@ public final class Xteps {
         final ThrowingSupplier<? extends R, ? extends TH> step
     ) throws TH {
         return CACHED_BASE.get().steps().stepTo(stepName, step);
-    }
-
-    /**
-     * Performs the step with given name and nested steps and returns no context steps.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.nestedSteps;
-     * import static com.plugatar.xteps.Xteps.emptyStep;
-     * import static com.plugatar.xteps.Xteps.step;
-     *
-     * nestedSteps("Step 1", () -> {
-     *     emptyStep("Inner step 1");
-     *     step("Inner step 2", () -> {
-     *         ...
-     *     });
-     * });
-     * }</pre>
-     *
-     * @param stepName the step name
-     * @param steps    the nested steps
-     * @param <TH>     the {@code steps} exception type
-     * @throws TH                      if {@code steps} threw exception
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code steps} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the steps
-     * @throws ConfigException         if Xteps configuration is incorrect
-     */
-    public static <TH extends Throwable> void nestedSteps(
-        final String stepName,
-        final ThrowingRunnable<? extends TH> steps
-    ) throws TH {
-        CACHED_BASE.get().steps().nestedSteps(stepName, s -> steps.run());
-    }
-
-    /**
-     * Performs step with given name and nested steps and returns the nested steps result.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.nestedStepsTo;
-     *
-     * String stepResult = nestedStepsTo("Step 1", () -> {
-     *     emptyStep("Inner step 1")
-     *     step("Inner step 2", () -> {
-     *         ...
-     *     });
-     *     return "result";
-     * });
-     * }</pre>
-     *
-     * @param stepName the step name
-     * @param steps    the nested steps
-     * @param <R>      the result type
-     * @param <TH>     the {@code steps} exception type
-     * @return {@code steps} result
-     * @throws TH                      if {@code steps} threw exception
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code steps} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the steps
-     * @throws ConfigException         if Xteps configuration is incorrect
-     */
-    public static <R, TH extends Throwable> R nestedStepsTo(
-        final String stepName,
-        final ThrowingSupplier<? extends R, ? extends TH> steps
-    ) throws TH {
-        return CACHED_BASE.get().steps().nestedStepsTo(stepName, s -> steps.get());
     }
 }
