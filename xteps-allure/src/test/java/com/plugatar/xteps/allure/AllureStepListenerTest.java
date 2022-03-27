@@ -17,9 +17,7 @@ package com.plugatar.xteps.allure;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Stage;
-import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
-import io.qameta.allure.util.ResultsUtils;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
@@ -73,15 +71,11 @@ final class AllureStepListenerTest {
         listener.stepPassed(uuid, stepName);
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
-        assertThat(stepResult.get()).isEqualTo(
-            new StepResult().setName(stepName)
-                .setStage(Stage.RUNNING)
-                .setStatus(Status.PASSED)
-        );
+        assertThat(stepResult.get()).isNull();
     }
 
     @Test
-    void stepFailedForAssertionErrorMethod() {
+    void stepFailedMethod() {
         final AllureStepListener listener = new AllureStepListener();
         final String uuid = UUID.randomUUID().toString();
         final String stepName = "step name";
@@ -91,30 +85,6 @@ final class AllureStepListenerTest {
         listener.stepFailed(uuid, stepName, error);
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
-        assertThat(stepResult.get()).isEqualTo(
-            new StepResult().setName(stepName)
-                .setStage(Stage.RUNNING)
-                .setStatus(Status.FAILED)
-                .setStatusDetails(ResultsUtils.getStatusDetails(error).get())
-        );
-    }
-
-    @Test
-    void stepFailedForNotAssertionErrorMethod() {
-        final AllureStepListener listener = new AllureStepListener();
-        final String uuid = UUID.randomUUID().toString();
-        final String stepName = "step name";
-        final Throwable throwable = new Throwable();
-        Allure.getLifecycle().startStep(uuid, new StepResult().setName(stepName));
-
-        listener.stepFailed(uuid, stepName, throwable);
-        final AtomicReference<StepResult> stepResult = new AtomicReference<>();
-        Allure.getLifecycle().updateStep(uuid, stepResult::set);
-        assertThat(stepResult.get()).isEqualTo(
-            new StepResult().setName(stepName)
-                .setStage(Stage.RUNNING)
-                .setStatus(Status.BROKEN)
-                .setStatusDetails(ResultsUtils.getStatusDetails(throwable).get())
-        );
+        assertThat(stepResult.get()).isNull();
     }
 }
