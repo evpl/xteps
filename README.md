@@ -1,6 +1,6 @@
 # Xteps
 
-*High-level contextual steps in your tests for any reporting tool.*
+*High-level contextual steps in your tests for any reporting tool*
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
@@ -25,7 +25,7 @@ Maven:
 <dependency>
     <groupId>com.plugatar.xteps</groupId>
     <artifactId>xteps</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -34,7 +34,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testRuntimeOnly 'com.plugatar:xteps:xteps:1.2'
+    testRuntimeOnly 'com.plugatar:xteps:xteps:1.3'
 }
 ```
 
