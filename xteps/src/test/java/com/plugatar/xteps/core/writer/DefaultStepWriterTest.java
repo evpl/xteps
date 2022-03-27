@@ -369,10 +369,10 @@ final class DefaultStepWriterTest {
     void cleanStackTraceArgumentTrue() {
         final StepListener stepListener = mock(StepListener.class);
         final DefaultStepWriter sw = new DefaultStepWriter(stepListener, true);
-        final RuntimeException ex1 = new RuntimeException();
-        final RuntimeException ex2 = new XtepsException();
-        final RuntimeException ex3 = new RuntimeException();
-        final RuntimeException ex4 = new XtepsException();
+        final RuntimeException ex1 = new XtepsException("ex1");
+        final RuntimeException ex2 = new RuntimeException("ex2");
+        final RuntimeException ex3 = new XtepsException("ex3");
+        final RuntimeException ex4 = new RuntimeException("ex4");
         ex1.initCause(ex2);
         ex2.addSuppressed(ex3);
         ex3.initCause(ex4);
@@ -387,20 +387,20 @@ final class DefaultStepWriterTest {
         assertThat(actualEx).isSameAs(ex1);
         final Predicate<StackTraceElement> elementWithXtepsInfoPredicate =
             stackTraceElement -> stackTraceElement.getClassName().startsWith("com.plugatar.xteps");
-        assertThat(ex1.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
-        assertThat(ex2.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
-        assertThat(ex3.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
-        assertThat(ex4.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex1.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex2.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
+        assertThat(ex3.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isNotEmpty();
+        assertThat(ex4.getStackTrace()).filteredOn(elementWithXtepsInfoPredicate).isEmpty();
     }
 
     @Test
     void cleanStackTraceArgumentFalse() {
         final StepListener stepListener = mock(StepListener.class);
         final DefaultStepWriter sw = new DefaultStepWriter(stepListener, false);
-        final RuntimeException ex1 = new RuntimeException();
-        final RuntimeException ex2 = new XtepsException();
-        final RuntimeException ex3 = new RuntimeException();
-        final RuntimeException ex4 = new XtepsException();
+        final RuntimeException ex1 = new XtepsException("ex1");
+        final RuntimeException ex2 = new RuntimeException("ex2");
+        final RuntimeException ex3 = new XtepsException("ex3");
+        final RuntimeException ex4 = new RuntimeException("ex4");
         ex1.initCause(ex2);
         ex2.addSuppressed(ex3);
         ex3.initCause(ex4);

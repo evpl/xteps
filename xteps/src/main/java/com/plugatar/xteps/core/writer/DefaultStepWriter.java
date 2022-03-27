@@ -134,7 +134,7 @@ public class DefaultStepWriter implements StepWriter {
 
     private static void cleanStackTrace(final Throwable mainTh) {
         final Set<Throwable> uniqueThrowables = new HashSet<>();
-        addCauses(uniqueThrowables, mainTh);
+        addAllThrowablesRecursively(uniqueThrowables, mainTh);
         final String ignoredClassesStartWith = "com.plugatar.xteps";
         for (final Throwable th : uniqueThrowables) {
             if (!(th instanceof XtepsException)) {
@@ -149,23 +149,16 @@ public class DefaultStepWriter implements StepWriter {
         }
     }
 
-    private static void addCauses(final Set<Throwable> uniqueThrowables, Throwable mainTh) {
-        for (Throwable currentTh = mainTh; currentTh != null; currentTh = currentTh.getCause()) {
-            if (uniqueThrowables.contains(currentTh)) {
+    private static void addAllThrowablesRecursively(final Set<Throwable> uniqueThrowables,
+                                                    final Throwable mainTh) {
+        for (Throwable causeTh = mainTh; causeTh != null; causeTh = causeTh.getCause()) {
+            if (uniqueThrowables.contains(causeTh)) {
                 break;
             }
-            uniqueThrowables.add(currentTh);
-            addSuppressed(uniqueThrowables, currentTh);
-        }
-    }
-
-    private static void addSuppressed(final Set<Throwable> uniqueThrowables, Throwable mainTh) {
-        for (final Throwable currentTh : mainTh.getSuppressed()) {
-            if (uniqueThrowables.contains(currentTh)) {
-                break;
+            uniqueThrowables.add(causeTh);
+            for (final Throwable suppressedTh : causeTh.getSuppressed()) {
+                addAllThrowablesRecursively(uniqueThrowables, suppressedTh);
             }
-            uniqueThrowables.add(currentTh);
-            addCauses(uniqueThrowables, currentTh);
         }
     }
 }
