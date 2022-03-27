@@ -93,58 +93,54 @@ You’re all set! Now you can use Xteps.
 
 ```java
 import static com.plugatar.xteps.Xteps.emptyStep;
-import static com.plugatar.xteps.Xteps.nestedSteps;
-import static com.plugatar.xteps.Xteps.nestedStepsTo;
 import static com.plugatar.xteps.Xteps.step;
 import static com.plugatar.xteps.Xteps.stepTo;
 import static com.plugatar.xteps.Xteps.stepsOf;
 
-class ExampleTest {
+final class ExampleTest {
 
     @Test
-    void withoutContextTest() {
+    void simpleExample() {
         step("Step 1", () -> {
             ...
         });
-        emptyStep("Step 3");
-        nestedSteps("Step 4", () -> {
+        emptyStep("Step 2");
+        step("Step 3", () -> {
             step("Inner step 1", () -> {
                 ...
             });
-            emptyStep("Inner step 2");
+            step("Inner step 2", () -> {
+                ...
+            });
         });
-        String step5Result = stepTo("Step 5", () -> {
+        final String step4Result = stepTo("Step 4", () -> {
             ...
-            return "step 5 result";
+            return "result";
         });
-        String step6Result = nestedStepsTo("Step 6", () ->{
+        final String step5Result = stepTo("Step 5", () -> {
             step("Inner step 1", () -> {
                 ...
             });
             return stepTo("Inner step 2", () -> {
                 ...
-                return "step 6 result";
+                return "result";
             });
         });
+        step("Step 6", () -> assertEquals(step4Result, step5Result));
     }
 
     @Test
-    void contextSteps() {
+    void chainExample() {
         stepsOf("context")
-            .step("Step 1", context -> {
+            .step("Step 1, context = {context.toUpperCase()}", ctx -> {
                 ...
             })
-            .stepToContext("Step 2, context hash = {context.hash}", context -> {
-                ...
-                return "new context";
-            })
-            .step("Step 3, context = {context.toUpperCase()}", newContext -> {
+            .stepToContext("Step 2", ctx -> 111)
+            .step("Step 3, context = {0.shortValue()}, previous = {1.toUpperCase()}", newCtx -> {
                 ...
             })
             .previous()
-            .step("Step 4", previousContext -> {
-                ...
-            });
+            .step("Step 4, context = {0.toUpperCase()}", previousCtx -> assertEquals(previousCtx, "context"));
     }
 }
 ```

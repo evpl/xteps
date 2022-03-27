@@ -27,7 +27,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
 import java.lang.reflect.Modifier;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -137,36 +136,10 @@ final class XtepsTest {
     }
 
     @Test
-    void stepToContextMethod() {
-        assertThat(Xteps.stepToContext("stepToContextMethod", () -> 111).context())
-            .isEqualTo(111);
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToContextMethod");
-    }
-
-    @Test
     void stepToMethod() {
         final Object result = Xteps.stepTo("stepToMethod", () -> 111);
         assertThat(result).isEqualTo(111);
         assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToMethod");
-    }
-
-    @Test
-    void nestedStepsMethod() {
-        final AtomicBoolean isExecuted = new AtomicBoolean();
-        Xteps.nestedSteps("nestedStepsMethod", () -> isExecuted.set(true));
-        assertThat(isExecuted).isTrue();
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("nestedStepsMethod");
-    }
-
-    @Test
-    void nestedStepsToMethod() {
-        final AtomicBoolean isExecuted = new AtomicBoolean();
-        final Object result = Xteps.nestedStepsTo("nestedStepsToMethod", () -> {
-            isExecuted.set(true);
-            return 111;
-        });
-        assertThat(result).isEqualTo(111);
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("nestedStepsToMethod");
     }
 
     public static final class StaticStepListener implements StepListener {

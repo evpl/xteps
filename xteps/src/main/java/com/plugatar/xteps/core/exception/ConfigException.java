@@ -16,7 +16,7 @@
 package com.plugatar.xteps.core.exception;
 
 /**
- * Thrown to indicate incorrect Xteps API configuration.
+ * Thrown to indicate incorrect Xteps configuration.
  */
 public class ConfigException extends XtepsException {
 
