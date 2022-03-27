@@ -54,7 +54,7 @@ Or just use property `xteps.listeners` to specify listeners.
 <dependency>
     <groupId>com.plugatar.xteps</groupId>
     <artifactId>xteps-allure</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <scope>test</scope>
 </dependency>
 ```
@@ -63,7 +63,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testRuntimeOnly 'com.plugatar:xteps:xteps-allure:1.0'
+    testRuntimeOnly 'com.plugatar:xteps:xteps-allure:1.1'
 }
 ```
 

@@ -1,11 +1,15 @@
 Change Log
 ==========
 
+Xteps Allure 1.1 *(2022-03-27)*
+-------------------------------
+* bug fix - sequential steps are reported as nested (issue #15, PR #16)
+
 Xteps 1.3 *(2022-03-27)*
 -------------------------------
 * Added missing javadoc (issue #10, PR #11)
 * Clean stack trace algorithm optimization
-* Removed redundant methods of `Xteps` class (issue #13, #14)
+* Removed redundant methods of `Xteps` class (issue #13, PR #14)
 
 Xteps 1.2 *(2022-03-26)*
 -------------------------------
