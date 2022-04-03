@@ -15,15 +15,13 @@
  */
 package com.plugatar.xteps.core.util.function;
 
-import java.util.function.Supplier;
-
 /**
- * Cached supplier.
+ * Cached throwing supplier.
  *
  * @param <T> the type of the result
  */
-public class CachedSupplier<T> implements Supplier<T> {
-    private volatile Supplier<? extends T> origin;
+public class CachedThrowingSupplier<T, TH extends Throwable> implements ThrowingSupplier<T, TH> {
+    private volatile ThrowingSupplier<? extends T, ? extends TH> origin;
     private final Object lock;
     private volatile boolean init;
     private T value;
@@ -31,10 +29,10 @@ public class CachedSupplier<T> implements Supplier<T> {
     /**
      * Ctor.
      *
-     * @param origin the origin supplier
+     * @param origin the origin throwing supplier
      * @throws NullPointerException if {@code origin} is null
      */
-    public CachedSupplier(final Supplier<? extends T> origin) {
+    public CachedThrowingSupplier(final ThrowingSupplier<? extends T, ? extends TH> origin) {
         if (origin == null) { throw new NullPointerException("origin arg is null"); }
         this.origin = origin;
         this.lock = new Object();
@@ -43,7 +41,7 @@ public class CachedSupplier<T> implements Supplier<T> {
     }
 
     @Override
-    public final T get() {
+    public final T get() throws TH {
         if (!this.init) {
             synchronized (this.lock) {
                 if (!this.init) {
