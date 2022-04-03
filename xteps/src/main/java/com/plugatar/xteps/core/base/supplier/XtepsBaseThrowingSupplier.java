@@ -22,6 +22,7 @@ import com.plugatar.xteps.core.exception.ConfigException;
 import com.plugatar.xteps.core.formatter.DefaultStepNameFormatter;
 import com.plugatar.xteps.core.listener.ComplexStepListener;
 import com.plugatar.xteps.core.listener.FakeStepListener;
+import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 import com.plugatar.xteps.core.writer.DefaultStepWriter;
 
 import java.io.IOException;
@@ -36,20 +37,19 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * {@link Supplier} implementation for {@link XtepsBase}.
+ * {@link ThrowingSupplier} implementation for {@link XtepsBase}.
  */
-public class XtepsBaseSupplier implements Supplier<XtepsBase> {
+public class XtepsBaseThrowingSupplier implements ThrowingSupplier<XtepsBase, RuntimeException> {
     private final Map<String, String> properties;
 
     /**
      * Ctor.
      */
-    public XtepsBaseSupplier() {
+    public XtepsBaseThrowingSupplier() {
         this.properties = systemPropertiesWithFile("xteps", "xteps.properties");
     }
 

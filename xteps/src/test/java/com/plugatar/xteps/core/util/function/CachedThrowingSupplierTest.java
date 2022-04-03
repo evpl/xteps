@@ -18,7 +18,6 @@ package com.plugatar.xteps.core.util.function;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -29,18 +28,18 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for {@link CachedSupplier}.
+ * Tests for {@link CachedThrowingSupplier}.
  */
-final class CachedSupplierTest {
+final class CachedThrowingSupplierTest {
 
     @Test
     void classIsNotFinal() {
-        assertThat(CachedSupplier.class).isNotFinal();
+        assertThat(CachedThrowingSupplier.class).isNotFinal();
     }
 
     @Test
     void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = CachedSupplier.class;
+        final Class<?> cls = CachedThrowingSupplier.class;
         assertThat(cls.getMethods())
             .filteredOn(method -> method.getDeclaringClass() == cls)
             .filteredOn(method -> !(method.getName().equals("get") && method.getReturnType() == Object.class))
@@ -49,16 +48,16 @@ final class CachedSupplierTest {
 
     @Test
     void ctorThrowsExceptionForNullOrigin() {
-        assertThatCode(() -> new CachedSupplier<>(null))
+        assertThatCode(() -> new CachedThrowingSupplier<>(null))
             .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     void getMethodForNullResult() {
         @SuppressWarnings("unchecked")
-        final Supplier<Object> origin = mock(Supplier.class);
+        final ThrowingSupplier<Object, RuntimeException> origin = mock(ThrowingSupplier.class);
         when(origin.get()).thenReturn(null, new Object());
-        final Supplier<Object> cachedSupplier = new CachedSupplier<>(origin);
+        final ThrowingSupplier<Object, RuntimeException> cachedSupplier = new CachedThrowingSupplier<>(origin);
 
         assertThat(cachedSupplier.get()).isNull();
         assertThat(cachedSupplier.get()).isNull();
@@ -68,10 +67,10 @@ final class CachedSupplierTest {
     @Test
     void getMethodForNotNullResult() {
         @SuppressWarnings("unchecked")
-        final Supplier<Object> origin = mock(Supplier.class);
+        final ThrowingSupplier<Object, RuntimeException> origin = mock(ThrowingSupplier.class);
         final Object firstResult = new Object();
         when(origin.get()).thenReturn(firstResult, new Object());
-        final Supplier<Object> cachedSupplier = new CachedSupplier<>(origin);
+        final ThrowingSupplier<Object, RuntimeException> cachedSupplier = new CachedThrowingSupplier<>(origin);
 
         assertThat(cachedSupplier.get()).isSameAs(firstResult);
         assertThat(cachedSupplier.get()).isSameAs(firstResult);
@@ -81,9 +80,9 @@ final class CachedSupplierTest {
     @Test
     void getMethodForException() {
         @SuppressWarnings("unchecked")
-        final Supplier<Object> origin = mock(Supplier.class);
+        final ThrowingSupplier<Object, RuntimeException> origin = mock(ThrowingSupplier.class);
         doThrow(new RuntimeException()).when(origin).get();
-        final Supplier<Object> cachedSupplier = new CachedSupplier<>(origin);
+        final ThrowingSupplier<Object, RuntimeException> cachedSupplier = new CachedThrowingSupplier<>(origin);
 
         assertThatCode(() -> cachedSupplier.get())
             .isInstanceOf(RuntimeException.class);

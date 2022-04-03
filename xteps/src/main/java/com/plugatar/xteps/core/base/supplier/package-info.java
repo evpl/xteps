@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 /**
- * {@link java.util.function.Supplier} implementations for {@link com.plugatar.xteps.core.XtepsBase}.
+ * {@link com.plugatar.xteps.core.util.function.ThrowingSupplier} implementations
+ * for {@link com.plugatar.xteps.core.XtepsBase}.
  */
 package com.plugatar.xteps.core.base.supplier;

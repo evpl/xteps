@@ -18,16 +18,14 @@ package com.plugatar.xteps;
 import com.plugatar.xteps.core.CtxSteps;
 import com.plugatar.xteps.core.NoCtxSteps;
 import com.plugatar.xteps.core.XtepsBase;
-import com.plugatar.xteps.core.base.supplier.XtepsBaseSupplier;
+import com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplier;
 import com.plugatar.xteps.core.exception.ArgumentException;
 import com.plugatar.xteps.core.exception.ConfigException;
 import com.plugatar.xteps.core.exception.StepNameFormatException;
 import com.plugatar.xteps.core.exception.StepWriteException;
-import com.plugatar.xteps.core.util.function.CachedSupplier;
+import com.plugatar.xteps.core.util.function.CachedThrowingSupplier;
 import com.plugatar.xteps.core.util.function.ThrowingRunnable;
 import com.plugatar.xteps.core.util.function.ThrowingSupplier;
-
-import java.util.function.Supplier;
 
 /**
  * Utility class. Main Xteps API.
@@ -39,8 +37,8 @@ public final class Xteps {
     /**
      * Cached XtepsBase instance supplier.
      */
-    private static final Supplier<XtepsBase> CACHED_BASE =
-        new CachedSupplier<>(() -> new XtepsBaseSupplier().get());
+    private static final ThrowingSupplier<XtepsBase, RuntimeException> CACHED_BASE =
+        new CachedThrowingSupplier<>(new XtepsBaseThrowingSupplier());
 
     /**
      * Utility class ctor.

@@ -32,19 +32,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Tests for {@link XtepsBaseSupplier}.
+ * Tests for {@link XtepsBaseThrowingSupplier}.
  */
 @ResourceLock(value = Resources.SYSTEM_PROPERTIES, mode = ResourceAccessMode.READ_WRITE)
-final class XtepsBaseSupplierTest {
+final class XtepsBaseThrowingSupplierTest {
 
     @BeforeAll
     static void beforeAll() {
-        XtepsBaseSupplierTest.clearProperties();
+        XtepsBaseThrowingSupplierTest.clearProperties();
     }
 
     @AfterEach
     void afterEach() {
-        XtepsBaseSupplierTest.clearProperties();
+        XtepsBaseThrowingSupplierTest.clearProperties();
     }
 
     private static void clearProperties() {
@@ -59,12 +59,12 @@ final class XtepsBaseSupplierTest {
 
     @Test
     void classIsNotFinal() {
-        assertThat(XtepsBaseSupplier.class).isNotFinal();
+        assertThat(XtepsBaseThrowingSupplier.class).isNotFinal();
     }
 
     @Test
     void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = XtepsBaseSupplier.class;
+        final Class<?> cls = XtepsBaseThrowingSupplier.class;
         assertThat(cls.getMethods())
             .filteredOn(method -> method.getDeclaringClass() == cls)
             .filteredOn(method -> !(method.getName().equals("get") && method.getReturnType() == Object.class))
@@ -74,9 +74,9 @@ final class XtepsBaseSupplierTest {
     @Test
     void enablePropertyCorrectValueTrueWithListener() {
         System.setProperty("xteps.enabled", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().step("enablePropertyCorrectValueTrueWithListener", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("enablePropertyCorrectValueTrueWithListener", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("enablePropertyCorrectValueTrueWithListener");
     }
 
@@ -84,16 +84,16 @@ final class XtepsBaseSupplierTest {
     void enablePropertyCorrectValueTrueWithoutListener() {
         System.setProperty("xteps.enabled", "true");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void enablePropertyCorrectValueFalseWithListener() {
         System.setProperty("xteps.enabled", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().step("enablePropertyCorrectValueFalseWithListener", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("enablePropertyCorrectValueFalseWithListener", () -> {});
         assertThat(StaticStepListener.lastStepName()).isNull();
     }
 
@@ -101,15 +101,15 @@ final class XtepsBaseSupplierTest {
     void enablePropertyCorrectValueFalseWithoutListener() {
         System.setProperty("xteps.enabled", "false");
 
-        new XtepsBaseSupplier().get().steps().step("enablePropertyCorrectValueFalseWithoutListener", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("enablePropertyCorrectValueFalseWithoutListener", () -> {});
         assertThat(StaticStepListener.lastStepName()).isNull();
     }
 
     @Test
     void enablePropertyDefaultValue() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().step("enablePropertyDefaultValue", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("enablePropertyDefaultValue", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("enablePropertyDefaultValue");
     }
 
@@ -117,69 +117,69 @@ final class XtepsBaseSupplierTest {
     void enablePropertyIncorrectValue() {
         System.setProperty("xteps.enabled", "value");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void patterPropertyCorrectValue1Group() {
         System.setProperty("xteps.replacementPattern", "l([^r]*)r");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(111).step("patterPropertyCorrectValue1Group lcontextr", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(111).step("patterPropertyCorrectValue1Group lcontextr", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("patterPropertyCorrectValue1Group 111");
     }
 
     @Test
     void patterPropertyCorrectValue2Groups() {
         System.setProperty("xteps.replacementPattern", "l([^r]*)r(abc|def)");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(111).step("patterPropertyCorrectValue2Groups lcontextrabc", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(111).step("patterPropertyCorrectValue2Groups lcontextrabc", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("patterPropertyCorrectValue2Groups 111");
     }
 
     @Test
     void patterPropertyDefaultValue() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(111).step("patterPropertyDefaultValue {context}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(111).step("patterPropertyDefaultValue {context}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("patterPropertyDefaultValue 111");
     }
 
     @Test
     void patterPropertyIncorrectValue0Groups() {
         System.setProperty("xteps.replacementPattern", "left right");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void fieldForceAccessPropertyCorrectValueTruePrivateField() {
         System.setProperty("xteps.fieldForceAccess", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueTruePrivateField {context.privateField}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueTruePrivateField {context.privateField}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("fieldForceAccessPropertyCorrectValueTruePrivateField 222");
     }
 
     @Test
     void fieldForceAccessPropertyCorrectValueTruePublicField() {
         System.setProperty("xteps.fieldForceAccess", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueTruePublicField {context.publicField}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueTruePublicField {context.publicField}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("fieldForceAccessPropertyCorrectValueTruePublicField 111");
     }
 
     @Test
     void fieldForceAccessPropertyCorrectValueFalsePrivateField() {
         System.setProperty("xteps.fieldForceAccess", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get()
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get()
             .steps()
             .toContext(new Obj())
             .step("fieldForceAccessPropertyCorrectValueFalsePrivateField {context.privateField}", context -> {})
@@ -189,17 +189,17 @@ final class XtepsBaseSupplierTest {
     @Test
     void fieldForceAccessPropertyCorrectValueFalsePublicField() {
         System.setProperty("xteps.fieldForceAccess", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueFalsePublicField {context.publicField}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("fieldForceAccessPropertyCorrectValueFalsePublicField {context.publicField}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("fieldForceAccessPropertyCorrectValueFalsePublicField 111");
     }
 
     @Test
     void fieldForceAccessPropertyDefaultValue() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        final XtepsBase xtepsBase = new XtepsBaseThrowingSupplier().get();
         xtepsBase.steps().toContext(new Obj()).step("fieldForceAccessPropertyDefaultValue {context.publicField}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("fieldForceAccessPropertyDefaultValue 111");
         assertThatCode(() -> xtepsBase.steps()
@@ -211,36 +211,36 @@ final class XtepsBaseSupplierTest {
     @Test
     void fieldForceAccessPropertyIncorrectValue() {
         System.setProperty("xteps.fieldForceAccess", "value");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void methodForceAccessPropertyCorrectValueTruePrivateMethod() {
         System.setProperty("xteps.methodForceAccess", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueTruePrivateMethod {context.privateMethod()}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueTruePrivateMethod {context.privateMethod()}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("methodForceAccessPropertyCorrectValueTruePrivateMethod 444");
     }
 
     @Test
     void methodForceAccessPropertyCorrectValueTruePublicMethod() {
         System.setProperty("xteps.methodForceAccess", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueTruePublicMethod {context.publicMethod()}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueTruePublicMethod {context.publicMethod()}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("methodForceAccessPropertyCorrectValueTruePublicMethod 333");
     }
 
     @Test
     void methodForceAccessPropertyCorrectValueFalsePrivateMethod() {
         System.setProperty("xteps.methodForceAccess", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get()
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get()
             .steps()
             .toContext(new Obj())
             .step("methodForceAccessPropertyCorrectValueFalsePrivateMethod {context.privateMethod()}", context -> {})
@@ -250,17 +250,17 @@ final class XtepsBaseSupplierTest {
     @Test
     void methodForceAccessPropertyCorrectValueFalsePublicMethod() {
         System.setProperty("xteps.methodForceAccess", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueFalsePublicMethod {context.publicMethod()}", context -> {});
+        new XtepsBaseThrowingSupplier().get().steps().toContext(new Obj()).step("methodForceAccessPropertyCorrectValueFalsePublicMethod {context.publicMethod()}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("methodForceAccessPropertyCorrectValueFalsePublicMethod 333");
     }
 
     @Test
     void methodForceAccessPropertyDefaultValue() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        final XtepsBase xtepsBase = new XtepsBaseThrowingSupplier().get();
         xtepsBase.steps().toContext(new Obj()).step("methodForceAccessPropertyDefaultValue {context.publicMethod()}", context -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("methodForceAccessPropertyDefaultValue 333");
         assertThatCode(() -> xtepsBase.steps()
@@ -272,18 +272,18 @@ final class XtepsBaseSupplierTest {
     @Test
     void methodForceAccessPropertyIncorrectValue() {
         System.setProperty("xteps.methodForceAccess", "value");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void cleanStackTracePropertyCorrectValueTrue() {
         System.setProperty("xteps.cleanStackTrace", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        final XtepsBase xtepsBase = new XtepsBaseThrowingSupplier().get();
         try {
             xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
         } catch (final Throwable th) {
@@ -296,9 +296,9 @@ final class XtepsBaseSupplierTest {
     @Test
     void cleanStackTracePropertyCorrectValueFalse() {
         System.setProperty("xteps.cleanStackTrace", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        final XtepsBase xtepsBase = new XtepsBaseThrowingSupplier().get();
         try {
             xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
         } catch (final Throwable th) {
@@ -310,9 +310,9 @@ final class XtepsBaseSupplierTest {
 
     @Test
     void cleanStackTracePropertyDefaultValue() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        final XtepsBase xtepsBase = new XtepsBaseSupplier().get();
+        final XtepsBase xtepsBase = new XtepsBaseThrowingSupplier().get();
         try {
             xtepsBase.steps().step("cleanStackTracePropertyCorrectValueTrue", () -> { throw new RuntimeException(); });
         } catch (final Throwable th) {
@@ -325,44 +325,44 @@ final class XtepsBaseSupplierTest {
     @Test
     void cleanStackTracePropertyIncorrectValue() {
         System.setProperty("xteps.cleanStackTrace", "value");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void useSPIListenersPropertyCorrectValueTrue() {
         System.setProperty("xteps.useSPIListeners", "true");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .doesNotThrowAnyException();
     }
 
     @Test
     void useSPIListenersPropertyCorrectValueFalse() {
         System.setProperty("xteps.useSPIListeners", "false");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .doesNotThrowAnyException();
     }
 
     @Test
     void useSPIListenersPropertyIncorrectValue() {
         System.setProperty("xteps.useSPIListeners", "value");
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void listenersPropertyCorrectValue1Listener() {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener");
+        System.setProperty("xteps.listeners", "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener");
 
-        new XtepsBaseSupplier().get().steps().step("listenersPropertyCorrectValue1Listener", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("listenersPropertyCorrectValue1Listener", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("listenersPropertyCorrectValue1Listener");
     }
 
@@ -370,38 +370,38 @@ final class XtepsBaseSupplierTest {
     void listenersPropertyCorrectValue2Listeners() {
         System.setProperty(
             "xteps.listeners",
-            "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener," +
-                "com.plugatar.xteps.core.base.supplier.XtepsBaseSupplierTest$StaticStepListener2"
+            "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener," +
+                "com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplierTest$StaticStepListener2"
         );
 
-        new XtepsBaseSupplier().get().steps().step("listenersPropertyCorrectValue2Listeners", () -> {});
+        new XtepsBaseThrowingSupplier().get().steps().step("listenersPropertyCorrectValue2Listeners", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("listenersPropertyCorrectValue2Listeners");
         assertThat(StaticStepListener2.lastStepName()).isEqualTo("listenersPropertyCorrectValue2Listeners");
     }
 
     @Test
     void listenersPropertyDefaultValue() {
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void listenersPropertyIncorrectValue0Listeners() {
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void listenersPropertyIncorrectValueNotListener() {
         System.setProperty("xteps.listeners", "com.plugatar.xteps.XtepsBaseSupplierTest$NotListener");
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
     @Test
     void listenersPropertyIncorrectValueNonExistentListener() {
         System.setProperty("xteps.listeners", "com.plugatar.xteps.XtepsBaseSupplierTest$NonExistent");
-        assertThatCode(() -> new XtepsBaseSupplier().get())
+        assertThatCode(() -> new XtepsBaseThrowingSupplier().get())
             .isInstanceOf(ConfigException.class);
     }
 
