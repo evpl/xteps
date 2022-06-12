@@ -20,7 +20,6 @@ import io.qameta.allure.model.Stage;
 import io.qameta.allure.model.StepResult;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Modifier;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,19 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Tests for {@link AllureStepListener}.
  */
 final class AllureStepListenerTest {
-
-    @Test
-    void classIsNotFinal() {
-        assertThat(AllureStepListener.class).isNotFinal();
-    }
-
-    @Test
-    void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = AllureStepListener.class;
-        assertThat(cls.getMethods())
-            .filteredOn(method -> method.getDeclaringClass() == cls)
-            .allMatch(method -> Modifier.isFinal(method.getModifiers()));
-    }
 
     @Test
     void stepStartedMethod() {
@@ -57,7 +43,6 @@ final class AllureStepListenerTest {
             new StepResult().setName(stepName)
                 .setStage(Stage.RUNNING)
         );
-
         Allure.getLifecycle().stopStep(uuid);
     }
 
@@ -68,7 +53,7 @@ final class AllureStepListenerTest {
         final String stepName = "step name";
         Allure.getLifecycle().startStep(uuid, new StepResult().setName(stepName));
 
-        listener.stepPassed(uuid, stepName);
+        listener.stepPassed(uuid);
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
         assertThat(stepResult.get()).isNull();
@@ -82,7 +67,7 @@ final class AllureStepListenerTest {
         final AssertionError error = new AssertionError();
         Allure.getLifecycle().startStep(uuid, new StepResult().setName(stepName));
 
-        listener.stepFailed(uuid, stepName, error);
+        listener.stepFailed(uuid, error);
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
         assertThat(stepResult.get()).isNull();

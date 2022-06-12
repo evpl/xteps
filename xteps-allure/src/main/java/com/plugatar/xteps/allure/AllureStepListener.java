@@ -19,7 +19,6 @@ import com.plugatar.xteps.core.StepListener;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.Status;
-import io.qameta.allure.model.StatusDetails;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.util.ResultsUtils;
 
@@ -48,8 +47,7 @@ public class AllureStepListener implements StepListener {
     }
 
     @Override
-    public final void stepPassed(final String uuid,
-                                 final String stepName) {
+    public final void stepPassed(final String uuid) {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
         allureLifecycle.updateStep(
             uuid,
@@ -60,14 +58,12 @@ public class AllureStepListener implements StepListener {
 
     @Override
     public final void stepFailed(final String uuid,
-                                 final String stepName,
                                  final Throwable throwable) {
-        final Status status = ResultsUtils.getStatus(throwable).get();
-        final StatusDetails statusDetails = ResultsUtils.getStatusDetails(throwable).get();
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
         allureLifecycle.updateStep(
             uuid,
-            step -> step.setStatus(status).setStatusDetails(statusDetails)
+            step -> step.setStatus(ResultsUtils.getStatus(throwable).orElse(Status.BROKEN))
+                .setStatusDetails(ResultsUtils.getStatusDetails(throwable).orElse(null))
         );
         allureLifecycle.stopStep(uuid);
     }
