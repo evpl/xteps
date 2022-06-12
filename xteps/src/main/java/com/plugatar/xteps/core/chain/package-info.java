@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Core.
+ * {@link com.plugatar.xteps.core.BaseStepsChain} implementations.
  */
-package com.plugatar.xteps.core;
+package com.plugatar.xteps.core.chain;

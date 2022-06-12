@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Core.
+ * {@link com.plugatar.xteps.core.StepReporter} implementations.
  */
-package com.plugatar.xteps.core;
+package com.plugatar.xteps.core.reporter;

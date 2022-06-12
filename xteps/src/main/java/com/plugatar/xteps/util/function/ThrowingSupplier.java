@@ -13,7 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.plugatar.xteps.util.function;
+
 /**
- * Core.
+ * The {@link java.util.function.Supplier} specialization that might
+ * throw a exception.
+ *
+ * @param <T> the type of the result
+ * @param <E> the type of the thrown exception
+ * @see java.util.function.Supplier
  */
-package com.plugatar.xteps.core;
+@FunctionalInterface
+public interface ThrowingSupplier<T, E extends Throwable> {
+
+    /**
+     * Gets the result.
+     *
+     * @return the result
+     * @throws E if supplier threw exception
+     */
+    T get() throws E;
+}

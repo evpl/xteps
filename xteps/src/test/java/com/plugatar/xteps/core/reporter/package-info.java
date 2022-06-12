@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Core.
+ * Tests for {@link com.plugatar.xteps.core.reporter} package.
  */
-package com.plugatar.xteps.core;
+package com.plugatar.xteps.core.reporter;

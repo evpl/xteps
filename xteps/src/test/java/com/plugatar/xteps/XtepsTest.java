@@ -15,10 +15,9 @@
  */
 package com.plugatar.xteps;
 
-import com.plugatar.xteps.core.NoCtxSteps;
+import com.plugatar.xteps.core.CtxStepsChain;
+import com.plugatar.xteps.core.InitialStepsChain;
 import com.plugatar.xteps.core.StepListener;
-import com.plugatar.xteps.core.XtepsBase;
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,8 @@ import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
-import java.lang.reflect.Modifier;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tests for {@link Xteps}.
@@ -49,83 +47,13 @@ final class XtepsTest {
 
     private static void clearProperties() {
         System.clearProperty("xteps.enabled");
-        System.clearProperty("xteps.replacementPattern");
-        System.clearProperty("xteps.fieldForceAccess");
-        System.clearProperty("xteps.methodForceAccess");
-        System.clearProperty("xteps.cleanStackTrace");
-        System.clearProperty("xteps.useSPIListeners");
+        System.clearProperty("xteps.spi");
         System.clearProperty("xteps.listeners");
     }
 
     @Test
-    void classIsFinal() {
-        assertThat(Xteps.class).isFinal();
-    }
-
-    @Test
-    void singlePrivateCtor() {
-        assertThat(Xteps.class.getDeclaredConstructors())
-            .singleElement()
-            .is(new Condition<>(
-                ctor -> Modifier.isPrivate(ctor.getModifiers()),
-                "private"
-            ));
-    }
-
-    @Test
-    void xtepsBaseMethod() {
-        final XtepsBase base = Xteps.xtepsBase();
-        base.steps().step("apiMethod", () -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("apiMethod");
-    }
-
-    @Test
-    void ofMethod() {
-        final NoCtxSteps noCtxSteps = Xteps.of();
-        assertThat(Xteps.steps()).isSameAs(noCtxSteps);
-        noCtxSteps.step("ofMethod", () -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("ofMethod");
-    }
-
-    @Test
-    void stepsMethod() {
-        final NoCtxSteps noCtxSteps = Xteps.steps();
-        assertThat(Xteps.steps()).isSameAs(noCtxSteps);
-        noCtxSteps.step("stepsMethod", () -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsMethod");
-    }
-
-    @Test
-    void ofOfValueMethod() {
-        Xteps.of(111)
-            .step("ofOfValueMethod {context}", c -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("ofOfValueMethod 111");
-    }
-
-    @Test
-    void stepsOfValueMethod() {
-        Xteps.stepsOf(111)
-            .step("stepsOfValueMethod {context}", c -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsOfValueMethod 111");
-    }
-
-    @Test
-    void ofOfSupplierMethod() {
-        Xteps.of(() -> 111)
-            .step("ofOfSupplierMethod {context}", c -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("ofOfSupplierMethod 111");
-    }
-
-    @Test
-    void stepsOfSupplierMethod() {
-        Xteps.stepsOf(() -> 111)
-            .step("stepsOfSupplierMethod {context}", c -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsOfSupplierMethod 111");
-    }
-
-    @Test
     void emptyStepMethod() {
-        Xteps.emptyStep("emptyStepMethod");
+        Xteps.step("emptyStepMethod");
         assertThat(StaticStepListener.lastStepName()).isEqualTo("emptyStepMethod");
     }
 
@@ -137,9 +65,34 @@ final class XtepsTest {
 
     @Test
     void stepToMethod() {
-        final Object result = Xteps.stepTo("stepToMethod", () -> 111);
-        assertThat(result).isEqualTo(111);
+        final Object result = new Object();
+        assertThat(Xteps.stepTo("stepToMethod", () -> result)).isSameAs(result);
         assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToMethod");
+    }
+
+    @Test
+    void failedStepMethod() {
+        final RuntimeException exception = new RuntimeException();
+        assertThatCode(() -> Xteps.failedStep("failedStepMethod", exception))
+            .isSameAs(exception);
+        assertThat(StaticStepListener.lastStepName()).isEqualTo("failedStepMethod");
+    }
+
+    @Test
+    void stepsChainMethod() {
+        final InitialStepsChain stepsChain = Xteps.stepsChain();
+        assertThat(Xteps.stepsChain()).isSameAs(stepsChain);
+        stepsChain.step("stepsChainMethod", () -> {});
+        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsChainMethod");
+    }
+
+    @Test
+    void stepsChainOfMethod() {
+        final Object context = new Object();
+        final CtxStepsChain<Object, InitialStepsChain> stepsChain = Xteps.stepsChainOf(context);
+        stepsChain.step("stepsChainOfMethod", c -> {});
+        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsChainOfMethod");
+        assertThat(stepsChain.context()).isSameAs(context);
     }
 
     public static final class StaticStepListener implements StepListener {
@@ -161,13 +114,11 @@ final class XtepsTest {
         }
 
         @Override
-        public void stepPassed(final String uuid,
-                               final String stepName) {
+        public void stepPassed(final String uuid) {
         }
 
         @Override
         public void stepFailed(final String uuid,
-                               final String stepName,
                                final Throwable throwable) {
         }
     }

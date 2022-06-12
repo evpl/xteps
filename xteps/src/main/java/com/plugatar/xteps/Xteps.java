@@ -15,17 +15,25 @@
  */
 package com.plugatar.xteps;
 
-import com.plugatar.xteps.core.CtxSteps;
-import com.plugatar.xteps.core.NoCtxSteps;
-import com.plugatar.xteps.core.XtepsBase;
-import com.plugatar.xteps.core.base.supplier.XtepsBaseThrowingSupplier;
-import com.plugatar.xteps.core.exception.ArgumentException;
-import com.plugatar.xteps.core.exception.ConfigException;
-import com.plugatar.xteps.core.exception.StepNameFormatException;
-import com.plugatar.xteps.core.exception.StepWriteException;
-import com.plugatar.xteps.core.util.function.CachedThrowingSupplier;
-import com.plugatar.xteps.core.util.function.ThrowingRunnable;
-import com.plugatar.xteps.core.util.function.ThrowingSupplier;
+import com.plugatar.xteps.core.CtxStepsChain;
+import com.plugatar.xteps.core.InitialStepsChain;
+import com.plugatar.xteps.core.StepListener;
+import com.plugatar.xteps.core.XtepsException;
+import com.plugatar.xteps.core.chain.InitialStepsChainImpl;
+import com.plugatar.xteps.core.reporter.DefaultStepReporter;
+import com.plugatar.xteps.util.function.ThrowingRunnable;
+import com.plugatar.xteps.util.function.ThrowingSupplier;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.ServiceLoader;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Utility class. Main Xteps API.
@@ -35,10 +43,26 @@ import com.plugatar.xteps.core.util.function.ThrowingSupplier;
 public final class Xteps {
 
     /**
-     * Cached XtepsBase instance supplier.
+     * Cached InitialStepsChain instance supplier.
      */
-    private static final ThrowingSupplier<XtepsBase, RuntimeException> CACHED_BASE =
-        new CachedThrowingSupplier<>(new XtepsBaseThrowingSupplier());
+    private static final Supplier<InitialStepsChain> INITIAL_STEPS_CHAIN_SUPPLIER = new Supplier<InitialStepsChain>() {
+        private volatile InitialStepsChain instance = null;
+
+        @Override
+        public InitialStepsChain get() {
+            InitialStepsChain result;
+            if ((result = this.instance) == null) {
+                synchronized (this) {
+                    if ((result = this.instance) == null) {
+                        result = new InitialStepsChainSupplier().get();
+                        this.instance = result;
+                    }
+                    return result;
+                }
+            }
+            return result;
+        }
+    };
 
     /**
      * Utility class ctor.
@@ -47,231 +71,31 @@ public final class Xteps {
     }
 
     /**
-     * Returns XtepsBase instance. Non-reporting method.
-     *
-     * @return XtepsBase instance
-     * @throws ConfigException if Xteps configuration is incorrect
-     */
-    public static XtepsBase xtepsBase() {
-        return CACHED_BASE.get();
-    }
-
-    /**
-     * Returns no context steps. Non-reporting method. Alias for {@link #steps()} method.<br>
-     * Code example:
-     * <pre>{@code
-     * import com.plugatar.xteps.Xteps;
-     *
-     * Xteps.of()
-     *     .step("Step 1", () -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", () -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", () -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @return no context steps
-     * @throws ConfigException if Xteps configuration is incorrect
-     */
-    public static NoCtxSteps of() {
-        return Xteps.steps();
-    }
-
-    /**
-     * Returns no context steps. Non-reporting method.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.steps;
-     *
-     * steps()
-     *     .step("Step 1", () -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", () -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", () -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @return no context steps
-     * @throws ConfigException if Xteps configuration is incorrect
-     */
-    public static NoCtxSteps steps() {
-        return CACHED_BASE.get().steps();
-    }
-
-    /**
-     * Returns a context steps of given context. Non-reporting method.
-     * Alias for {@link #stepsOf(Object)} method.<br>
-     * Code example:
-     * <pre>{@code
-     * import com.plugatar.xteps.Xteps;
-     *
-     * stepsOf("context")
-     *     .step("Step 1", ctx -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", ctx -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", ctx -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @param context the context
-     * @param <T>     the context type
-     * @return context steps
-     * @throws ConfigException if Xteps configuration is incorrect
-     */
-    public static <T> CtxSteps<T> of(final T context) {
-        return Xteps.stepsOf(context);
-    }
-
-    /**
-     * Returns a context steps of given context. Non-reporting method.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.stepsOf;
-     *
-     * stepsOf("context")
-     *     .step("Step 1", ctx -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", ctx -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", ctx -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @param context the context
-     * @param <T>     the context type
-     * @return context steps
-     * @throws ConfigException if Xteps configuration is incorrect
-     */
-    public static <T> CtxSteps<T> stepsOf(final T context) {
-        return CACHED_BASE.get().steps().toContext(context);
-    }
-
-    /**
-     * Returns a context steps of given context. Non-reporting method.
-     * Alias for {@link #stepsOf(ThrowingSupplier)} method.<br>
-     * Code example:
-     * <pre>{@code
-     * import com.plugatar.xteps.Xteps;
-     *
-     * Xteps.of(() -> context)
-     *     .step("Step 1", ctx -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", ctx -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", ctx -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @param contextSupplier the context supplier
-     * @param <T>             the context type
-     * @param <TH>            the {@code contextSupplier} exception type
-     * @return context steps
-     * @throws TH                if {@code contextSupplier} threw exception
-     * @throws ArgumentException if {@code contextSupplier} is null
-     * @throws ConfigException   if Xteps configuration is incorrect
-     */
-    public static <T, TH extends Throwable> CtxSteps<T> of(
-        final ThrowingSupplier<? extends T, ? extends TH> contextSupplier
-    ) throws TH {
-        return Xteps.stepsOf(contextSupplier);
-    }
-
-    /**
-     * Returns a context steps of given context. Non-reporting method.<br>
-     * Code example:
-     * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.stepsOf;
-     *
-     * stepsOf(() -> context)
-     *     .step("Step 1", ctx -> {
-     *         ...
-     *     })
-     *     .nestedSteps("Step 2", steps -> steps
-     *         .step("Inner step 1", ctx -> {
-     *             ...
-     *         })
-     *         .step("Inner step 2", ctx -> {
-     *             ...
-     *         })
-     *     );
-     * }</pre>
-     *
-     * @param contextSupplier the context supplier
-     * @param <T>             the context type
-     * @param <TH>            the {@code contextSupplier} exception type
-     * @return context steps
-     * @throws TH                if {@code contextSupplier} threw exception
-     * @throws ArgumentException if {@code contextSupplier} is null
-     * @throws ConfigException   if Xteps configuration is incorrect
-     */
-    public static <T, TH extends Throwable> CtxSteps<T> stepsOf(
-        final ThrowingSupplier<? extends T, ? extends TH> contextSupplier
-    ) throws TH {
-        return CACHED_BASE.get().steps().toContext(contextSupplier);
-    }
-
-    /**
      * Performs empty step with given name and returns no context steps.<br>
      * Code example:
      * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.emptyStep;
-     *
-     * emptyStep("Step 1");
-     * emptyStep("Step 2");
+     * step("Step 1");
      * }</pre>
      *
      * @param stepName the step name
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the step
-     * @throws ConfigException         if Xteps configuration is incorrect
+     * @throws XtepsException if {@code stepName} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
      */
-    public static void emptyStep(final String stepName) {
-        CACHED_BASE.get().steps().emptyStep(stepName);
+    public static void step(final String stepName) {
+        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName);
     }
 
     /**
      * Performs given step with given name and returns no context steps.<br>
      * Code example:
      * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.step;
-     *
      * step("Step 1", () -> {
      *     ...
      * });
      * step("Step 2", () -> {
+     *     ...
      *     step("Inner step 1", () -> {
-     *         ...
-     *     });
-     *     step("Inner step 2", () -> {
      *         ...
      *     });
      * });
@@ -279,38 +103,32 @@ public final class Xteps {
      *
      * @param stepName the step name
      * @param step     the step
-     * @param <TH>     the {@code step} exception type
-     * @throws TH                      if {@code step} threw exception
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the step
-     * @throws ConfigException         if Xteps configuration is incorrect
+     * @param <E>      the {@code step} exception type
+     * @throws XtepsException if {@code stepName} or {@code step} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
      */
-    public static <TH extends Throwable> void step(
+    public static <E extends Throwable> void step(
         final String stepName,
-        final ThrowingRunnable<? extends TH> step
-    ) throws TH {
-        CACHED_BASE.get().steps().step(stepName, step);
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, step);
     }
 
     /**
      * Performs given step with given name and returns the step result.<br>
      * Code example:
      * <pre>{@code
-     * import static com.plugatar.xteps.Xteps.step;
-     * import static com.plugatar.xteps.Xteps.stepTo;
-     *
      * String step1Result = stepTo("Step 1", () -> {
      *     ...
-     *     return "result";
+     *     return "result1";
      * });
      * String step2Result = stepTo("Step 2", () -> {
-     *     step("Inner step 1", () -> {
+     *     ...
+     *     return stepTo("Inner step 1", () -> {
      *         ...
-     *     });
-     *     return stepTo("Inner step 2", () -> {
-     *         ...
-     *         return "result";
+     *         return "result2";
      *     });
      * });
      * }</pre>
@@ -318,18 +136,241 @@ public final class Xteps {
      * @param stepName the step name
      * @param step     the step
      * @param <R>      the result type
-     * @param <TH>     the {@code step} exception type
+     * @param <E>      the {@code step} exception type
      * @return {@code step} result
-     * @throws TH                      if {@code step} threw exception
-     * @throws ArgumentException       if {@code stepName} is null or empty or if {@code step} is null
-     * @throws StepNameFormatException if it's impossible to correctly format the step name
-     * @throws StepWriteException      if it's impossible to correctly report the step
-     * @throws ConfigException         if Xteps configuration is incorrect
+     * @throws XtepsException if {@code stepName} or {@code step} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
      */
-    public static <R, TH extends Throwable> R stepTo(
+    public static <R, E extends Throwable> R stepTo(
         final String stepName,
-        final ThrowingSupplier<? extends R, ? extends TH> step
-    ) throws TH {
-        return CACHED_BASE.get().steps().stepTo(stepName, step);
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        return INITIAL_STEPS_CHAIN_SUPPLIER.get().stepTo(stepName, step);
+    }
+
+    /**
+     * Performs failed step with given name and exception.<br>
+     * Code example:
+     * <pre>{@code
+     * failedStep("Step 1", new AssertionError());
+     * }</pre>
+     *
+     * @param stepName  the step name
+     * @param exception the exception
+     * @param <E>       the exception type
+     * @throws XtepsException if {@code stepName} or {@code exception} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              in any other case
+     */
+    public static <E extends Throwable> void failedStep(final String stepName,
+                                                        final E exception) throws E {
+        INITIAL_STEPS_CHAIN_SUPPLIER.get().failedStep(stepName, exception);
+    }
+
+    /**
+     * Returns no context steps. Non-reporting method.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain()
+     *     .step("Step 1", () -> {
+     *         ...
+     *     })
+     *     .nestedSteps("Step 2", stepsChain -> stepsChain
+     *         .step("Inner step 1", () -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", () -> {
+     *             ...
+     *         })
+     *     );
+     * }</pre>
+     *
+     * @return no context steps
+     * @throws XtepsException if Xteps configuration is incorrect
+     */
+    public static InitialStepsChain stepsChain() {
+        return INITIAL_STEPS_CHAIN_SUPPLIER.get();
+    }
+
+    /**
+     * Returns a context steps of given context. Non-reporting method.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChainOf("context")
+     *     .step("Step 1", ctx -> {
+     *         ...
+     *     })
+     *     .nestedSteps("Step 2", stepsChain -> stepsChain
+     *         .step("Inner step 1", ctx -> {
+     *             ...
+     *         })
+     *         .step("Inner step 2", ctx -> {
+     *             ...
+     *         })
+     *     );
+     * }</pre>
+     *
+     * @param context the context
+     * @param <C>     the context type
+     * @return context steps
+     * @throws XtepsException if Xteps configuration is incorrect
+     */
+    public static <C> CtxStepsChain<C, InitialStepsChain> stepsChainOf(final C context) {
+        return INITIAL_STEPS_CHAIN_SUPPLIER.get().withContext(context);
+    }
+
+    /**
+     * {@link Supplier} implementation for {@link InitialStepsChain}.
+     */
+    static final class InitialStepsChainSupplier implements Supplier<InitialStepsChain> {
+        private final Properties properties;
+
+        /**
+         * Ctor.
+         */
+        InitialStepsChainSupplier() {
+            this.properties = systemPropertiesWithFile("xteps.properties");
+        }
+
+        /**
+         * Returns NoCtxSteps instance.
+         *
+         * @return NoCtxSteps instance
+         * @throws XtepsException if it's impossible to correctly instantiate NoCtxSteps
+         */
+        @Override
+        public InitialStepsChain get() {
+            final List<StepListener> listeners = new ArrayList<>();
+            if (booleanProperty(this.properties, "xteps.enabled", true)) {
+                if (booleanProperty(this.properties, "xteps.spi", true)) {
+                    listeners.addAll(listenersBySPI());
+                }
+                listeners.addAll(
+                    listenersByClassNames(
+                        stringListProperty(this.properties, "xteps.listeners", ",", Collections.emptyList())
+                    )
+                );
+            }
+            return new InitialStepsChainImpl(
+                new DefaultStepReporter(listeners.toArray(new StepListener[0]))
+            );
+        }
+
+        /**
+         * Returns properties in priority:
+         * <br>1. System properties
+         * <br>2. Current thread ClassLoader properties file
+         * <br>3. System ClassLoader properties file
+         *
+         * @return the properties
+         */
+        private static Properties systemPropertiesWithFile(final String propertiesFilePath) {
+            final Properties properties = new Properties();
+            try (final InputStream stream =
+                     ClassLoader.getSystemClassLoader().getResourceAsStream(propertiesFilePath)) {
+                if (stream != null) {
+                    properties.load(stream);
+                }
+            } catch (final IOException ignored) { }
+            try (final InputStream stream =
+                     Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiesFilePath)) {
+                if (stream != null) {
+                    properties.load(stream);
+                }
+            } catch (final IOException ignored) { }
+            properties.putAll(System.getProperties());
+            return properties;
+        }
+
+        /**
+         * Returns boolean property value, or {@code defaultValue} if property missing.
+         *
+         * @param properties   the properties
+         * @param propertyName the property name
+         * @param defaultValue the default value
+         * @return property value
+         */
+        private static boolean booleanProperty(final Properties properties,
+                                               final String propertyName,
+                                               final boolean defaultValue) {
+            final String propertyValue = properties.getProperty(propertyName);
+            if (propertyValue == null) {
+                return defaultValue;
+            }
+            final String trimmedPropertyValue = propertyValue.trim();
+            if (trimmedPropertyValue.isEmpty()) {
+                return defaultValue;
+            }
+            return trimmedPropertyValue.equalsIgnoreCase("true");
+        }
+
+        /**
+         * Returns list of strings property value or {@code defaultValue} if property missing.
+         *
+         * @param properties   the properties
+         * @param propertyName the property name
+         * @param delimiter    the delimiter
+         * @param defaultValue the default value
+         * @return property value
+         */
+        private static List<String> stringListProperty(final Properties properties,
+                                                       final String propertyName,
+                                                       final String delimiter,
+                                                       final List<String> defaultValue) {
+            final String propertyValue = properties.getProperty(propertyName);
+            if (propertyValue == null) {
+                return defaultValue;
+            }
+            final List<String> stringList = Arrays.stream(propertyValue.split(delimiter))
+                .map(String::trim)
+                .filter(str -> !str.isEmpty())
+                .collect(Collectors.toList());
+            if (stringList.isEmpty()) {
+                return defaultValue;
+            }
+            return stringList;
+        }
+
+        /**
+         * Returns StepListener instances list provided by SPI mechanism.
+         *
+         * @return StepListener instances list
+         * @throws XtepsException if it's impossible to instantiate any listener
+         */
+        private static List<StepListener> listenersBySPI() {
+            final List<StepListener> listeners = new ArrayList<>();
+            try {
+                for (final StepListener listener : ServiceLoader.load(StepListener.class)) {
+                    listeners.add(listener);
+                }
+            } catch (final Exception ex) {
+                throw new XtepsException("Cannot instantiate StepListener by SPI cause " + ex, ex);
+            }
+            return listeners;
+        }
+
+        /**
+         * Returns StepListener instances list provided by classes names.
+         *
+         * @param classNames the class names
+         * @return StepListener instances list
+         * @throws XtepsException if it's impossible to instantiate any listener
+         */
+        private static List<StepListener> listenersByClassNames(final List<String> classNames) {
+            final List<StepListener> listeners = new ArrayList<>();
+            for (final String className : classNames) {
+                final StepListener listener;
+                try {
+                    listener = (StepListener) Class.forName(className).getConstructor().newInstance();
+                } catch (final Exception ex) {
+                    throw new XtepsException("Cannot instantiate StepListener " + className + " cause " + ex, ex);
+                }
+                listeners.add(listener);
+            }
+            return listeners;
+        }
     }
 }

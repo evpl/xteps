@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Core.
- */
 package com.plugatar.xteps.core;
+
+/**
+ * Steps chain memorizing a previous steps chain.
+ *
+ * @param <P> the previous steps chain type
+ */
+public interface MemorizingStepsChain<S extends BaseStepsChain<S>, P extends BaseStepsChain<?>>
+    extends BaseStepsChain<S> {
+
+    /**
+     * Returns the previous steps chain.
+     *
+     * @return previous steps chain
+     */
+    P previousStepsChain();
+}

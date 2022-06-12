@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Core.
- */
 package com.plugatar.xteps.core;
+
+/**
+ * No context steps chain.
+ *
+ * @param <P> the previous steps chain type
+ */
+public interface NoCtxStepsChain<P extends BaseStepsChain<?>>
+    extends BaseNoCtxStepsChain<NoCtxStepsChain<P>>, MemorizingStepsChain<NoCtxStepsChain<P>, P> {
+
+}

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Core.
+ * Functions.
  */
-package com.plugatar.xteps.core;
+package com.plugatar.xteps.util.function;

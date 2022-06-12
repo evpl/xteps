@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Core.
- */
 package com.plugatar.xteps.core;
+
+/**
+ * Initial steps chain.
+ */
+public interface InitialStepsChain extends BaseNoCtxStepsChain<InitialStepsChain> {
+
+}

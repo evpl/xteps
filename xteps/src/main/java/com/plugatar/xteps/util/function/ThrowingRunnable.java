@@ -13,7 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.plugatar.xteps.util.function;
+
 /**
- * Core.
+ * The {@link Runnable} specialization that might
+ * throw a exception.
+ *
+ * @param <E> the type of the thrown exception
+ * @see Runnable
  */
-package com.plugatar.xteps.core;
+@FunctionalInterface
+public interface ThrowingRunnable<E extends Throwable> {
+
+    /**
+     * Performs this operation.
+     *
+     * @throws E if runnable threw exception
+     */
+    void run() throws E;
+}

@@ -16,30 +16,43 @@
 package com.plugatar.xteps.core;
 
 /**
- * Step listener.
+ * The base Xteps exception.
  */
-public interface StepListener {
+public class XtepsException extends RuntimeException {
 
     /**
-     * Invoked each time a step starts.
-     *
-     * @param uuid     the uuid
-     * @param stepName the step name
+     * Ctor.
      */
-    void stepStarted(String uuid, String stepName);
+    public XtepsException() {
+        super();
+    }
 
     /**
-     * Invoked each time a step passes.
+     * Ctor.
      *
-     * @param uuid the uuid
+     * @param message the message
      */
-    void stepPassed(String uuid);
+    public XtepsException(final String message) {
+        super(message);
+    }
 
     /**
-     * Invoked each time a step fails.
+     * Ctor.
      *
-     * @param uuid      the uuid
-     * @param throwable the step throwable
+     * @param cause the cause
      */
-    void stepFailed(String uuid, Throwable throwable);
+    public XtepsException(final Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param message the message
+     * @param cause   the cause
+     */
+    public XtepsException(final String message,
+                          final Throwable cause) {
+        super(message, cause);
+    }
 }
