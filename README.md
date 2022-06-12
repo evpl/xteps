@@ -125,7 +125,7 @@ overridden by system properties.
 
 Maven test run command example:
 
-`mvn test -Denabled=true -Dspi=true -Dlisteners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
+`mvn test -Dxteps.enabled=true -Dxteps.spi=true -Dxteps.listeners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
 ***
 
 xteps.properties file example:
