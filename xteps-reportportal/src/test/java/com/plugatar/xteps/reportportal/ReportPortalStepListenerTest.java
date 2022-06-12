@@ -17,26 +17,11 @@ package com.plugatar.xteps.reportportal;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Modifier;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 final class ReportPortalStepListenerTest {
-
-    @Test
-    void classIsNotFinal() {
-        assertThat(ReportPortalStepListener.class).isNotFinal();
-    }
-
-    @Test
-    void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = ReportPortalStepListener.class;
-        assertThat(cls.getMethods())
-            .filteredOn(method -> method.getDeclaringClass() == cls)
-            .allMatch(method -> Modifier.isFinal(method.getModifiers()));
-    }
 
     @Test
     void stepStartedMethod() {
@@ -49,8 +34,7 @@ final class ReportPortalStepListenerTest {
     @Test
     void stepPassedMethod() {
         assertThatCode(() -> new ReportPortalStepListener().stepPassed(
-            UUID.randomUUID().toString(),
-            "step name"
+            UUID.randomUUID().toString()
         )).doesNotThrowAnyException();
     }
 
@@ -58,7 +42,6 @@ final class ReportPortalStepListenerTest {
     void stepFailedMethod() {
         assertThatCode(() -> new ReportPortalStepListener().stepFailed(
             UUID.randomUUID().toString(),
-            "step name",
             new Throwable()
         )).doesNotThrowAnyException();
     }

@@ -46,8 +46,7 @@ public class ReportPortalStepListener implements StepListener {
     }
 
     @Override
-    public final void stepPassed(final String uuid,
-                                 final String stepName) {
+    public final void stepPassed(final String uuid) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
             launch.getStepReporter().finishNestedStep();
@@ -56,7 +55,6 @@ public class ReportPortalStepListener implements StepListener {
 
     @Override
     public final void stepFailed(final String uuid,
-                                 final String stepName,
                                  final Throwable throwable) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
