@@ -1,9 +1,13 @@
 Change Log
 ==========
 
+Xteps 2.0 / Xteps Allure 2.0 / Xteps ReportPortal 2.0 *(2022-06-12)*
+-------------------------------
+* Simplifying refactoring
+
 Xteps Allure 1.1 *(2022-03-27)*
 -------------------------------
-* bug fix - sequential steps are reported as nested (issue #15, PR #16)
+* Bug fix - sequential steps are reported as nested (issue #15, PR #16)
 
 Xteps 1.3 *(2022-03-27)*
 -------------------------------
