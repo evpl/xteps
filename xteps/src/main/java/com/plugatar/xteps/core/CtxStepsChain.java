@@ -52,6 +52,7 @@ public interface CtxStepsChain<C, P extends BaseStepsChain<?>>
      *
      * @param function the function
      * @param <E>      the {@code function} exception type
+     * @param <R>      the {@code function} result type
      * @return this steps chain
      * @throws XtepsException if {@code function} is null
      * @throws E              if {@code function} threw exception
