@@ -17,8 +17,81 @@
 The library has no dependencies. Requires Java 8+ version.
 ***
 
-Add a dependency first. Then add listeners via Service Provider Interface or via properties. You’re all set! Now you
-can use Xteps.
+If you are using Allure then just add the [Allure integration dependency](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)
+([README](https://github.com/evpl/xteps/blob/master/xteps-allure/README.md)).
+For ReportPortal use [ReportPortal integration dependency](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal)
+([README](https://github.com/evpl/xteps/blob/master/xteps-reportportal/README.md)).
+
+If you want to use Xteps with a custom step reporting system add a [dependency](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)
+first. Then add listeners via Service Provider Interface or via properties. You’re all set! Now you can use Xteps.
+
+## API
+Xteps API is a set of static methods located in the `com.plugatar.xteps.Xteps`.
+1. `step(String)` - performs empty step with given name.
+```java
+step("Step 1");
+```
+2. `step(String, ThrowingRunnable)` - performs given step with given name.
+```java
+step("Step 1", () -> {
+    ...
+});
+step("Step 2", () -> {
+    ...
+    step("Inner step 1", () -> {
+        ...
+    });
+});
+```
+3. `stepTo(String, ThrowingSupplier)` - performs given step with given name and returns the step result.
+```java
+String step1Result = stepTo("Step 1", () -> {
+    ...
+    return "result1";
+});
+String step2Result = stepTo("Step 2", () -> {
+    ...
+    return stepTo("Inner step 1", () -> {
+        ...
+        return "result2";
+    });
+});
+```
+4. `failedStep(String, Throwable)` - performs failed step with given name and exception.
+```java
+failedStep("Step 1", new AssertionError());
+```
+5. `stepsChain()` - returns initial steps chain.
+```java
+stepsChain()
+    .step("Step 1", () -> {
+        ...
+    })
+    .nestedSteps("Step 2", stepsChain -> stepsChain
+        .step("Inner step 1", () -> {
+            ...
+        })
+        .step("Inner step 2", () -> {
+            ...
+        })
+    );
+```
+6. `stepsChainOf(Object)` - returns a contextual steps chain of given context.
+```java
+stepsChainOf("context")
+    .step("Step 1", ctx -> {
+        ...
+    })
+    .nestedSteps("Step 2", stepsChain -> stepsChain
+        .step("Inner step 1", ctx -> {
+            ...
+        })
+        .step("Inner step 2", ctx -> {
+            ...
+        })
+    );
+```
+
 
 ## Code example
 
@@ -141,9 +214,10 @@ xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 You may run into a problem if you use Java 8. The problem is caused by generic exceptions.
 
 ```java
-Xteps.nestedStepsTo("Step 1", steps -> steps
-    .step("Inner step 1", () -> {})
-);
+Xteps.stepsChain()
+    .nestedStepsTo("Step 1", stepsChain -> stepsChain
+        .step("Inner step 1", () -> {})
+    );
 ```
 
 This code can fail to build with this
@@ -155,7 +229,8 @@ throwables.
 ```java
 import static com.plugatar.xteps.Unchecked.uncheckedFunction;
 
-Xteps.nestedStepsTo("Step 1", uncheckedFunction(steps -> steps
-    .step("Inner step 1", () -> {})
-));
+Xteps.stepsChain()
+    .nestedStepsTo("Step 1", uncheckedFunction(stepsChain -> stepsChain
+        .step("Inner step 1", () -> {}))
+    );
 ```
