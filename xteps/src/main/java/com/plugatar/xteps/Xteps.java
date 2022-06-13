@@ -71,7 +71,7 @@ public final class Xteps {
     }
 
     /**
-     * Performs empty step with given name and returns no context steps.<br>
+     * Performs empty step with given name.<br>
      * Code example:
      * <pre>{@code
      * step("Step 1");
@@ -87,7 +87,7 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name and returns no context steps.<br>
+     * Performs given step with given name.<br>
      * Code example:
      * <pre>{@code
      * step("Step 1", () -> {
@@ -171,7 +171,7 @@ public final class Xteps {
     }
 
     /**
-     * Returns no context steps. Non-reporting method.<br>
+     * Returns initial steps chain.<br>
      * Code example:
      * <pre>{@code
      * stepsChain()
@@ -196,7 +196,7 @@ public final class Xteps {
     }
 
     /**
-     * Returns a context steps of given context. Non-reporting method.<br>
+     * Returns a contextual steps chain of given context.<br>
      * Code example:
      * <pre>{@code
      * stepsChainOf("context")
