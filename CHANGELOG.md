@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Xteps Allure 2.1 / Xteps ReportPortal 2.1 *(2022-06-13)*
+-------------------------------
+* Update Xteps dependency
+
+Xteps 2.1 *(2022-06-13)*
+-------------------------------
+* API methods javadoc fix
+
 Xteps 2.0 / Xteps Allure 2.0 / Xteps ReportPortal 2.0 *(2022-06-12)*
 -------------------------------
 * Simplifying refactoring
