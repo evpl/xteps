@@ -15,7 +15,6 @@
 ## How to use
 
 The library has no dependencies. Requires Java 8+ version.
-***
 
 If you are using Allure then just add the [Allure integration dependency](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)
 ([README](https://github.com/evpl/xteps/blob/master/xteps-allure/README.md)).
@@ -166,8 +165,6 @@ You can choose a mechanism to cheat checked exceptions if you don't like them. X
 methods using `com.plugatar.xteps.Unchecked` class.
 
 ```java
-import static com.plugatar.xteps.core.util.function.Unchecked.uncheckedRunnable;
-
 @Test
 void test() {
     step("Step 1", uncheckedRunnable(() -> {
@@ -188,18 +185,17 @@ overridden by system properties.
 
 ### Properties list
 
-| Property name            | Type    | Default value | Description                                                                         |
-| ------------------------ | ------- | ------------- | ----------------------------------------------------------------------------------- |
-| xteps.enabled            | Boolean | `true`        | Enable/disable steps logging                                                        |
-| xteps.spi                | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.core.StepListener` implementations. Implementations should have zero-argument public constructor. |
-| xteps.listeners          | String  |               | List of `com.plugatar.xteps.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| Name | Type | Default value | Description |
+| --- | --- | --- | --- |
+| xteps.enabled   | Boolean | `true` | Enable/disable steps logging |
+| xteps.spi       | Boolean | `true` | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.core.StepListener` implementations. Implementations should have zero-argument public constructor. |
+| xteps.listeners | String  |        | List of `com.plugatar.xteps.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
 
 ### Examples
 
 Maven test run command example:
 
 `mvn test -Dxteps.enabled=true -Dxteps.spi=true -Dxteps.listeners="com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2"`
-***
 
 xteps.properties file example:
 
@@ -214,22 +210,18 @@ xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 You may run into a problem if you use Java 8. The problem is caused by generic exceptions.
 
 ```java
-Xteps.stepsChain()
+stepsChain()
     .nestedStepsTo("Step 1", stepsChain -> stepsChain
         .step("Inner step 1", () -> {})
     );
 ```
 
-This code can fail to build with this
-exception `java: unreported exception java.lang.Throwable; must be caught or declared to be thrown`.
+This code can fail to build with this exception `java: unreported exception java.lang.Throwable; must be caught or declared to be thrown`.
 
-You can switch to Java 9+ or use `com.plugatar.xteps.Unchecked` static methods to hide any
-throwables.
+You can switch to Java 9+ or use `com.plugatar.xteps.Unchecked` static methods to hide any throwables.
 
 ```java
-import static com.plugatar.xteps.Unchecked.uncheckedFunction;
-
-Xteps.stepsChain()
+stepsChain()
     .nestedStepsTo("Step 1", uncheckedFunction(stepsChain -> stepsChain
         .step("Inner step 1", () -> {}))
     );
