@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 /**
- * Tests for {@link com.plugatar.xteps} package.
+ * Xteps ReportPortal integration.
+ *
+ * @see <a href="https://github.com/evpl/xteps">GitHub repository</a>
+ * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
-package com.plugatar.xteps;
+package com.plugatar.xteps.reportportal;

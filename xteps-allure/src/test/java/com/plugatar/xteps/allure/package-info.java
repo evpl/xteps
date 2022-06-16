@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Tests for {@link com.plugatar.xteps} package.
+ * Tests for {@link com.plugatar.xteps.allure} package.
  */
-package com.plugatar.xteps;
+package com.plugatar.xteps.allure;
