@@ -51,6 +51,19 @@ public class DefaultStepReporter implements StepReporter {
         this.listeners = listeners;
     }
 
+    /**
+     * Returns given {@link Throwable} wrapped in {@link RuntimeException} for use in
+     * {@link DefaultStepReporter} methods.
+     *
+     * @param exception the exception
+     * @return runtime exception
+     * @throws NullPointerException if {@code exception} is null
+     */
+    public static RuntimeException wrappedException(final Throwable exception) {
+        if (exception == null) { throw new NullPointerException("exception arg is null"); }
+        return new DefaultStepReporter.WrappedException(exception);
+    }
+
     private void throwNullArgException(final String methodName,
                                        final String argName) {
         final String message = "StepReporter " + methodName + " method " + argName + " arg is null";
@@ -138,11 +151,14 @@ public class DefaultStepReporter implements StepReporter {
         try {
             result = function.apply(input);
         } catch (final Throwable ex) {
-            cleanStackTraceIfNotXtepsException(ex);
+            final Throwable innerEx = ex instanceof WrappedException
+                ? ((WrappedException) ex).innerException
+                : ex;
+            cleanStackTraceIfNotXtepsException(innerEx);
             if (baseException != null) {
-                baseException.addSuppressed(ex);
+                baseException.addSuppressed(innerEx);
             }
-            stepEx = (TH) ex;
+            stepEx = (TH) innerEx;
         }
         // step passed or failed
         for (final StepListener listener : this.listeners) {
@@ -181,11 +197,13 @@ public class DefaultStepReporter implements StepReporter {
             for (final Throwable currentTh : throwables) {
                 if (!(currentTh instanceof XtepsException)) {
                     final StackTraceElement[] originST = currentTh.getStackTrace();
-                    final StackTraceElement[] cleanST = Arrays.stream(originST)
-                        .filter(element -> !element.getClassName().startsWith("com.plugatar.xteps"))
-                        .toArray(StackTraceElement[]::new);
-                    if (cleanST.length != originST.length) {
-                        currentTh.setStackTrace(cleanST);
+                    if (originST.length != 0) {
+                        final StackTraceElement[] cleanST = Arrays.stream(originST)
+                            .filter(element -> !element.getClassName().startsWith("com.plugatar.xteps"))
+                            .toArray(StackTraceElement[]::new);
+                        if (cleanST.length != originST.length) {
+                            currentTh.setStackTrace(cleanST);
+                        }
                     }
                 }
             }
@@ -202,6 +220,25 @@ public class DefaultStepReporter implements StepReporter {
             for (final Throwable suppressedTh : currentTh.getSuppressed()) {
                 addAllThrowables(throwables, suppressedTh);
             }
+        }
+    }
+
+    /**
+     * Wrapped exception.
+     */
+    private static final class WrappedException extends RuntimeException {
+        private final Throwable innerException;
+
+        /**
+         * Ctor.
+         *
+         * @param exception the inner exception
+         */
+        private WrappedException(final Throwable exception) {
+            super(null, null, false, false);
+            this.innerException = exception instanceof WrappedException
+                ? ((WrappedException) exception).innerException
+                : exception;
         }
     }
 }

@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 /**
  * Utility class. Main Xteps API.
  *
+ * @see Unchecked
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class Xteps {

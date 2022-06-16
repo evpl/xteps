@@ -15,13 +15,17 @@
  */
 package com.plugatar.xteps;
 
+import com.plugatar.xteps.core.reporter.DefaultStepReporter;
 import com.plugatar.xteps.util.function.ThrowingConsumer;
 import com.plugatar.xteps.util.function.ThrowingFunction;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 
 /**
- * Utility class. Part of Xteps API. Allows to make functions unchecked.
+ * Utility class. Part of Xteps API. Allows to make {@link com.plugatar.xteps.util.function}s unchecked.
+ *
+ * @see Xteps
+ * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class Unchecked {
 
@@ -29,6 +33,21 @@ public final class Unchecked {
      * Utility class ctor.
      */
     private Unchecked() {
+    }
+
+    /**
+     * Returns given {@link Throwable} as {@link RuntimeException} or null if {@code exception} is null.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain()
+     *     .failedStep("Step 1", uncheckedException(new Throwable()));
+     * }</pre>
+     *
+     * @param exception the exception
+     * @return unchecked exception
+     */
+    public static RuntimeException uncheckedException(final Throwable exception) {
+        return exception == null ? null : DefaultStepReporter.wrappedException(exception);
     }
 
     /**

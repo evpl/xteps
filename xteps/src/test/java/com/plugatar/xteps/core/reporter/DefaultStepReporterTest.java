@@ -26,6 +26,7 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
@@ -69,6 +70,28 @@ final class DefaultStepReporterTest {
     void ctorDoesntThrowExceptionForEmptyStepListenerArray() {
         assertThatCode(() -> new DefaultStepReporter(new StepListener[0]))
             .doesNotThrowAnyException();
+    }
+
+    @Test
+    void wrappedExceptionMethodThrowsExceptionForNullException() {
+        assertThatCode(() -> DefaultStepReporter.wrappedException(null))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void wrappedExceptionMethod() throws Exception {
+        final Throwable innerException = new Throwable();
+
+        final RuntimeException methodResult = DefaultStepReporter.wrappedException(innerException);
+        final Class<?> methodResultClass = methodResult.getClass();
+        assertThat(methodResultClass.getTypeName())
+            .isEqualTo("com.plugatar.xteps.core.reporter.DefaultStepReporter$WrappedException");
+        final Field innerExceptionField = methodResultClass.getDeclaredField("innerException");
+        innerExceptionField.setAccessible(true);
+        assertThat(innerExceptionField.get(methodResult)).isSameAs(innerException);
+        assertThat(methodResult.getCause()).isNull();
+        assertThat(methodResult.getSuppressed()).isEmpty();
+        assertThat(methodResult.getStackTrace()).isEmpty();
     }
 
     @Test
@@ -128,6 +151,44 @@ final class DefaultStepReporterTest {
             () -> stepReporter.reportFailedStep(stepName, exception),
             stepName,
             exception,
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportFailedStepMethodForWrappedException() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+        final String stepName = randomStepName();
+        final Throwable innerException = new Throwable();
+        final RuntimeException wrappedException = DefaultStepReporter.wrappedException(innerException);
+
+        assertThatStepFailed(
+            () -> stepReporter.reportFailedStep(stepName, wrappedException),
+            stepName,
+            innerException,
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportFailedStepMethodForTripleWrappedException() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+        final String stepName = randomStepName();
+        final Throwable innerException = new Throwable();
+        final RuntimeException wrappedException = DefaultStepReporter.wrappedException(
+            DefaultStepReporter.wrappedException(
+                DefaultStepReporter.wrappedException(
+                    innerException
+                )
+            )
+        );
+
+        assertThatStepFailed(
+            () -> stepReporter.reportFailedStep(stepName, wrappedException),
+            stepName,
+            innerException,
             stepListeners
         );
     }

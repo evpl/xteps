@@ -79,6 +79,15 @@ final class XtepsTest {
     }
 
     @Test
+    void failedStepMethodForWrappedException() {
+        final Throwable innerException = new Throwable();
+        final RuntimeException wrappedException = Unchecked.uncheckedException(innerException);
+        assertThatCode(() -> Xteps.failedStep("failedStepMethodForWrappedException", wrappedException))
+            .isSameAs(innerException);
+        assertThat(StaticStepListener.lastStepName()).isEqualTo("failedStepMethodForWrappedException");
+    }
+
+    @Test
     void stepsChainMethod() {
         final InitialStepsChain stepsChain = Xteps.stepsChain();
         assertThat(Xteps.stepsChain()).isSameAs(stepsChain);
