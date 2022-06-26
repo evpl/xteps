@@ -19,6 +19,7 @@ package com.plugatar.xteps.core;
  * The base Xteps exception.
  */
 public class XtepsException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     /**
      * Ctor.
