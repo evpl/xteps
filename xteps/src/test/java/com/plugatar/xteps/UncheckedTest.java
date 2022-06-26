@@ -21,8 +21,6 @@ import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,27 +35,6 @@ import static org.mockito.Mockito.when;
  * Tests for {@link Unchecked}.
  */
 final class UncheckedTest {
-
-    @Test
-    void uncheckedExceptionMethodReturnsNullForNullArg() {
-        assertThat(Unchecked.uncheckedException(null)).isNull();
-    }
-
-    @Test
-    void uncheckedExceptionMethodReturnsWrappedException() throws Exception {
-        final Throwable innerException = new Throwable();
-
-        final RuntimeException methodResult = Unchecked.uncheckedException(innerException);
-        final Class<?> methodResultClass = methodResult.getClass();
-        assertThat(methodResultClass.getTypeName())
-            .isEqualTo("com.plugatar.xteps.core.reporter.DefaultStepReporter$WrappedException");
-        final Field innerExceptionField = methodResultClass.getDeclaredField("innerException");
-        innerExceptionField.setAccessible(true);
-        assertThat(innerExceptionField.get(methodResult)).isSameAs(innerException);
-        assertThat(methodResult.getCause()).isNull();
-        assertThat(methodResult.getSuppressed()).isEmpty();
-        assertThat(methodResult.getStackTrace()).isEmpty();
-    }
 
     @Test
     void uncheckedRunnableMethodReturnsNullForNullArg() {
@@ -187,5 +164,18 @@ final class UncheckedTest {
         assertThat(methodResult.apply(input))
             .isSameAs(functionResult);
         verify(function).apply(refEq(input));
+    }
+
+    @Test
+    void uncheckedExceptionMethodThrowsExceptionForNullArg() {
+        assertThatCode(() -> Unchecked.uncheckedException(null))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void uncheckedExceptionMethodThrowsExceptionForNonNullArg() {
+        final Throwable exceptedException = new Throwable();
+        assertThatCode(() -> Unchecked.uncheckedException(exceptedException))
+            .isSameAs(exceptedException);
     }
 }

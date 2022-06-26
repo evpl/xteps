@@ -152,26 +152,6 @@ public final class Xteps {
     }
 
     /**
-     * Performs failed step with given name and exception.<br>
-     * Code example:
-     * <pre>{@code
-     * failedStep("Step 1", new AssertionError());
-     * }</pre>
-     *
-     * @param stepName  the step name
-     * @param exception the exception
-     * @param <E>       the exception type
-     * @throws XtepsException if {@code stepName} or {@code exception} is null
-     *                        or if Xteps configuration is incorrect
-     *                        or if it's impossible to correctly report the step
-     * @throws E              in any other case
-     */
-    public static <E extends Throwable> void failedStep(final String stepName,
-                                                        final E exception) throws E {
-        INITIAL_STEPS_CHAIN_SUPPLIER.get().failedStep(stepName, exception);
-    }
-
-    /**
      * Returns initial steps chain.<br>
      * Code example:
      * <pre>{@code

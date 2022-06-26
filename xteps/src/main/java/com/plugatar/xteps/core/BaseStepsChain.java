@@ -45,19 +45,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     S step(String stepName);
 
     /**
-     * Performs failed step with given name and exception.
-     *
-     * @param stepName  the step name
-     * @param exception the exception
-     * @param <E>       the exception type
-     * @throws XtepsException if {@code stepName} or {@code exception} is null
-     *                        or if it's impossible to correctly report the step
-     * @throws E              in any other case
-     */
-    <E extends Throwable> void failedStep(final String stepName,
-                                          final E exception) throws E;
-
-    /**
      * Performs the step with given name and nested steps chain and returns this steps chain.
      *
      * @param stepName   the step name

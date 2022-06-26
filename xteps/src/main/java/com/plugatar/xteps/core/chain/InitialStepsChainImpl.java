@@ -73,14 +73,6 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public final <E extends Throwable> void failedStep(final String stepName,
-                                                       final E exception) throws E {
-        if (stepName == null) { throwNullArgException("failedStep", "stepName"); }
-        if (exception == null) { throwNullArgException("failedStep", "exception"); }
-        this.stepReporter.reportFailedStep(stepName, exception);
-    }
-
-    @Override
     public final InitialStepsChain step(final String stepName) {
         if (stepName == null) { throwNullArgException("step", "stepName"); }
         this.stepReporter.reportEmptyStep(stepName);

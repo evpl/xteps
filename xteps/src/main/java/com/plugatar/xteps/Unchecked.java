@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps;
 
-import com.plugatar.xteps.core.reporter.DefaultStepReporter;
 import com.plugatar.xteps.util.function.ThrowingConsumer;
 import com.plugatar.xteps.util.function.ThrowingFunction;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
@@ -33,21 +32,6 @@ public final class Unchecked {
      * Utility class ctor.
      */
     private Unchecked() {
-    }
-
-    /**
-     * Returns given {@link Throwable} as {@link RuntimeException} or null if {@code exception} is null.<br>
-     * Code example:
-     * <pre>{@code
-     * stepsChain()
-     *     .failedStep("Step 1", uncheckedException(new Throwable()));
-     * }</pre>
-     *
-     * @param exception the exception
-     * @return unchecked exception
-     */
-    public static RuntimeException uncheckedException(final Throwable exception) {
-        return exception == null ? null : DefaultStepReporter.wrappedException(exception);
     }
 
     /**
@@ -134,5 +118,34 @@ public final class Unchecked {
         final ThrowingFunction<? super T, ? extends R, ?> function
     ) {
         return (ThrowingFunction<T, R, RuntimeException>) function;
+    }
+
+    /**
+     * Throws given {@link Throwable} as unchecked or {@link NullPointerException} if {@code exception} is null.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain()
+     *     .step("Step 1", () -> { throw uncheckedException(new Throwable()); });
+     *
+     * stepsChain()
+     *     .step("Step 2", () -> {
+     *         try {
+     *             ...
+     *         } catch (Throwable ex) {
+     *             throw uncheckedException(ex);
+     *         }
+     *     });
+     * }</pre>
+     *
+     * @param exception the exception
+     * @param <E>       the fake exception type
+     * @return fake value
+     * @throws NullPointerException if {@code exception} is null
+     * @throws E                    in any other case
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends Throwable> RuntimeException uncheckedException(final Throwable exception) throws E {
+        if (exception == null) { throw new NullPointerException("exception arg is null"); }
+        throw (E) exception;
     }
 }

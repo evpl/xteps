@@ -270,53 +270,6 @@ final class CtxStepsChainImplTest {
     }
 
     @Test
-    void failedStepMethodThrowsExceptionForNullStepName() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final CtxStepsChain<Object, FakeStepsChain> chain = new CtxStepsChainImpl<>(
-            stepReporter, new Object(), new FakeStepsChain()
-        );
-        final String failedStepName = "CtxStepsChain failedStep method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(null, new RuntimeException()));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void failedStepMethodThrowsExceptionForNullException() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final CtxStepsChain<Object, FakeStepsChain> chain = new CtxStepsChainImpl<>(
-            stepReporter, new Object(), new FakeStepsChain()
-        );
-        final String failedStepName = "CtxStepsChain failedStep method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(null, new RuntimeException()));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void failedStepMethod() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final CtxStepsChain<Object, FakeStepsChain> chain = new CtxStepsChainImpl<>(
-            stepReporter, new Object(), new FakeStepsChain()
-        );
-        final String stepName = randomStepName();
-        final RuntimeException exception = new RuntimeException();
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(stepName, exception));
-        assertThat(methodException).isSameAs(exception);
-        verify(stepReporter).reportFailedStep(eq(stepName), same(methodException));
-    }
-
-    @Test
     void step1ArgMethodThrowsExceptionForNullStepName() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final CtxStepsChain<Object, FakeStepsChain> chain = new CtxStepsChainImpl<>(
@@ -627,14 +580,6 @@ final class CtxStepsChainImplTest {
         @Override
         public FakeStepsChain step(final String stepName) {
             return null;
-        }
-
-        @Override
-        public <E extends Throwable> void failedStep(
-            final String stepName,
-            final E exception
-        ) throws E {
-
         }
 
         @Override

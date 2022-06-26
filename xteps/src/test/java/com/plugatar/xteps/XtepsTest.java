@@ -26,7 +26,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Tests for {@link Xteps}.
@@ -68,23 +67,6 @@ final class XtepsTest {
         final Object result = new Object();
         assertThat(Xteps.stepTo("stepToMethod", () -> result)).isSameAs(result);
         assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToMethod");
-    }
-
-    @Test
-    void failedStepMethod() {
-        final RuntimeException exception = new RuntimeException();
-        assertThatCode(() -> Xteps.failedStep("failedStepMethod", exception))
-            .isSameAs(exception);
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("failedStepMethod");
-    }
-
-    @Test
-    void failedStepMethodForWrappedException() {
-        final Throwable innerException = new Throwable();
-        final RuntimeException wrappedException = Unchecked.uncheckedException(innerException);
-        assertThatCode(() -> Xteps.failedStep("failedStepMethodForWrappedException", wrappedException))
-            .isSameAs(innerException);
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("failedStepMethodForWrappedException");
     }
 
     @Test

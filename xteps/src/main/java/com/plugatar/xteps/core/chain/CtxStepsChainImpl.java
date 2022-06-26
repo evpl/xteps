@@ -121,14 +121,6 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
     }
 
     @Override
-    public final <E extends Throwable> void failedStep(final String stepName,
-                                                       final E exception) throws E {
-        if (stepName == null) { throwNullArgException("failedStep", "stepName"); }
-        if (exception == null) { throwNullArgException("failedStep", "exception"); }
-        this.stepReporter.reportFailedStep(stepName, exception);
-    }
-
-    @Override
     public final CtxStepsChain<C, P> step(final String stepName) {
         if (stepName == null) { throwNullArgException("step", "stepName"); }
         this.stepReporter.reportEmptyStep(stepName);

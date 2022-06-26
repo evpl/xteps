@@ -56,11 +56,7 @@ String step2Result = stepTo("Step 2", () -> {
     });
 });
 ```
-4. `failedStep(String, Throwable)` - performs failed step with given name and exception.
-```java
-failedStep("Step 1", new AssertionError());
-```
-5. `stepsChain()` - returns initial steps chain.
+4. `stepsChain()` - returns initial steps chain.
 ```java
 stepsChain()
     .step("Step 1", () -> {
@@ -75,7 +71,7 @@ stepsChain()
         })
     );
 ```
-6. `stepsChainOf(Object)` - returns a contextual steps chain of given context.
+5. `stepsChainOf(Object)` - returns a contextual steps chain of given context.
 ```java
 stepsChainOf("context")
     .step("Step 1", ctx -> {

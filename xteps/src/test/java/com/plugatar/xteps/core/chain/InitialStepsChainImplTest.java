@@ -117,47 +117,6 @@ final class InitialStepsChainImplTest {
     }
 
     @Test
-    void failedStepMethodThrowsExceptionForNullStepName() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
-        final String failedStepName = "InitialStepsChain failedStep method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(null, new RuntimeException()));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void failedStepMethodThrowsExceptionForNullException() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
-        final String failedStepName = "InitialStepsChain failedStep method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(null, new RuntimeException()));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void failedStepMethod() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
-        final String stepName = "step name";
-        final RuntimeException exception = new RuntimeException();
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.failedStep(stepName, exception));
-        assertThat(methodException).isSameAs(exception);
-        verify(stepReporter).reportFailedStep(eq(stepName), same(methodException));
-    }
-
-    @Test
     void step1ArgMethodThrowsExceptionForNullStepName() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
