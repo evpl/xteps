@@ -1,7 +1,15 @@
 Change Log
 ==========
 
-Xteps Allure 2.2 / Xteps ReportPortal 2.2 *(2022-06-16)*
+Xteps Allure 2.3 / Xteps ReportPortal 2.3 *(2022-06-26)*
+-------------------------------
+* Update Xteps dependency
+
+Xteps 2.3 *(2022-06-26)*
+-------------------------------
+* Update unchecked exception mechanism
+
+Xteps Allure 2.2 / Xteps ReportPortal 2.2 *(2022-06-26)*
 -------------------------------
 * Update Xteps dependency
 
