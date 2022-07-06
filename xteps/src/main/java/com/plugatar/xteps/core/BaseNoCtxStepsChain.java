@@ -26,6 +26,15 @@ import com.plugatar.xteps.util.function.ThrowingSupplier;
 public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends BaseStepsChain<S> {
 
     /**
+     * Returns a contextual steps chain of the new context.
+     *
+     * @param context the new context
+     * @param <U>     the new context type
+     * @return contextual steps chain
+     */
+    <U> CtxStepsChain<U, S> withContext(U context);
+
+    /**
      * Returns a context steps chain of the new context.
      *
      * @param contextSupplier the context supplier

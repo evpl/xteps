@@ -26,15 +26,6 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
 public interface BaseStepsChain<S extends BaseStepsChain<S>> {
 
     /**
-     * Returns a contextual steps chain of the new context.
-     *
-     * @param context the new context
-     * @param <U>     the new context type
-     * @return contextual steps chain
-     */
-    <U> CtxStepsChain<U, S> withContext(U context);
-
-    /**
      * Performs empty step with given name and returns this steps chain.
      *
      * @param stepName the step name

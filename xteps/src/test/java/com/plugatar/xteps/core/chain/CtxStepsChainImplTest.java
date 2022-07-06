@@ -573,11 +573,6 @@ final class CtxStepsChainImplTest {
         }
 
         @Override
-        public <U> CtxStepsChain<U, FakeStepsChain> withContext(final U context) {
-            return null;
-        }
-
-        @Override
         public FakeStepsChain step(final String stepName) {
             return null;
         }
