@@ -46,6 +46,7 @@ public final class Unchecked {
      *
      * @param runnable the runnable
      * @return unchecked runnable
+     * @see #unchecked(ThrowingRunnable)
      */
     @SuppressWarnings("unchecked")
     public static ThrowingRunnable<RuntimeException> uncheckedRunnable(
@@ -55,10 +56,31 @@ public final class Unchecked {
     }
 
     /**
+     * Returns given {@link ThrowingRunnable} as unchecked or null if {@code runnable} is null.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain()
+     *     .step("Step 1", unchecked(() -> {
+     *         ...
+     *     }));
+     * }</pre>
+     *
+     * @param runnable the runnable
+     * @return unchecked runnable
+     * @see #uncheckedRunnable(ThrowingRunnable)
+     */
+    @SuppressWarnings("unchecked")
+    public static ThrowingRunnable<RuntimeException> unchecked(
+        final ThrowingRunnable<?> runnable
+    ) {
+        return (ThrowingRunnable<RuntimeException>) runnable;
+    }
+
+    /**
      * Returns given {@link ThrowingConsumer} as as unchecked or null if {@code consumer} is null.<br>
      * Code example:
      * <pre>{@code
-     * stepsChainOf("context")
+     * stepsChain().withContext("context")
      *     .step("Step 1", uncheckedConsumer(ctx -> {
      *         ...
      *     }));
@@ -67,9 +89,32 @@ public final class Unchecked {
      * @param consumer the consumer
      * @param <T>      the type of the {@code consumer} input argument
      * @return unchecked consumer
+     * @see #unchecked(ThrowingConsumer)
      */
     @SuppressWarnings("unchecked")
     public static <T> ThrowingConsumer<T, RuntimeException> uncheckedConsumer(
+        final ThrowingConsumer<? super T, ?> consumer
+    ) {
+        return (ThrowingConsumer<T, RuntimeException>) consumer;
+    }
+
+    /**
+     * Returns given {@link ThrowingConsumer} as as unchecked or null if {@code consumer} is null.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain().withContext("context")
+     *     .step("Step 1", unchecked(ctx -> {
+     *         ...
+     *     }));
+     * }</pre>
+     *
+     * @param consumer the consumer
+     * @param <T>      the type of the {@code consumer} input argument
+     * @return unchecked consumer
+     * @see #uncheckedConsumer(ThrowingConsumer)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> ThrowingConsumer<T, RuntimeException> unchecked(
         final ThrowingConsumer<? super T, ?> consumer
     ) {
         return (ThrowingConsumer<T, RuntimeException>) consumer;
@@ -89,6 +134,7 @@ public final class Unchecked {
      * @param supplier the supplier
      * @param <T>      the type of the {@code supplier} result
      * @return unchecked supplier
+     * @see #unchecked(ThrowingSupplier)
      */
     @SuppressWarnings("unchecked")
     public static <T> ThrowingSupplier<T, RuntimeException> uncheckedSupplier(
@@ -98,10 +144,33 @@ public final class Unchecked {
     }
 
     /**
+     * Returns given {@link ThrowingSupplier} as unchecked or null if {@code supplier} is null.<br>
+     * Code example:
+     * <pre>{@code
+     * stepsChain()
+     *     .stepToContext("Step 1", unchecked(() -> {
+     *         ...
+     *         return "context";
+     *     }));
+     * }</pre>
+     *
+     * @param supplier the supplier
+     * @param <T>      the type of the {@code supplier} result
+     * @return unchecked supplier
+     * @see #uncheckedSupplier(ThrowingSupplier)
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> ThrowingSupplier<T, RuntimeException> unchecked(
+        final ThrowingSupplier<? extends T, ?> supplier
+    ) {
+        return (ThrowingSupplier<T, RuntimeException>) supplier;
+    }
+
+    /**
      * Returns given {@link ThrowingFunction} as unchecked or null if {@code function} is null.<br>
      * Code example:
      * <pre>{@code
-     * stepsChainOf("context1")
+     * stepsChain().withContext("context1")
      *     .stepToContext("Step 1", uncheckedFunction(ctx -> {
      *         ...
      *         return "context2";
@@ -112,6 +181,7 @@ public final class Unchecked {
      * @param <T>      the type of the {@code function} input argument
      * @param <R>      the type of the {@code function} result
      * @return unchecked function
+     * @see #unchecked(ThrowingFunction)
      */
     @SuppressWarnings("unchecked")
     public static <T, R> ThrowingFunction<T, R, RuntimeException> uncheckedFunction(
@@ -121,31 +191,26 @@ public final class Unchecked {
     }
 
     /**
-     * Throws given {@link Throwable} as unchecked or {@link NullPointerException} if {@code exception} is null.<br>
+     * Returns given {@link ThrowingFunction} as unchecked or null if {@code function} is null.<br>
      * Code example:
      * <pre>{@code
-     * stepsChain()
-     *     .step("Step 1", () -> { throw uncheckedException(new Throwable()); });
-     *
-     * stepsChain()
-     *     .step("Step 2", () -> {
-     *         try {
-     *             ...
-     *         } catch (Throwable ex) {
-     *             throw uncheckedException(ex);
-     *         }
-     *     });
+     * stepsChain().withContext("context1")
+     *     .stepToContext("Step 1", unchecked(ctx -> {
+     *         ...
+     *         return "context2";
+     *     }));
      * }</pre>
      *
-     * @param exception the exception
-     * @param <E>       the fake exception type
-     * @return fake value
-     * @throws NullPointerException if {@code exception} is null
-     * @throws E                    in any other case
+     * @param function the function
+     * @param <T>      the type of the {@code function} input argument
+     * @param <R>      the type of the {@code function} result
+     * @return unchecked function
+     * @see #uncheckedFunction(ThrowingFunction)
      */
     @SuppressWarnings("unchecked")
-    public static <E extends Throwable> RuntimeException uncheckedException(final Throwable exception) throws E {
-        if (exception == null) { throw new NullPointerException("exception arg is null"); }
-        throw (E) exception;
+    public static <T, R> ThrowingFunction<T, R, RuntimeException> unchecked(
+        final ThrowingFunction<? super T, ? extends R, ?> function
+    ) {
+        return (ThrowingFunction<T, R, RuntimeException>) function;
     }
 }
