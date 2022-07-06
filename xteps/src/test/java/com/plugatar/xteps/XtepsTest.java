@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps;
 
-import com.plugatar.xteps.core.CtxStepsChain;
 import com.plugatar.xteps.core.InitialStepsChain;
 import com.plugatar.xteps.core.StepListener;
 import org.junit.jupiter.api.AfterAll;
@@ -75,15 +74,6 @@ final class XtepsTest {
         assertThat(Xteps.stepsChain()).isSameAs(stepsChain);
         stepsChain.step("stepsChainMethod", () -> {});
         assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsChainMethod");
-    }
-
-    @Test
-    void stepsChainOfMethod() {
-        final Object context = new Object();
-        final CtxStepsChain<Object, InitialStepsChain> stepsChain = Xteps.stepsChainOf(context);
-        stepsChain.step("stepsChainOfMethod", c -> {});
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsChainOfMethod");
-        assertThat(stepsChain.context()).isSameAs(context);
     }
 
     public static final class StaticStepListener implements StepListener {

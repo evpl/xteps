@@ -70,14 +70,12 @@ stepsChain()
             ...
         })
     );
-```
-5. `stepsChainOf(Object)` - returns a contextual steps chain of given context.
-```java
-stepsChainOf("context")
-    .step("Step 1", ctx -> {
+
+stepsChain().withContext("context")
+    .step("Step 3", ctx -> {
         ...
     })
-    .nestedSteps("Step 2", stepsChain -> stepsChain
+    .nestedSteps("Step 4", stepsChain -> stepsChain
         .step("Inner step 1", ctx -> {
             ...
         })
@@ -85,62 +83,6 @@ stepsChainOf("context")
             ...
         })
     );
-```
-
-
-## Code example
-
-```java
-import static com.plugatar.xteps.Xteps.step;
-import static com.plugatar.xteps.Xteps.stepTo;
-import static com.plugatar.xteps.Xteps.stepsChainOf;
-
-final class ExampleTest {
-
-    @Test
-    void simpleExample() {
-        step("Step 1", () -> {
-            ...
-        });
-        step("Step 2");
-        step("Step 3", () -> {
-            step("Inner step 1", () -> {
-                ...
-            });
-            step("Inner step 2", () -> {
-                ...
-            });
-        });
-        final String step4Result = stepTo("Step 4", () -> {
-            ...
-            return "result";
-        });
-        final String step5Result = stepTo("Step 5", () -> {
-            step("Inner step 1", () -> {
-                ...
-            });
-            return stepTo("Inner step 2", () -> {
-                ...
-                return "result";
-            });
-        });
-        step("Step 6", () -> assertEquals(step4Result, step5Result));
-    }
-
-    @Test
-    void chainExample() {
-        stepsChainOf("context")
-            .step("Step 1", ctx -> {
-                ...
-            })
-            .stepToContext("Step 2", ctx -> 111)
-            .step("Step 3", newCtx -> {
-                ...
-            })
-            .previousStepsChain()
-            .step("Step 4", previousCtx -> assertEquals(previousCtx, "context"));
-    }
-}
 ```
 
 ## Checked exceptions

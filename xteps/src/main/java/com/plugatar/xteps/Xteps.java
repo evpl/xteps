@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps;
 
-import com.plugatar.xteps.core.CtxStepsChain;
 import com.plugatar.xteps.core.InitialStepsChain;
 import com.plugatar.xteps.core.StepListener;
 import com.plugatar.xteps.core.XtepsException;
@@ -167,24 +166,12 @@ public final class Xteps {
      *             ...
      *         })
      *     );
-     * }</pre>
      *
-     * @return no context steps
-     * @throws XtepsException if Xteps configuration is incorrect
-     */
-    public static InitialStepsChain stepsChain() {
-        return INITIAL_STEPS_CHAIN_SUPPLIER.get();
-    }
-
-    /**
-     * Returns a contextual steps chain of given context.<br>
-     * Code example:
-     * <pre>{@code
-     * stepsChainOf("context")
-     *     .step("Step 1", ctx -> {
+     * stepsChain().withContext("context")
+     *     .step("Step 3", ctx -> {
      *         ...
      *     })
-     *     .nestedSteps("Step 2", stepsChain -> stepsChain
+     *     .nestedSteps("Step 4", stepsChain -> stepsChain
      *         .step("Inner step 1", ctx -> {
      *             ...
      *         })
@@ -194,13 +181,11 @@ public final class Xteps {
      *     );
      * }</pre>
      *
-     * @param context the context
-     * @param <C>     the context type
-     * @return context steps
+     * @return no context steps
      * @throws XtepsException if Xteps configuration is incorrect
      */
-    public static <C> CtxStepsChain<C, InitialStepsChain> stepsChainOf(final C context) {
-        return INITIAL_STEPS_CHAIN_SUPPLIER.get().withContext(context);
+    public static InitialStepsChain stepsChain() {
+        return INITIAL_STEPS_CHAIN_SUPPLIER.get();
     }
 
     /**
