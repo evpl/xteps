@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -175,7 +175,7 @@ final class UncheckedTest {
         final ThrowingConsumer<Object, RuntimeException> methodResult = Unchecked.uncheckedConsumer(consumer);
         assertThatCode(() -> methodResult.accept(input))
             .isSameAs(throwable);
-        verify(consumer).accept(refEq(input));
+        verify(consumer).accept(same(input));
     }
 
     @Test
@@ -189,7 +189,7 @@ final class UncheckedTest {
         final ThrowingConsumer<Object, RuntimeException> methodResult = Unchecked.unchecked(consumer);
         assertThatCode(() -> methodResult.accept(input))
             .isSameAs(throwable);
-        verify(consumer).accept(refEq(input));
+        verify(consumer).accept(same(input));
     }
 
     @Test
@@ -200,7 +200,7 @@ final class UncheckedTest {
 
         final ThrowingConsumer<Object, RuntimeException> methodResult = Unchecked.uncheckedConsumer(consumer);
         methodResult.accept(input);
-        verify(consumer).accept(refEq(input));
+        verify(consumer).accept(same(input));
     }
 
     @Test
@@ -211,7 +211,7 @@ final class UncheckedTest {
 
         final ThrowingConsumer<Object, RuntimeException> methodResult = Unchecked.unchecked(consumer);
         methodResult.accept(input);
-        verify(consumer).accept(refEq(input));
+        verify(consumer).accept(same(input));
     }
 
     @Test
@@ -235,7 +235,7 @@ final class UncheckedTest {
         final ThrowingFunction<Object, Object, RuntimeException> methodResult = Unchecked.uncheckedFunction(function);
         assertThatCode(() -> methodResult.apply(input))
             .isSameAs(throwable);
-        verify(function).apply(refEq(input));
+        verify(function).apply(same(input));
     }
 
     @Test
@@ -249,7 +249,7 @@ final class UncheckedTest {
         final ThrowingFunction<Object, Object, RuntimeException> methodResult = Unchecked.unchecked(function);
         assertThatCode(() -> methodResult.apply(input))
             .isSameAs(throwable);
-        verify(function).apply(refEq(input));
+        verify(function).apply(same(input));
     }
 
     @Test
@@ -263,7 +263,7 @@ final class UncheckedTest {
         final ThrowingFunction<Object, Object, RuntimeException> methodResult = Unchecked.uncheckedFunction(function);
         assertThat(methodResult.apply(input))
             .isSameAs(functionResult);
-        verify(function).apply(refEq(input));
+        verify(function).apply(same(input));
     }
 
     @Test
@@ -277,6 +277,6 @@ final class UncheckedTest {
         final ThrowingFunction<Object, Object, RuntimeException> methodResult = Unchecked.unchecked(function);
         assertThat(methodResult.apply(input))
             .isSameAs(functionResult);
-        verify(function).apply(refEq(input));
+        verify(function).apply(same(input));
     }
 }

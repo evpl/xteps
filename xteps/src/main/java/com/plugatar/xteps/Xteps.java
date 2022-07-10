@@ -23,7 +23,6 @@ import com.plugatar.xteps.core.reporter.DefaultStepReporter;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,9 +80,29 @@ public final class Xteps {
      * @throws XtepsException if {@code stepName} is null
      *                        or if Xteps configuration is incorrect
      *                        or if it's impossible to correctly report the step
+     * @see #step(String, String)
      */
     public static void step(final String stepName) {
         INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName);
+    }
+
+    /**
+     * Performs empty step with given name and description.<br>
+     * Code example:
+     * <pre>{@code
+     * step("Step 1", "Description");
+     * }</pre>
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @see #step(String)
+     */
+    public static void step(final String stepName,
+                            final String stepDescription) {
+        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, stepDescription);
     }
 
     /**
@@ -108,12 +127,46 @@ public final class Xteps {
      *                        or if Xteps configuration is incorrect
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
+     * @see #step(String, String, ThrowingRunnable)
      */
     public static <E extends Throwable> void step(
         final String stepName,
         final ThrowingRunnable<? extends E> step
     ) throws E {
         INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, step);
+    }
+
+    /**
+     * Performs given step with given name and description.<br>
+     * Code example:
+     * <pre>{@code
+     * step("Step 1", "Description", () -> {
+     *     ...
+     * });
+     * step("Step 2", "Description", () -> {
+     *     ...
+     *     step("Inner step 1", "Description", () -> {
+     *         ...
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param step            the step
+     * @param <E>             the {@code step} exception type
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     * @see #step(String, ThrowingRunnable)
+     */
+    public static <E extends Throwable> void step(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, stepDescription, step);
     }
 
     /**
@@ -142,12 +195,50 @@ public final class Xteps {
      *                        or if Xteps configuration is incorrect
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
+     * @see #stepTo(String, String, ThrowingSupplier)
      */
     public static <R, E extends Throwable> R stepTo(
         final String stepName,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         return INITIAL_STEPS_CHAIN_SUPPLIER.get().stepTo(stepName, step);
+    }
+
+    /**
+     * Performs given step with given name and description and returns the step result.<br>
+     * Code example:
+     * <pre>{@code
+     * String step1Result = stepTo("Step 1", "Description", () -> {
+     *     ...
+     *     return "result1";
+     * });
+     * String step2Result = stepTo("Step 2", "Description", () -> {
+     *     ...
+     *     return stepTo("Inner step 1", "Description", () -> {
+     *         ...
+     *         return "result2";
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param step            the step
+     * @param <R>             the result type
+     * @param <E>             the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     * @see #stepTo(String, ThrowingSupplier)
+     */
+    public static <R, E extends Throwable> R stepTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        return INITIAL_STEPS_CHAIN_SUPPLIER.get().stepTo(stepName, stepDescription, step);
     }
 
     /**
@@ -162,7 +253,7 @@ public final class Xteps {
      *         .step("Inner step 1", () -> {
      *             ...
      *         })
-     *         .step("Inner step 2", () -> {
+     *         .step("Inner step 2", "Description", () -> {
      *             ...
      *         })
      *     );
@@ -175,13 +266,13 @@ public final class Xteps {
      *         .step("Inner step 1", ctx -> {
      *             ...
      *         })
-     *         .step("Inner step 2", ctx -> {
+     *         .step("Inner step 2", "Description", ctx -> {
      *             ...
      *         })
      *     );
      * }</pre>
      *
-     * @return no context steps
+     * @return initial steps chain
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static InitialStepsChain stepsChain() {
@@ -202,10 +293,10 @@ public final class Xteps {
         }
 
         /**
-         * Returns NoCtxSteps instance.
+         * Returns InitialStepsChain instance.
          *
-         * @return NoCtxSteps instance
-         * @throws XtepsException if it's impossible to correctly instantiate NoCtxSteps
+         * @return InitialStepsChain instance
+         * @throws XtepsException if it's impossible to correctly instantiate InitialStepsChain
          */
         @Override
         public InitialStepsChain get() {
@@ -240,13 +331,13 @@ public final class Xteps {
                 if (stream != null) {
                     properties.load(stream);
                 }
-            } catch (final IOException ignored) { }
+            } catch (final Exception ignored) { }
             try (final InputStream stream =
                      Thread.currentThread().getContextClassLoader().getResourceAsStream(propertiesFilePath)) {
                 if (stream != null) {
                     properties.load(stream);
                 }
-            } catch (final IOException ignored) { }
+            } catch (final Exception ignored) { }
             properties.putAll(System.getProperties());
             return properties;
         }

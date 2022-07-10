@@ -23,10 +23,13 @@ public interface StepListener {
     /**
      * Invoked each time a step starts.
      *
-     * @param uuid     the uuid
-     * @param stepName the step name
+     * @param uuid            the uuid
+     * @param stepName        the step name
+     * @param stepDescription the step description
      */
-    void stepStarted(String uuid, String stepName);
+    void stepStarted(String uuid,
+                     String stepName,
+                     String stepDescription);
 
     /**
      * Invoked each time a step passes.
@@ -41,5 +44,6 @@ public interface StepListener {
      * @param uuid      the uuid
      * @param throwable the step throwable
      */
-    void stepFailed(String uuid, Throwable throwable);
+    void stepFailed(String uuid,
+                    Throwable throwable);
 }

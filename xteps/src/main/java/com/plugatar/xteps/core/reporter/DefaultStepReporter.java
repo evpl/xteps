@@ -45,86 +45,98 @@ public class DefaultStepReporter implements StepReporter {
         if (listeners == null) { throw new NullPointerException("listeners arg is null"); }
         for (int idx = 0; idx < listeners.length; ++idx) {
             if (listeners[idx] == null) {
-                throw new NullPointerException("listener with index " + idx + " is null");
+                throw new NullPointerException("Listener with index " + idx + " is null");
             }
         }
         this.listeners = listeners;
     }
 
-    private void throwNullArgException(final String methodName,
-                                       final String argName) {
-        final String message = "StepReporter " + methodName + " method " + argName + " arg is null";
-        this.reportFailedStep(message, new XtepsException(message));
+    private static void throwNullArgException(final String argName) {
+        throw new XtepsException(argName + " arg is null");
     }
 
     @Override
-    public final void reportEmptyStep(final String stepName) {
-        if (stepName == null) { throwNullArgException("reportEmptyStep", "stepName"); }
-        this.reportFunctionStep(stepName, null, n -> null);
-    }
-
-    @Override
-    public final <TH extends Throwable> void reportFailedStep(
+    public final void reportEmptyStep(
         final String stepName,
-        final TH exception
-    ) throws TH {
-        if (stepName == null) { throwNullArgException("reportFailedStep", "stepName"); }
-        if (exception == null) { throwNullArgException("reportFailedStep", "exception"); }
-        this.reportFunctionStep(stepName, null, n -> { throw exception; });
+        final String stepDescription
+    ) {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        this.reportFunctionStep(stepName, stepDescription, null, n -> null);
     }
 
     @Override
-    public final <TH extends Throwable> void reportRunnableStep(
+    public final <E extends Throwable> void reportFailedStep(
         final String stepName,
-        final ThrowingRunnable<? extends TH> runnable
-    ) throws TH {
-        if (stepName == null) { throwNullArgException("reportRunnableStep", "stepName"); }
-        if (runnable == null) { throwNullArgException("reportRunnableStep", "runnable"); }
-        this.reportFunctionStep(stepName, null, n -> {
+        final String stepDescription,
+        final E exception
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (exception == null) { throwNullArgException("exception"); }
+        this.reportFunctionStep(stepName, stepDescription, null, n -> { throw exception; });
+    }
+
+    @Override
+    public final <E extends Throwable> void reportRunnableStep(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingRunnable<? extends E> runnable
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (runnable == null) { throwNullArgException("runnable"); }
+        this.reportFunctionStep(stepName, stepDescription, null, n -> {
             runnable.run();
             return null;
         });
     }
 
     @Override
-    public final <T, TH extends Throwable> void reportConsumerStep(
+    public final <T, E extends Throwable> void reportConsumerStep(
         final String stepName,
+        final String stepDescription,
         final T input,
-        final ThrowingConsumer<? super T, ? extends TH> consumer
-    ) throws TH {
-        if (stepName == null) { throwNullArgException("reportConsumerStep", "stepName"); }
-        if (consumer == null) { throwNullArgException("reportConsumerStep", "consumer"); }
-        this.reportFunctionStep(stepName, null, n -> {
+        final ThrowingConsumer<? super T, ? extends E> consumer
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (consumer == null) { throwNullArgException("consumer"); }
+        this.reportFunctionStep(stepName, stepDescription, null, n -> {
             consumer.accept(input);
             return null;
         });
     }
 
     @Override
-    public final <T, TH extends Throwable> T reportSupplierStep(
-        String stepName,
-        ThrowingSupplier<? extends T, ? extends TH> supplier
-    ) throws TH {
-        if (stepName == null) { throwNullArgException("reportSupplierStep", "stepName"); }
-        if (supplier == null) { throwNullArgException("reportSupplierStep", "supplier"); }
-        return this.reportFunctionStep(stepName, null, n -> supplier.get());
+    public final <T, E extends Throwable> T reportSupplierStep(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends T, ? extends E> supplier
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (supplier == null) { throwNullArgException("supplier"); }
+        return this.reportFunctionStep(stepName, stepDescription, null, n -> supplier.get());
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T, R, TH extends Throwable> R reportFunctionStep(
+    public final <T, R, E extends Throwable> R reportFunctionStep(
         final String stepName,
+        final String stepDescription,
         final T input,
-        final ThrowingFunction<? super T, ? extends R, ? extends TH> function
-    ) throws TH {
-        if (stepName == null) { throwNullArgException("reportFunctionStep", "stepName"); }
-        if (function == null) { throwNullArgException("reportFunctionStep", "function"); }
+        final ThrowingFunction<? super T, ? extends R, ? extends E> function
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (function == null) { throwNullArgException("function"); }
         final String uuid = UUID.randomUUID().toString();
         XtepsException baseException = null;
-        // step started
+        // step start
         for (final StepListener listener : this.listeners) {
             try {
-                listener.stepStarted(uuid, stepName);
+                listener.stepStarted(uuid, stepName, stepDescription);
             } catch (final Throwable ex) {
                 if (baseException == null) {
                     baseException = listenerException();
@@ -133,7 +145,7 @@ public class DefaultStepReporter implements StepReporter {
             }
         }
         // step action
-        TH stepEx = null;
+        E stepEx = null;
         R result = null;
         try {
             result = function.apply(input);
@@ -142,9 +154,9 @@ public class DefaultStepReporter implements StepReporter {
             if (baseException != null) {
                 baseException.addSuppressed(ex);
             }
-            stepEx = (TH) ex;
+            stepEx = (E) ex;
         }
-        // step passed or failed
+        // step finish
         for (final StepListener listener : this.listeners) {
             try {
                 if (baseException != null) {

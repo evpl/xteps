@@ -175,7 +175,8 @@ final class InitialStepsChainSupplierTest {
 
         @Override
         public void stepStarted(final String uuid,
-                                final String stepName) {
+                                final String stepName,
+                                final String stepDescription) {
             lastStepName = stepName;
         }
 
@@ -203,7 +204,8 @@ final class InitialStepsChainSupplierTest {
 
         @Override
         public void stepStarted(final String uuid,
-                                final String stepName) {
+                                final String stepName,
+                                final String stepDescription) {
             lastStepName = stepName;
         }
 

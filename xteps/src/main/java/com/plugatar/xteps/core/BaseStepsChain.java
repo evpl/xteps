@@ -32,8 +32,24 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} is null
      *                        or if it's impossible to correctly report the step
+     * @see #step(String, String)
      */
     S step(String stepName);
+
+    /**
+     * Performs empty step with given name and description and returns this steps chain.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @return this steps chain
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} is null
+     *                        or if it's impossible to correctly report the step
+     * @see #step(String)
+     */
+    S step(
+        String stepName,
+        String stepDescription
+    );
 
     /**
      * Performs the step with given name and nested steps chain and returns this steps chain.
@@ -45,9 +61,29 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
+     * @see #nestedSteps(String, String, ThrowingConsumer)
      */
     <E extends Throwable> S nestedSteps(
         String stepName,
+        ThrowingConsumer<S, ? extends E> stepsChain
+    ) throws E;
+
+    /**
+     * Performs the step with given name and description and nested steps chain and returns this steps chain.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param stepsChain      the nested steps chain
+     * @param <E>             the {@code stepsChain} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code stepsChain} threw exception
+     * @see #nestedSteps(String, ThrowingConsumer)
+     */
+    <E extends Throwable> S nestedSteps(
+        String stepName,
+        String stepDescription,
         ThrowingConsumer<S, ? extends E> stepsChain
     ) throws E;
 
@@ -62,9 +98,30 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
+     * @see #nestedStepsTo(String, String, ThrowingFunction)
      */
     <R, E extends Throwable> R nestedStepsTo(
         String stepName,
+        ThrowingFunction<S, ? extends R, ? extends E> stepsChain
+    ) throws E;
+
+    /**
+     * Performs given step with given name and description and returns the steps chain result.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param stepsChain      the nested steps chain
+     * @param <R>             the result type
+     * @param <E>             the {@code step} exception type
+     * @return {@code stepsChain} result
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code stepsChain} threw exception
+     * @see #nestedStepsTo(String, ThrowingFunction)
+     */
+    <R, E extends Throwable> R nestedStepsTo(
+        String stepName,
+        String stepDescription,
         ThrowingFunction<S, ? extends R, ? extends E> stepsChain
     ) throws E;
 }

@@ -25,10 +25,15 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
@@ -44,14 +49,106 @@ final class NoCtxStepsChainImplTest {
 
     @Test
     void ctorThrowsExceptionForNullStepReporter() {
-        assertThatCode(() -> new NoCtxStepsChainImpl<>(null, new FakeStepsChain()))
+        assertThatCode(() -> new NoCtxStepsChainImpl<>((StepReporter) null, new FakeStepsChain()))
             .isInstanceOf(NullPointerException.class);
     }
 
     @Test
     void ctorThrowsExceptionForNullPrevious() {
-        assertThatCode(() -> new NoCtxStepsChainImpl<>(mockedStepReporter(), null))
+        assertThatCode(() -> new NoCtxStepsChainImpl<>(mockedStepReporter(), (BaseStepsChain<?>) null))
             .isInstanceOf(NullPointerException.class);
+    }
+
+    private static Stream<Arguments> nullArgsTestCases() {
+        return Stream.of(
+            Arguments.of("withContext method null supplier arg",
+                action(chain -> chain.withContext((ThrowingSupplier<Object, RuntimeException>) null))),
+
+            Arguments.of("step method null stepName arg",
+                action(chain -> chain.step((String) null))),
+
+            Arguments.of("step method with description null stepName arg",
+                action(chain -> chain.step((String) null, ""))),
+            Arguments.of("step method with description null stepDescription arg",
+                action(chain -> chain.step("", (String) null))),
+
+            Arguments.of("step method with action null stepName arg",
+                action(chain -> chain.step((String) null, () -> {}))),
+            Arguments.of("step method with action null runnable arg",
+                action(chain -> chain.step("", (ThrowingRunnable<RuntimeException>) null))),
+
+            Arguments.of("step method with description and action null stepName arg",
+                action(chain -> chain.step((String) null, "", () -> {}))),
+            Arguments.of("step method with description and action null stepDescription arg",
+                action(chain -> chain.step("", (String) null, () -> {}))),
+            Arguments.of("step method with description and action null runnable arg",
+                action(chain -> chain.step("", "", (ThrowingRunnable<RuntimeException>) null))),
+
+            Arguments.of("stepToContext method null stepName arg",
+                action(chain -> chain.stepToContext((String) null, Object::new))),
+            Arguments.of("stepToContext method null supplier arg",
+                action(chain -> chain.stepToContext("", (ThrowingSupplier<Object, RuntimeException>) null))),
+
+            Arguments.of("stepToContext method with description null stepName arg",
+                action(chain -> chain.stepToContext((String) null, "", Object::new))),
+            Arguments.of("stepToContext method with description null stepDescription arg",
+                action(chain -> chain.stepToContext("", (String) null, Object::new))),
+            Arguments.of("stepToContext method with description null supplier arg",
+                action(chain -> chain.stepToContext("", "", (ThrowingSupplier<Object, RuntimeException>) null))),
+
+            Arguments.of("stepTo method null stepName arg",
+                action(chain -> chain.stepTo((String) null, Object::new))),
+            Arguments.of("stepTo method null supplier arg",
+                action(chain -> chain.stepTo("", (ThrowingSupplier<Object, RuntimeException>) null))),
+
+            Arguments.of("stepTo method with description null stepName arg",
+                action(chain -> chain.stepTo((String) null, "", Object::new))),
+            Arguments.of("stepTo method with description null stepDescription arg",
+                action(chain -> chain.stepTo("", (String) null, Object::new))),
+            Arguments.of("stepTo method with description null supplier arg",
+                action(chain -> chain.stepTo("", "", (ThrowingSupplier<Object, RuntimeException>) null))),
+
+            Arguments.of("nestedSteps method null stepName arg",
+                action(chain -> chain.nestedSteps((String) null, c -> {}))),
+            Arguments.of("nestedSteps method null consumer arg",
+                action(chain -> chain.nestedSteps("", (ThrowingConsumer<NoCtxStepsChain<FakeStepsChain>, RuntimeException>) null))),
+
+            Arguments.of("nestedSteps method null stepName arg",
+                action(chain -> chain.nestedSteps((String) null, "", c -> {}))),
+            Arguments.of("nestedSteps method null stepDescription arg",
+                action(chain -> chain.nestedSteps("", (String) null, c -> {}))),
+            Arguments.of("nestedSteps method null consumer arg",
+                action(chain -> chain.nestedSteps("", "", (ThrowingConsumer<NoCtxStepsChain<FakeStepsChain>, RuntimeException>) null))),
+
+            Arguments.of("nestedStepsTo method null stepName arg",
+                action(chain -> chain.nestedStepsTo((String) null, c -> new Object()))),
+            Arguments.of("nestedStepsTo method null function arg",
+                action(chain -> chain.nestedStepsTo("", (ThrowingFunction<NoCtxStepsChain<FakeStepsChain>, Object, RuntimeException>) null))),
+
+            Arguments.of("nestedStepsTo method null stepName arg",
+                action(chain -> chain.nestedStepsTo((String) null, "", c -> new Object()))),
+            Arguments.of("nestedStepsTo method null stepDescription arg",
+                action(chain -> chain.nestedStepsTo("", (String) null, c -> new Object()))),
+            Arguments.of("nestedStepsTo method null function arg",
+                action(chain -> chain.nestedStepsTo("", "", (ThrowingFunction<NoCtxStepsChain<FakeStepsChain>, Object, RuntimeException>) null)))
+        );
+    }
+
+    private static Consumer<NoCtxStepsChain<FakeStepsChain>> action(
+        final Consumer<NoCtxStepsChain<FakeStepsChain>> consumer
+    ) {
+        return consumer;
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("nullArgsTestCases")
+    void methodsWithNullArgsThrowsException(final String testCaseName,
+                                            final Consumer<NoCtxStepsChain<FakeStepsChain>> action) throws Throwable {
+        final StepReporter stepReporter = mockedStepReporter();
+        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        assertThatCode(() -> action.accept(chain))
+            .isInstanceOf(XtepsException.class);
+        verifyNoInteractions(stepReporter);
     }
 
     @Test
@@ -77,7 +174,7 @@ final class NoCtxStepsChainImplTest {
     }
 
     @Test
-    void withContextValueMethodForNullContext() throws Throwable {
+    void withContextValueMethodNullContext() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
         final Object context = null;
@@ -86,21 +183,6 @@ final class NoCtxStepsChainImplTest {
         assertThat(methodResult.context()).isNull();
         assertThat(methodResult.previousStepsChain()).isSameAs(chain);
         verifyNoInteractions(stepReporter);
-    }
-
-    @Test
-    void withContextSupplierMethodThrowsExceptionForNullSupplier() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final ThrowingSupplier<Object, RuntimeException> supplier = null;
-        final String failedStepName = "NoCtxStepsChain withContext method contextSupplier arg is null";
-
-        final RuntimeException methodException = assertThrows(RuntimeException.class,
-            () -> chain.withContext(supplier));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
     }
 
     @Test
@@ -120,267 +202,186 @@ final class NoCtxStepsChainImplTest {
     void withContextSupplierMethodThrowsException() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final RuntimeException exception = new RuntimeException("ex message");
+        final RuntimeException exception = new RuntimeException();
         final ThrowingSupplier<Object, RuntimeException> supplier = () -> { throw exception; };
-        final String failedStepName = "NoCtxStepsChain withContext method throws exception";
 
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.withContext(supplier));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName + " java.lang.RuntimeException: ex message")
-            .hasCause(exception);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
+        assertThatCode(() -> chain.withContext(supplier))
+            .isSameAs(exception);
+        verifyNoInteractions(stepReporter);
     }
 
     @Test
-    void step1ArgMethodThrowsExceptionForNullStepName() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain step method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.step(null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void step1ArgMethod() throws Throwable {
+    void stepMethod() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
         final String stepName = "step name";
 
         final NoCtxStepsChain<FakeStepsChain> methodResult = chain.step(stepName);
         assertThat(methodResult).isSameAs(chain);
-        verify(stepReporter).reportEmptyStep(eq(stepName));
+        verify(stepReporter).reportEmptyStep(eq(stepName), eq(""));
     }
 
     @Test
-    void step2ArgsMethodThrowsExceptionForNullStepName() throws Throwable {
+    void stepMethodWithDescription() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain step method stepName arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.step(null, () -> {}));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void step2ArgsMethodThrowsExceptionForNullRunnable() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain step method step arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.step("step name", null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void step2ArgsMethod() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final ThrowingRunnable<RuntimeException> runnable = () -> {};
         final String stepName = "step name";
+        final String stepDescription = "step description";
+
+        final NoCtxStepsChain<FakeStepsChain> methodResult = chain.step(stepName, stepDescription);
+        assertThat(methodResult).isSameAs(chain);
+        verify(stepReporter).reportEmptyStep(eq(stepName), eq(stepDescription));
+    }
+
+    @Test
+    void stepMethodWithAction() throws Throwable {
+        final StepReporter stepReporter = mockedStepReporter();
+        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        final String stepName = "step name";
+        final ThrowingRunnable<RuntimeException> runnable = () -> {};
 
         final NoCtxStepsChain<FakeStepsChain> methodResult = chain.step(stepName, runnable);
         assertThat(methodResult).isSameAs(chain);
-        verify(stepReporter).reportRunnableStep(eq(stepName), same(runnable));
+        verify(stepReporter).reportRunnableStep(eq(stepName), eq(""), same(runnable));
     }
 
     @Test
-    void stepToContextMethodThrowsExceptionForNullStepName() throws Throwable {
+    void stepMethodWithDescriptionAndAction() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain stepToContext method stepName arg is null";
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+        final ThrowingRunnable<RuntimeException> runnable = () -> {};
 
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.stepToContext(null, Object::new));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void stepToContextMethodThrowsExceptionForNullSupplier() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain stepToContext method step arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.stepToContext("step name", null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
+        final NoCtxStepsChain<FakeStepsChain> methodResult = chain.step(stepName, stepDescription, runnable);
+        assertThat(methodResult).isSameAs(chain);
+        verify(stepReporter).reportRunnableStep(eq(stepName), eq(stepDescription), same(runnable));
     }
 
     @Test
     void stepToContextMethod() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        final String stepName = "step name";
         final Object context = new Object();
         final ThrowingSupplier<Object, RuntimeException> supplier = () -> context;
-        final String stepName = "step name";
 
         final CtxStepsChain<Object, NoCtxStepsChain<FakeStepsChain>> methodResult = chain.stepToContext(stepName, supplier);
         assertThat(methodResult.context()).isSameAs(context);
         assertThat(methodResult.previousStepsChain()).isSameAs(chain);
-        verify(stepReporter).reportSupplierStep(eq(stepName), same(supplier));
+        verify(stepReporter).reportSupplierStep(eq(stepName), eq(""), same(supplier));
     }
 
     @Test
-    void stepToMethodThrowsExceptionForNullStepName() throws Throwable {
+    void stepToContextMethodWithDescription() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain stepTo method stepName arg is null";
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+        final Object context = new Object();
+        final ThrowingSupplier<Object, RuntimeException> supplier = () -> context;
 
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.stepTo(null, Object::new));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void stepToMethodThrowsExceptionForNullSupplier() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain stepTo method step arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.stepTo("step name", null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
+        final CtxStepsChain<Object, NoCtxStepsChain<FakeStepsChain>> methodResult = chain.stepToContext(stepName, stepDescription, supplier);
+        assertThat(methodResult.context()).isSameAs(context);
+        assertThat(methodResult.previousStepsChain()).isSameAs(chain);
+        verify(stepReporter).reportSupplierStep(eq(stepName), eq(stepDescription), same(supplier));
     }
 
     @Test
     void stepToMethod() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        final String stepName = "step name";
         final Object result = new Object();
         final ThrowingSupplier<Object, RuntimeException> supplier = () -> result;
-        final String stepName = "step name";
 
         final Object methodResult = chain.stepTo(stepName, supplier);
         assertThat(methodResult).isSameAs(result);
-        verify(stepReporter).reportSupplierStep(eq(stepName), same(supplier));
+        verify(stepReporter).reportSupplierStep(eq(stepName), eq(""), same(supplier));
     }
 
     @Test
-    void nestedStepsMethodThrowsExceptionForNullStepName() throws Throwable {
+    void stepToMethodWithDescription() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain nestedSteps method stepName arg is null";
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+        final Object result = new Object();
+        final ThrowingSupplier<Object, RuntimeException> supplier = () -> result;
 
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.nestedSteps(null, c -> {}));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void nestedStepsMethodThrowsExceptionForNullConsumer() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain nestedSteps method stepsChain arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.nestedSteps("step name", null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
+        final Object methodResult = chain.stepTo(stepName, stepDescription, supplier);
+        assertThat(methodResult).isSameAs(result);
+        verify(stepReporter).reportSupplierStep(eq(stepName), eq(stepDescription), same(supplier));
     }
 
     @Test
     void nestedStepsMethod() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final ThrowingConsumer<NoCtxStepsChain<FakeStepsChain>, RuntimeException> consumer = c -> {};
         final String stepName = "step name";
+        final ThrowingConsumer<NoCtxStepsChain<FakeStepsChain>, RuntimeException> consumer = c -> {};
 
         final NoCtxStepsChain<FakeStepsChain> methodResult = chain.nestedSteps(stepName, consumer);
         assertThat(methodResult).isSameAs(chain);
-        verify(stepReporter).reportConsumerStep(eq(stepName), same(chain), same(consumer));
+        verify(stepReporter).reportConsumerStep(eq(stepName), eq(""), same(chain), same(consumer));
     }
 
     @Test
-    void nestedStepsToMethodThrowsExceptionForNullStepName() throws Throwable {
+    void nestedStepsMethodWithDescription() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain nestedStepsTo method stepName arg is null";
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+        final ThrowingConsumer<NoCtxStepsChain<FakeStepsChain>, RuntimeException> consumer = c -> {};
 
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.nestedStepsTo(null, c -> new Object()));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
-    }
-
-    @Test
-    void nestedStepsMethodThrowsExceptionForNullFunction() throws Throwable {
-        final StepReporter stepReporter = mockedStepReporter();
-        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
-        final String failedStepName = "NoCtxStepsChain nestedStepsTo method stepsChain arg is null";
-
-        final Throwable methodException = assertThrows(Throwable.class,
-            () -> chain.nestedStepsTo("step name", null));
-        assertThat(methodException)
-            .isInstanceOf(XtepsException.class)
-            .hasMessage(failedStepName);
-        verify(stepReporter).reportFailedStep(eq(failedStepName), same(methodException));
+        final NoCtxStepsChain<FakeStepsChain> methodResult = chain.nestedSteps(stepName, stepDescription, consumer);
+        assertThat(methodResult).isSameAs(chain);
+        verify(stepReporter).reportConsumerStep(eq(stepName), eq(stepDescription), same(chain), same(consumer));
     }
 
     @Test
     void nestedStepsToMethod() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        final String stepName = "step name";
         final Object result = new Object();
         final ThrowingFunction<NoCtxStepsChain<FakeStepsChain>, Object, RuntimeException> function = c -> result;
-        final String stepName = "step name";
 
         final Object methodResult = chain.nestedStepsTo(stepName, function);
         assertThat(methodResult).isSameAs(result);
-        verify(stepReporter).reportFunctionStep(eq(stepName), same(chain), same(function));
+        verify(stepReporter).reportFunctionStep(eq(stepName), eq(""), same(chain), same(function));
+    }
+
+    @Test
+    void nestedStepsToMethodWithDescription() throws Throwable {
+        final StepReporter stepReporter = mockedStepReporter();
+        final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(stepReporter, new FakeStepsChain());
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+        final Object result = new Object();
+        final ThrowingFunction<NoCtxStepsChain<FakeStepsChain>, Object, RuntimeException> function = c -> result;
+
+        final Object methodResult = chain.nestedStepsTo(stepName, stepDescription, function);
+        assertThat(methodResult).isSameAs(result);
+        verify(stepReporter).reportFunctionStep(eq(stepName), eq(stepDescription), same(chain), same(function));
     }
 
     private static StepReporter mockedStepReporter() throws Throwable {
         final StepReporter stepReporter = mock(StepReporter.class);
         doAnswer(in -> {
-            throw (Throwable) in.getArgument(1);
-        }).when(stepReporter).reportFailedStep(any(), any());
-        doAnswer(in -> {
-            ((ThrowingRunnable<?>) in.getArgument(1)).run();
+            ((ThrowingRunnable<?>) in.getArgument(2)).run();
             return null;
-        }).when(stepReporter).reportRunnableStep(any(), any());
+        }).when(stepReporter).reportRunnableStep(any(), any(), any());
         doAnswer(in -> {
-            ((ThrowingConsumer<?, ?>) in.getArgument(2)).accept(in.getArgument(1));
+            ((ThrowingConsumer<?, ?>) in.getArgument(3)).accept(in.getArgument(2));
             return null;
-        }).when(stepReporter).reportConsumerStep(any(), any(), any());
+        }).when(stepReporter).reportConsumerStep(any(), any(), any(), any());
         doAnswer(in -> {
-            return ((ThrowingSupplier<?, ?>) in.getArgument(1)).get();
-        }).when(stepReporter).reportSupplierStep(any(), any());
+            return ((ThrowingSupplier<?, ?>) in.getArgument(2)).get();
+        }).when(stepReporter).reportSupplierStep(any(), any(), any());
         doAnswer(in -> {
-            return ((ThrowingFunction<?, ?, ?>) in.getArgument(2)).apply(in.getArgument(1));
-        }).when(stepReporter).reportFunctionStep(any(), any(), any());
+            return ((ThrowingFunction<?, ?, ?>) in.getArgument(3)).apply(in.getArgument(2));
+        }).when(stepReporter).reportFunctionStep(any(), any(), any(), any());
         return stepReporter;
     }
 
@@ -395,6 +396,12 @@ final class NoCtxStepsChainImplTest {
         }
 
         @Override
+        public FakeStepsChain step(final String stepName,
+                                   final String stepDescription) {
+            return null;
+        }
+
+        @Override
         public <E extends Throwable> FakeStepsChain nestedSteps(
             final String stepName,
             final ThrowingConsumer<FakeStepsChain, ? extends E> stepsChain
@@ -403,8 +410,26 @@ final class NoCtxStepsChainImplTest {
         }
 
         @Override
+        public <E extends Throwable> FakeStepsChain nestedSteps(
+            final String stepName,
+            final String stepDescription,
+            final ThrowingConsumer<FakeStepsChain, ? extends E> stepsChain
+        ) throws E {
+            return null;
+        }
+
+        @Override
         public <R, E extends Throwable> R nestedStepsTo(
             final String stepName,
+            final ThrowingFunction<FakeStepsChain, ? extends R, ? extends E> stepsChain
+        ) throws E {
+            return null;
+        }
+
+        @Override
+        public <R, E extends Throwable> R nestedStepsTo(
+            final String stepName,
+            final String stepDescription,
             final ThrowingFunction<FakeStepsChain, ? extends R, ? extends E> stepsChain
         ) throws E {
             return null;

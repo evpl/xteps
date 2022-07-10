@@ -17,27 +17,12 @@ package com.plugatar.xteps.core;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Modifier;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link XtepsException}.
  */
 final class XtepsExceptionTest {
-
-    @Test
-    void classIsNotFinal() {
-        assertThat(XtepsException.class).isNotFinal();
-    }
-
-    @Test
-    void allDeclaredPublicMethodsAreFinal() {
-        final Class<?> cls = XtepsException.class;
-        assertThat(cls.getMethods())
-            .filteredOn(method -> method.getDeclaringClass() == cls)
-            .allMatch(method -> Modifier.isFinal(method.getModifiers()));
-    }
 
     @Test
     void emptyCtor() {

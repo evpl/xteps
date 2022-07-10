@@ -45,20 +45,8 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         this.previousStepsChain = previousStepsChain;
     }
 
-    private void throwNullArgException(final String methodName,
-                                       final String argName) {
-        final String message = "CtxStepsChain " + methodName + " method " + argName + " arg is null";
-        this.stepReporter.reportFailedStep(message, new XtepsException(message));
-    }
-
-    private <R> R throwExecutionException(final String methodName,
-                                          final Throwable throwable) {
-        final String message = "CtxStepsChain " + methodName + " method throws exception";
-        this.stepReporter.reportFailedStep(
-            message,
-            new XtepsException(message + " " + throwable, throwable)
-        );
-        return null;
+    private static void throwNullArgException(final String argName) {
+        throw new XtepsException(argName + " arg is null");
     }
 
     @Override
@@ -75,12 +63,8 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
     public final <E extends Throwable> CtxStepsChain<C, P> supplyContextTo(
         final ThrowingConsumer<? super C, ? extends E> consumer
     ) throws E {
-        if (consumer == null) { throwNullArgException("supplyContextTo", "consumer"); }
-        try {
-            consumer.accept(this.context);
-        } catch (final Throwable throwable) {
-            throwExecutionException("supplyContextTo", throwable);
-        }
+        if (consumer == null) { throwNullArgException("consumer"); }
+        consumer.accept(this.context);
         return this;
     }
 
@@ -88,12 +72,8 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
     public final <R, E extends Throwable> R applyContextTo(
         final ThrowingFunction<? super C, ? extends R, ? extends E> function
     ) throws E {
-        if (function == null) { throwNullArgException("applyContextTo", "function"); }
-        try {
-            return function.apply(this.context);
-        } catch (final Throwable throwable) {
-            return throwExecutionException("applyContextTo", throwable);
-        }
+        if (function == null) { throwNullArgException("function"); }
+        return function.apply(this.context);
     }
 
     @Override
@@ -105,14 +85,8 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
     public final <U, E extends Throwable> CtxStepsChain<U, CtxStepsChain<C, P>> withContext(
         final ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
     ) throws E {
-        if (contextFunction == null) { throwNullArgException("withContext", "contextFunction"); }
-        final U newContext;
-        try {
-            newContext = contextFunction.apply(this.context);
-        } catch (final Throwable throwable) {
-            return throwExecutionException("withContext", throwable);
-        }
-        return new CtxStepsChainImpl<>(this.stepReporter, newContext, this);
+        if (contextFunction == null) { throwNullArgException("contextFunction"); }
+        return new CtxStepsChainImpl<>(this.stepReporter, contextFunction.apply(this.context), this);
     }
 
     @Override
@@ -122,8 +96,17 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
 
     @Override
     public final CtxStepsChain<C, P> step(final String stepName) {
-        if (stepName == null) { throwNullArgException("step", "stepName"); }
-        this.stepReporter.reportEmptyStep(stepName);
+        return this.step(stepName, "");
+    }
+
+    @Override
+    public CtxStepsChain<C, P> step(
+        final String stepName,
+        final String stepDescription
+    ) {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        this.stepReporter.reportEmptyStep(stepName, stepDescription);
         return this;
     }
 
@@ -132,9 +115,19 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         final String stepName,
         final ThrowingConsumer<? super C, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("step", "stepName"); }
-        if (step == null) { throwNullArgException("step", "step"); }
-        this.stepReporter.reportConsumerStep(stepName, this.context, step);
+        return this.step(stepName, "", step);
+    }
+
+    @Override
+    public <E extends Throwable> CtxStepsChain<C, P> step(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingConsumer<? super C, ? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
+        this.stepReporter.reportConsumerStep(stepName, stepDescription, this.context, step);
         return this;
     }
 
@@ -143,11 +136,21 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepToContext", "stepName"); }
-        if (step == null) { throwNullArgException("stepToContext", "step"); }
+        return this.stepToContext(stepName, "", step);
+    }
+
+    @Override
+    public <U, E extends Throwable> CtxStepsChain<U, CtxStepsChain<C, P>> stepToContext(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
         return new CtxStepsChainImpl<>(
             this.stepReporter,
-            this.stepReporter.reportFunctionStep(stepName, this.context, step),
+            this.stepReporter.reportFunctionStep(stepName, stepDescription, this.context, step),
             this
         );
     }
@@ -157,9 +160,19 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         final String stepName,
         final ThrowingFunction<? super C, ? extends R, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepTo", "stepName"); }
-        if (step == null) { throwNullArgException("stepTo", "step"); }
-        return this.stepReporter.reportFunctionStep(stepName, this.context, step);
+        return this.stepTo(stepName, "", step);
+    }
+
+    @Override
+    public <R, E extends Throwable> R stepTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingFunction<? super C, ? extends R, ? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
+        return this.stepReporter.reportFunctionStep(stepName, stepDescription, this.context, step);
     }
 
     @Override
@@ -167,9 +180,19 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         final String stepName,
         final ThrowingConsumer<CtxStepsChain<C, P>, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("nestedSteps", "stepName"); }
-        if (stepsChain == null) { throwNullArgException("nestedSteps", "stepsChain"); }
-        this.stepReporter.reportConsumerStep(stepName, this, stepsChain);
+        return this.nestedSteps(stepName, "", stepsChain);
+    }
+
+    @Override
+    public <E extends Throwable> CtxStepsChain<C, P> nestedSteps(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingConsumer<CtxStepsChain<C, P>, ? extends E> stepsChain
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (stepsChain == null) { throwNullArgException("stepsChain"); }
+        this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
         return this;
     }
 
@@ -178,8 +201,18 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         final String stepName,
         final ThrowingFunction<CtxStepsChain<C, P>, ? extends R, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("nestedStepsTo", "stepName"); }
-        if (stepsChain == null) { throwNullArgException("nestedStepsTo", "stepsChain"); }
-        return this.stepReporter.reportFunctionStep(stepName, this, stepsChain);
+        return this.nestedStepsTo(stepName, "", stepsChain);
+    }
+
+    @Override
+    public <R, E extends Throwable> R nestedStepsTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingFunction<CtxStepsChain<C, P>, ? extends R, ? extends E> stepsChain
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (stepsChain == null) { throwNullArgException("stepsChain"); }
+        return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
     }
 }

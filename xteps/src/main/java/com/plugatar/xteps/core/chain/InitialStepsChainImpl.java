@@ -37,20 +37,8 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         this.stepReporter = stepReporter;
     }
 
-    private void throwNullArgException(final String methodName,
-                                       final String argName) {
-        final String message = "InitialStepsChain " + methodName + " method " + argName + " arg is null";
-        this.stepReporter.reportFailedStep(message, new XtepsException(message));
-    }
-
-    private <R> R throwExecutionException(final String methodName,
-                                          final Throwable throwable) {
-        final String message = "InitialStepsChain " + methodName + " method throws exception";
-        this.stepReporter.reportFailedStep(
-            message,
-            new XtepsException(message + " " + throwable, throwable)
-        );
-        return null;
+    private static void throwNullArgException(final String argName) {
+        throw new XtepsException(argName + " arg is null");
     }
 
     @Override
@@ -62,20 +50,23 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     public final <U, E extends Throwable> CtxStepsChain<U, InitialStepsChain> withContext(
         final ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E {
-        if (contextSupplier == null) { throwNullArgException("withContext", "contextSupplier"); }
-        final U newContext;
-        try {
-            newContext = contextSupplier.get();
-        } catch (final Throwable throwable) {
-            return throwExecutionException("withContext", throwable);
-        }
-        return new CtxStepsChainImpl<>(this.stepReporter, newContext, this);
+        if (contextSupplier == null) { throwNullArgException("contextSupplier"); }
+        return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this);
     }
 
     @Override
     public final InitialStepsChain step(final String stepName) {
-        if (stepName == null) { throwNullArgException("step", "stepName"); }
-        this.stepReporter.reportEmptyStep(stepName);
+        return this.step(stepName, "");
+    }
+
+    @Override
+    public InitialStepsChain step(
+        final String stepName,
+        final String stepDescription
+    ) {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        this.stepReporter.reportEmptyStep(stepName, stepDescription);
         return this;
     }
 
@@ -84,9 +75,19 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final String stepName,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("step", "stepName"); }
-        if (step == null) { throwNullArgException("step", "step"); }
-        this.stepReporter.reportRunnableStep(stepName, step);
+        return this.step(stepName, "", step);
+    }
+
+    @Override
+    public <E extends Throwable> InitialStepsChain step(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
+        this.stepReporter.reportRunnableStep(stepName, stepDescription, step);
         return this;
     }
 
@@ -95,11 +96,21 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final String stepName,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepToContext", "stepName"); }
-        if (step == null) { throwNullArgException("stepToContext", "step"); }
+        return this.stepToContext(stepName, "", step);
+    }
+
+    @Override
+    public <U, E extends Throwable> CtxStepsChain<U, InitialStepsChain> stepToContext(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
         return new CtxStepsChainImpl<>(
             this.stepReporter,
-            this.stepReporter.reportSupplierStep(stepName, step),
+            this.stepReporter.reportSupplierStep(stepName, stepDescription, step),
             this
         );
     }
@@ -109,9 +120,19 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final String stepName,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepTo", "stepName"); }
-        if (step == null) { throwNullArgException("stepTo", "step"); }
-        return this.stepReporter.reportSupplierStep(stepName, step);
+        return this.stepTo(stepName, "", step);
+    }
+
+    @Override
+    public <R, E extends Throwable> R stepTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (step == null) { throwNullArgException("step"); }
+        return this.stepReporter.reportSupplierStep(stepName, stepDescription, step);
     }
 
     @Override
@@ -119,9 +140,19 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final String stepName,
         final ThrowingConsumer<InitialStepsChain, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("nestedSteps", "stepName"); }
-        if (stepsChain == null) { throwNullArgException("nestedSteps", "stepsChain"); }
-        this.stepReporter.reportConsumerStep(stepName, this, stepsChain);
+        return this.nestedSteps(stepName, "", stepsChain);
+    }
+
+    @Override
+    public <E extends Throwable> InitialStepsChain nestedSteps(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingConsumer<InitialStepsChain, ? extends E> stepsChain
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (stepsChain == null) { throwNullArgException("stepsChain"); }
+        this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
         return this;
     }
 
@@ -130,8 +161,18 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final String stepName,
         final ThrowingFunction<InitialStepsChain, ? extends R, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("nestedStepsTo", "stepName"); }
-        if (stepsChain == null) { throwNullArgException("nestedStepsTo", "stepsChain"); }
-        return this.stepReporter.reportFunctionStep(stepName, this, stepsChain);
+        return this.nestedStepsTo(stepName, "", stepsChain);
+    }
+
+    @Override
+    public <R, E extends Throwable> R nestedStepsTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingFunction<InitialStepsChain, ? extends R, ? extends E> stepsChain
+    ) throws E {
+        if (stepName == null) { throwNullArgException("stepName"); }
+        if (stepDescription == null) { throwNullArgException("stepDescription"); }
+        if (stepsChain == null) { throwNullArgException("stepsChain"); }
+        return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
     }
 }

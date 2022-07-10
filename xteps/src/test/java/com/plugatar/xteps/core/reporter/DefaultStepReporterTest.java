@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps.core.reporter;
 
-import com.plugatar.xteps.Unchecked;
 import com.plugatar.xteps.core.StepListener;
 import com.plugatar.xteps.core.XtepsException;
 import com.plugatar.xteps.util.function.ThrowingConsumer;
@@ -37,12 +36,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
@@ -52,14 +52,14 @@ final class DefaultStepReporterTest {
 
     @Test
     void ctorThrowsExceptionForNullStepListenerArray() {
-        assertThatCode(() -> new DefaultStepReporter(null))
+        assertThatCode(() -> new DefaultStepReporter((StepListener[]) null))
             .isInstanceOf(NullPointerException.class)
             .is(containsXtepsStackTrace());
     }
 
     @Test
     void ctorThrowsExceptionForNullStepListenerInArray() {
-        final StepListener[] stepListeners = {mock(StepListener.class), null, mock(StepListener.class)};
+        final StepListener[] stepListeners = {mock(StepListener.class), (StepListener) null, mock(StepListener.class)};
 
         assertThatCode(() -> new DefaultStepReporter(stepListeners))
             .isInstanceOf(NullPointerException.class)
@@ -72,19 +72,24 @@ final class DefaultStepReporterTest {
             .doesNotThrowAnyException();
     }
 
-    public static void main(String[] args) {
-        throw Unchecked.uncheckedException(null);
-
-    }
-
     @Test
     void reportEmptyStepMethodThrowsExceptionForNullStepName() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportEmptyStep(null),
-            "StepReporter reportEmptyStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportEmptyStep((String) null, "step description"),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportEmptyStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportEmptyStep("step name", (String) null),
             stepListeners
         );
     }
@@ -93,10 +98,11 @@ final class DefaultStepReporterTest {
     void reportEmptyStepMethod() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
 
-        stepReporter.reportEmptyStep(stepName);
-        assertThatStepPassed(stepName, stepListeners);
+        stepReporter.reportEmptyStep(stepName, stepDescription);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
     }
 
     @Test
@@ -104,9 +110,19 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportFailedStep(null, new RuntimeException()),
-            "StepReporter reportFailedStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFailedStep((String) null, "step description", new RuntimeException()),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportFailedStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFailedStep("step name", (String) null, new RuntimeException()),
             stepListeners
         );
     }
@@ -116,9 +132,8 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportFailedStep("step name", null),
-            "StepReporter reportFailedStep method exception arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFailedStep("step name", "step description", (RuntimeException) null),
             stepListeners
         );
     }
@@ -127,63 +142,37 @@ final class DefaultStepReporterTest {
     void reportFailedStepMethod() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception = new RuntimeException();
 
         assertThatStepFailed(
-            () -> stepReporter.reportFailedStep(stepName, exception),
+            () -> stepReporter.reportFailedStep(stepName, stepDescription, exception),
             stepName,
+            stepDescription,
             exception,
             stepListeners
         );
     }
-
-//    @Test
-//    void reportFailedStepMethodForWrappedException() {
-//        final StepListener[] stepListeners = mockedStepListeners(3);
-//        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-//        final String stepName = randomStepName();
-//        final Throwable innerException = new Throwable();
-//        final RuntimeException wrappedException = DefaultStepReporter.wrappedException(innerException);
-//
-//        assertThatStepFailed(
-//            () -> stepReporter.reportFailedStep(stepName, wrappedException),
-//            stepName,
-//            innerException,
-//            stepListeners
-//        );
-//    }
-
-//    @Test
-//    void reportFailedStepMethodForTripleWrappedException() {
-//        final StepListener[] stepListeners = mockedStepListeners(3);
-//        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-//        final String stepName = randomStepName();
-//        final Throwable innerException = new Throwable();
-//        final RuntimeException wrappedException = DefaultStepReporter.wrappedException(
-//            DefaultStepReporter.wrappedException(
-//                DefaultStepReporter.wrappedException(
-//                    innerException
-//                )
-//            )
-//        );
-//
-//        assertThatStepFailed(
-//            () -> stepReporter.reportFailedStep(stepName, wrappedException),
-//            stepName,
-//            innerException,
-//            stepListeners
-//        );
-//    }
 
     @Test
     void reportRunnableStepMethodThrowsExceptionForNullStepName() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportRunnableStep(null, () -> {}),
-            "StepReporter reportRunnableStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportRunnableStep((String) null, "step description", () -> {}),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportRunnableStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportRunnableStep("step name", (String) null, () -> {}),
             stepListeners
         );
     }
@@ -193,9 +182,12 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportRunnableStep("step name", null),
-            "StepReporter reportRunnableStep method runnable arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportRunnableStep(
+                "step name",
+                "step description",
+                (ThrowingRunnable<RuntimeException>) null
+            ),
             stepListeners
         );
     }
@@ -204,12 +196,13 @@ final class DefaultStepReporterTest {
     void reportRunnableStepMethodPassedStep() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> runnable = mock(ThrowingRunnable.class);
 
-        stepReporter.reportRunnableStep(stepName, runnable);
-        assertThatStepPassed(stepName, stepListeners);
+        stepReporter.reportRunnableStep(stepName, stepDescription, runnable);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
         verify(runnable, times(1)).run();
     }
 
@@ -217,15 +210,17 @@ final class DefaultStepReporterTest {
     void reportRunnableStepMethodFailedStep() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> runnable = mock(ThrowingRunnable.class);
         doThrow(exception).when(runnable).run();
 
         assertThatStepFailed(
-            () -> stepReporter.reportRunnableStep(stepName, runnable),
+            () -> stepReporter.reportRunnableStep(stepName, stepDescription, runnable),
             stepName,
+            stepDescription,
             exception,
             stepListeners
         );
@@ -237,9 +232,19 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportConsumerStep(null, "input", x -> {}),
-            "StepReporter reportConsumerStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportConsumerStep((String) null, "step description", new Object(), x -> {}),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportConsumerStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportConsumerStep("step name", (String) null, new Object(), x -> {}),
             stepListeners
         );
     }
@@ -249,9 +254,13 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportConsumerStep("step name", "input", null),
-            "StepReporter reportConsumerStep method consumer arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportConsumerStep(
+                "step name",
+                "step description",
+                new Object(),
+                (ThrowingConsumer<Object, RuntimeException>) null
+            ),
             stepListeners
         );
     }
@@ -260,26 +269,28 @@ final class DefaultStepReporterTest {
     void reportConsumerStepMethodStepPassed() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final Object input = new Object();
         @SuppressWarnings("unchecked")
         final ThrowingConsumer<Object, RuntimeException> consumer = mock(ThrowingConsumer.class);
 
-        stepReporter.reportConsumerStep(stepName, input, consumer);
-        assertThatStepPassed(stepName, stepListeners);
-        verify(consumer, times(1)).accept(refEq(input));
+        stepReporter.reportConsumerStep(stepName, stepDescription, input, consumer);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
+        verify(consumer, times(1)).accept(same(input));
     }
 
     @Test
     void reportConsumerStepMethodStepPassedWithNullInputArg() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         @SuppressWarnings("unchecked")
         final ThrowingConsumer<String, RuntimeException> consumer = mock(ThrowingConsumer.class);
 
-        stepReporter.reportConsumerStep(stepName, null, consumer);
-        assertThatStepPassed(stepName, stepListeners);
+        stepReporter.reportConsumerStep(stepName, stepDescription, (String) null, consumer);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
         verify(consumer, times(1)).accept(isNull());
     }
 
@@ -287,7 +298,8 @@ final class DefaultStepReporterTest {
     void reportConsumerStepMethodStepFailed() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception = new RuntimeException();
         final Object input = new Object();
         @SuppressWarnings("unchecked")
@@ -295,12 +307,13 @@ final class DefaultStepReporterTest {
         doThrow(exception).when(consumer).accept(any());
 
         assertThatStepFailed(
-            () -> stepReporter.reportConsumerStep(stepName, input, consumer),
+            () -> stepReporter.reportConsumerStep(stepName, stepDescription, input, consumer),
             stepName,
+            stepDescription,
             exception,
             stepListeners
         );
-        verify(consumer, times(1)).accept(refEq(input));
+        verify(consumer, times(1)).accept(same(input));
     }
 
     @Test
@@ -308,9 +321,19 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportSupplierStep(null, () -> "result"),
-            "StepReporter reportSupplierStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportSupplierStep((String) null, "step description", Object::new),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportSupplierStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportSupplierStep("step name", (String) null, Object::new),
             stepListeners
         );
     }
@@ -320,9 +343,12 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportSupplierStep("step name", null),
-            "StepReporter reportSupplierStep method supplier arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportSupplierStep(
+                "step name",
+                "step description",
+                (ThrowingSupplier<Object, RuntimeException>) null
+            ),
             stepListeners
         );
     }
@@ -331,14 +357,15 @@ final class DefaultStepReporterTest {
     void reportSupplierStepMethodStepPassed() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final Object supplierResult = new Object();
         @SuppressWarnings("unchecked")
         final ThrowingSupplier<Object, RuntimeException> supplier = mock(ThrowingSupplier.class);
         when(supplier.get()).thenReturn(supplierResult);
 
-        final Object methodResult = stepReporter.reportSupplierStep(stepName, supplier);
-        assertThatStepPassed(stepName, stepListeners);
+        final Object methodResult = stepReporter.reportSupplierStep(stepName, stepDescription, supplier);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
         assertThat(methodResult).isSameAs(supplierResult);
         verify(supplier, times(1)).get();
     }
@@ -347,15 +374,17 @@ final class DefaultStepReporterTest {
     void reportSupplierStepMethodStepFailed() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception = new RuntimeException();
         @SuppressWarnings("unchecked")
         final ThrowingSupplier<String, RuntimeException> supplier = mock(ThrowingSupplier.class);
         doThrow(exception).when(supplier).get();
 
         assertThatStepFailed(
-            () -> stepReporter.reportSupplierStep(stepName, supplier),
+            () -> stepReporter.reportSupplierStep(stepName, stepDescription, supplier),
             stepName,
+            stepDescription,
             exception,
             stepListeners
         );
@@ -367,9 +396,19 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportFunctionStep(null, "input", x -> new Object()),
-            "StepReporter reportFunctionStep method stepName arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFunctionStep((String) null, "step description", new Object(), x -> new Object()),
+            stepListeners
+        );
+    }
+
+    @Test
+    void reportFunctionStepMethodThrowsExceptionForNullStepDescription() {
+        final StepListener[] stepListeners = mockedStepListeners(3);
+        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
+
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFunctionStep("step name", (String) null, new Object(), x -> new Object()),
             stepListeners
         );
     }
@@ -379,9 +418,13 @@ final class DefaultStepReporterTest {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
-        assertThatStepFailedWithXtepsException(
-            () -> stepReporter.reportFunctionStep("step name", "input", null),
-            "StepReporter reportFunctionStep method function arg is null",
+        assertThatThrownXtepsException(
+            () -> stepReporter.reportFunctionStep(
+                "step name",
+                "step description",
+                new Object(),
+                (ThrowingFunction<Object, Object, RuntimeException>) null
+            ),
             stepListeners
         );
     }
@@ -390,31 +433,33 @@ final class DefaultStepReporterTest {
     void reportFunctionStepMethodStepPassed() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final Object input = new Object();
         final Object functionResult = new Object();
         @SuppressWarnings("unchecked")
         final ThrowingFunction<Object, Object, RuntimeException> function = mock(ThrowingFunction.class);
         when(function.apply(any())).thenReturn(functionResult);
 
-        final Object methodResult = stepReporter.reportFunctionStep(stepName, input, function);
-        assertThatStepPassed(stepName, stepListeners);
+        final Object methodResult = stepReporter.reportFunctionStep(stepName, stepDescription, input, function);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
         assertThat(methodResult).isSameAs(functionResult);
-        verify(function, times(1)).apply(refEq(input));
+        verify(function, times(1)).apply(same(input));
     }
 
     @Test
     void reportFunctionStepMethodStepPassedWithNullInputArg() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final Object functionResult = new Object();
         @SuppressWarnings("unchecked")
         final ThrowingFunction<Object, Object, RuntimeException> function = mock(ThrowingFunction.class);
         when(function.apply(any())).thenReturn(functionResult);
 
-        final Object methodResult = stepReporter.reportFunctionStep(stepName, null, function);
-        assertThatStepPassed(stepName, stepListeners);
+        final Object methodResult = stepReporter.reportFunctionStep(stepName, stepDescription, (Object) null, function);
+        assertThatStepPassed(stepName, stepDescription, stepListeners);
         assertThat(methodResult).isSameAs(functionResult);
         verify(function, times(1)).apply(isNull());
     }
@@ -423,7 +468,8 @@ final class DefaultStepReporterTest {
     void reportFunctionStepMethodReportInfoForException() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception = new RuntimeException();
         final Object input = new Object();
         @SuppressWarnings("unchecked")
@@ -431,12 +477,13 @@ final class DefaultStepReporterTest {
         doThrow(exception).when(function).apply(any());
 
         assertThatStepFailed(
-            () -> stepReporter.reportFunctionStep(stepName, input, function),
+            () -> stepReporter.reportFunctionStep(stepName, stepDescription, input, function),
             stepName,
+            stepDescription,
             exception,
             stepListeners
         );
-        verify(function, times(1)).apply(refEq(input));
+        verify(function, times(1)).apply(same(input));
     }
 
     @Test
@@ -446,13 +493,16 @@ final class DefaultStepReporterTest {
         final DefaultStepReporter stepReporter = new DefaultStepReporter(
             new StepListener[]{stepListener1, stepListener2}
         );
-        final String stepName = randomStepName();
+        final String stepName = randomString();
+        final String stepDescription = randomString();
         final RuntimeException exception1 = new RuntimeException("listener 1 step started exception");
         final RuntimeException exception2 = new RuntimeException("listener 2 step failed exception");
-        doThrow(exception1).when(stepListener1).stepStarted(any(), any());
+        doThrow(exception1).when(stepListener1).stepStarted(any(), any(), any());
         doThrow(exception2).when(stepListener2).stepFailed(any(), any());
 
-        final Throwable methodException = assertThrows(Throwable.class, () -> stepReporter.reportEmptyStep(stepName));
+        final Throwable methodException = assertThrows(Throwable.class, () ->
+            stepReporter.reportEmptyStep(stepName, stepDescription)
+        );
         assertThat(methodException)
             .isInstanceOf(XtepsException.class)
             .hasMessage("One or more listeners threw exceptions")
@@ -462,7 +512,7 @@ final class DefaultStepReporterTest {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<String> stepFailedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<Throwable> stepFailedException = ArgumentCaptor.forClass(Throwable.class);
-            verify(stepListener1, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName));
+            verify(stepListener1, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(stepListener1, times(1)).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
             assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
             assertThat(stepFailedException.getValue()).isSameAs(methodException);
@@ -471,7 +521,7 @@ final class DefaultStepReporterTest {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<String> stepFailedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<Throwable> stepFailedException = ArgumentCaptor.forClass(Throwable.class);
-            verify(stepListener2, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName));
+            verify(stepListener2, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(stepListener2, times(1)).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
             assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
             assertThat(stepFailedException.getValue()).isSameAs(methodException);
@@ -479,11 +529,12 @@ final class DefaultStepReporterTest {
     }
 
     private static void assertThatStepPassed(final String stepName,
+                                             final String stepDescription,
                                              final StepListener... mockedStepListeners) {
         for (final StepListener listener : mockedStepListeners) {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<String> stepPassedUUID = ArgumentCaptor.forClass(String.class);
-            verify(listener).stepStarted(stepStartedUUID.capture(), eq(stepName));
+            verify(listener).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(listener).stepPassed(stepPassedUUID.capture());
             verify(listener, never()).stepFailed(any(), any());
             assertThat(stepPassedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
@@ -493,6 +544,7 @@ final class DefaultStepReporterTest {
 
     private static void assertThatStepFailed(final ThrowableAssert.ThrowingCallable stepAction,
                                              final String stepName,
+                                             final String stepDescription,
                                              final Throwable exception,
                                              final StepListener... mockedStepListeners) {
         assertThatCode(stepAction)
@@ -502,7 +554,7 @@ final class DefaultStepReporterTest {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<String> stepFailedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<Throwable> stepFailedException = ArgumentCaptor.forClass(Throwable.class);
-            verify(listener).stepStarted(stepStartedUUID.capture(), eq(stepName));
+            verify(listener).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(listener).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
             verify(listener, never()).stepPassed(any());
             assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
@@ -511,25 +563,13 @@ final class DefaultStepReporterTest {
         }
     }
 
-    private static void assertThatStepFailedWithXtepsException(final ThrowableAssert.ThrowingCallable stepAction,
-                                                               final String stepName,
-                                                               final StepListener... mockedStepListeners) {
+    private static void assertThatThrownXtepsException(final ThrowableAssert.ThrowingCallable stepAction,
+                                                       final StepListener... mockedStepListeners) {
         final Throwable methodException = assertThrows(Throwable.class, stepAction::call);
         assertThat(methodException)
             .isInstanceOf(XtepsException.class)
-            .hasMessage(stepName)
             .is(containsXtepsStackTrace());
-        for (final StepListener listener : mockedStepListeners) {
-            final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
-            final ArgumentCaptor<String> stepFailedUUID = ArgumentCaptor.forClass(String.class);
-            final ArgumentCaptor<Throwable> stepFailedException = ArgumentCaptor.forClass(Throwable.class);
-            verify(listener).stepStarted(stepStartedUUID.capture(), eq(stepName));
-            verify(listener).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
-            verify(listener, never()).stepPassed(any());
-            assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
-            assertThat(stepStartedUUID.getValue()).matches(uuidPattern());
-            assertThat(stepFailedException.getValue()).isSameAs(methodException);
-        }
+        verifyNoInteractions((Object[]) mockedStepListeners);
     }
 
     private static StepListener[] mockedStepListeners(final int count) {
@@ -551,7 +591,7 @@ final class DefaultStepReporterTest {
         return "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$";
     }
 
-    private static String randomStepName() {
+    private static String randomString() {
         final Random random = new Random();
         byte[] byteArray = new byte[random.nextInt(9) + 1];
         random.nextBytes(byteArray);

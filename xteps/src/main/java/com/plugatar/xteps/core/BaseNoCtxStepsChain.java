@@ -31,6 +31,7 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @param context the new context
      * @param <U>     the new context type
      * @return contextual steps chain
+     * @see #withContext(ThrowingSupplier)
      */
     <U> CtxStepsChain<U, S> withContext(U context);
 
@@ -43,6 +44,7 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return contextual steps chain
      * @throws XtepsException if {@code contextSupplier} is null
      * @throws E              if {@code contextSupplier} threw exception
+     * @see #withContext(Object)
      */
     <U, E extends Throwable> CtxStepsChain<U, S> withContext(
         ThrowingSupplier<? extends U, ? extends E> contextSupplier
@@ -58,9 +60,29 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
+     * @see #step(String, String, ThrowingRunnable)
      */
     <E extends Throwable> S step(
         String stepName,
+        ThrowingRunnable<? extends E> step
+    ) throws E;
+
+    /**
+     * Performs given step with given name and description and returns this steps chain.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param step            the step
+     * @param <E>             the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     * @see #step(String, ThrowingRunnable)
+     */
+    <E extends Throwable> S step(
+        String stepName,
+        String stepDescription,
         ThrowingRunnable<? extends E> step
     ) throws E;
 
@@ -75,9 +97,30 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
+     * @see #stepToContext(String, String, ThrowingSupplier)
      */
     <U, E extends Throwable> CtxStepsChain<U, S> stepToContext(
         String stepName,
+        ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs given step with given name and description and returns a contextual steps chain of the new context.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param step            the step
+     * @param <U>             the context type
+     * @param <E>             the {@code step} exception type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     * @see #stepToContext(String, ThrowingSupplier)
+     */
+    <U, E extends Throwable> CtxStepsChain<U, S> stepToContext(
+        String stepName,
+        String stepDescription,
         ThrowingSupplier<? extends U, ? extends E> step
     ) throws E;
 
@@ -92,9 +135,30 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
+     * @see #stepTo(String, String, ThrowingSupplier)
      */
     <R, E extends Throwable> R stepTo(
         String stepName,
+        ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs given step with given name and description and returns the step result.
+     *
+     * @param stepName        the step name
+     * @param stepDescription the step description
+     * @param step            the step
+     * @param <R>             the result type
+     * @param <E>             the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     * @see #stepTo(String, ThrowingSupplier)
+     */
+    <R, E extends Throwable> R stepTo(
+        String stepName,
+        String stepDescription,
         ThrowingSupplier<? extends R, ? extends E> step
     ) throws E;
 }
