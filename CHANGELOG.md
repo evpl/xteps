@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Xteps 3.0.1 / Xteps Allure 3.0.1 / Xteps ReportPortal 3.0.1 *(2022-07-11)*
+-------------------------------
+* Fix pom files
+
 Xteps 3.0 / Xteps Allure 3.0 / Xteps ReportPortal 3.0 *(2022-07-11)*
 -------------------------------
 * Added step description
