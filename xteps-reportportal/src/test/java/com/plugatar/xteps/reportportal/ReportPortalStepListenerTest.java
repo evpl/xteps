@@ -27,7 +27,8 @@ final class ReportPortalStepListenerTest {
     void stepStartedMethod() {
         assertThatCode(() -> new ReportPortalStepListener().stepStarted(
             UUID.randomUUID().toString(),
-            "step name"
+            "step name",
+            "step description"
         )).doesNotThrowAnyException();
     }
 

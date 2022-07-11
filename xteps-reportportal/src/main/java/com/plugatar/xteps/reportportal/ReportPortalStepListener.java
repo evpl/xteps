@@ -36,11 +36,15 @@ public class ReportPortalStepListener implements StepListener {
 
     @Override
     public final void stepStarted(final String uuid,
-                                  final String stepName) {
+                                  final String stepName,
+                                  final String stepDescription) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
             launch.getStepReporter().startNestedStep(
-                StepRequestUtils.buildStartStepRequest(stepName, null)
+                StepRequestUtils.buildStartStepRequest(
+                    stepName.isEmpty() ? "Step" : stepName,
+                    stepDescription.isEmpty() ? null : stepDescription
+                )
             );
         }
     }
@@ -55,10 +59,10 @@ public class ReportPortalStepListener implements StepListener {
 
     @Override
     public final void stepFailed(final String uuid,
-                                 final Throwable throwable) {
+                                 final Throwable exception) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
-            launch.getStepReporter().finishNestedStep(throwable);
+            launch.getStepReporter().finishNestedStep(exception);
         }
     }
 }

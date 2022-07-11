@@ -38,12 +38,15 @@ public class AllureStepListener implements StepListener {
     }
 
     @Override
-    public final void stepStarted(final String uuid,
-                                  final String stepName) {
-        Allure.getLifecycle().startStep(
-            uuid,
-            new StepResult().setName(stepName)
-        );
+    public void stepStarted(final String uuid,
+                            final String stepName,
+                            final String stepDescription) {
+        final StepResult stepResult = new StepResult();
+        stepResult.setName(stepName.isEmpty() ? "Step" : stepName);
+        if (!stepDescription.isEmpty()) {
+            stepResult.setDescription(stepDescription);
+        }
+        Allure.getLifecycle().startStep(uuid, stepResult);
     }
 
     @Override
@@ -58,12 +61,12 @@ public class AllureStepListener implements StepListener {
 
     @Override
     public final void stepFailed(final String uuid,
-                                 final Throwable throwable) {
+                                 final Throwable exception) {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
         allureLifecycle.updateStep(
             uuid,
-            step -> step.setStatus(ResultsUtils.getStatus(throwable).orElse(Status.BROKEN))
-                .setStatusDetails(ResultsUtils.getStatusDetails(throwable).orElse(null))
+            step -> step.setStatus(ResultsUtils.getStatus(exception).orElse(Status.BROKEN))
+                .setStatusDetails(ResultsUtils.getStatusDetails(exception).orElse(null))
         );
         allureLifecycle.stopStep(uuid);
     }

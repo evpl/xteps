@@ -42,8 +42,8 @@ public interface StepListener {
      * Invoked each time a step fails.
      *
      * @param uuid      the uuid
-     * @param throwable the step throwable
+     * @param exception the step exception
      */
     void stepFailed(String uuid,
-                    Throwable throwable);
+                    Throwable exception);
 }

@@ -31,18 +31,51 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class AllureStepListenerTest {
 
     @Test
-    void stepStartedMethod() {
+    void stepStartedMethodEmptyName() {
+        final AllureStepListener listener = new AllureStepListener();
+        final String uuid = UUID.randomUUID().toString();
+        final String stepDescription = "step description";
+
+        listener.stepStarted(uuid, "", stepDescription);
+        final AtomicReference<StepResult> stepResult = new AtomicReference<>();
+        Allure.getLifecycle().updateStep(uuid, stepResult::set);
+        assertThat(stepResult.get().getName()).isEqualTo("Step");
+        assertThat(stepResult.get().getDescription()).isEqualTo(stepDescription);
+        assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
+
+        Allure.getLifecycle().stopStep(uuid);
+    }
+
+    @Test
+    void stepStartedMethodEmptyDescription() {
         final AllureStepListener listener = new AllureStepListener();
         final String uuid = UUID.randomUUID().toString();
         final String stepName = "step name";
 
-        listener.stepStarted(uuid, stepName);
+        listener.stepStarted(uuid, stepName, "");
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
-        assertThat(stepResult.get()).isEqualTo(
-            new StepResult().setName(stepName)
-                .setStage(Stage.RUNNING)
-        );
+        assertThat(stepResult.get().getName()).isEqualTo(stepName);
+        assertThat(stepResult.get().getDescription()).isNull();
+        assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
+
+        Allure.getLifecycle().stopStep(uuid);
+    }
+
+    @Test
+    void stepStartedMethod() {
+        final AllureStepListener listener = new AllureStepListener();
+        final String uuid = UUID.randomUUID().toString();
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+
+        listener.stepStarted(uuid, stepName, stepDescription);
+        final AtomicReference<StepResult> stepResult = new AtomicReference<>();
+        Allure.getLifecycle().updateStep(uuid, stepResult::set);
+        assertThat(stepResult.get().getName()).isEqualTo(stepName);
+        assertThat(stepResult.get().getDescription()).isEqualTo(stepDescription);
+        assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
+
         Allure.getLifecycle().stopStep(uuid);
     }
 
