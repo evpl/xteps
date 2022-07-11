@@ -177,7 +177,7 @@ final class XtepsTest {
 
         @Override
         public void stepFailed(final String uuid,
-                               final Throwable throwable) {
+                               final Throwable exception) {
         }
     }
 

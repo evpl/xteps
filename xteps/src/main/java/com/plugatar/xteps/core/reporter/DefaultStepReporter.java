@@ -24,7 +24,8 @@ import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public class DefaultStepReporter implements StepReporter {
         if (listeners == null) { throw new NullPointerException("listeners arg is null"); }
         for (int idx = 0; idx < listeners.length; ++idx) {
             if (listeners[idx] == null) {
-                throw new NullPointerException("Listener with index " + idx + " is null");
+                throw new NullPointerException("listener with index " + idx + " is null");
             }
         }
         this.listeners = listeners;
@@ -63,18 +64,6 @@ public class DefaultStepReporter implements StepReporter {
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
         this.reportFunctionStep(stepName, stepDescription, null, n -> null);
-    }
-
-    @Override
-    public final <E extends Throwable> void reportFailedStep(
-        final String stepName,
-        final String stepDescription,
-        final E exception
-    ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (exception == null) { throwNullArgException("exception"); }
-        this.reportFunctionStep(stepName, stepDescription, null, n -> { throw exception; });
     }
 
     @Override
@@ -188,7 +177,7 @@ public class DefaultStepReporter implements StepReporter {
 
     private static void cleanStackTraceIfNotXtepsException(final Throwable mainTh) {
         if (!(mainTh instanceof XtepsException)) {
-            final Set<Throwable> throwables = new HashSet<>();
+            final Set<Throwable> throwables = Collections.newSetFromMap(new IdentityHashMap<>(16));
             addAllThrowables(throwables, mainTh);
             for (final Throwable currentTh : throwables) {
                 if (!(currentTh instanceof XtepsException)) {

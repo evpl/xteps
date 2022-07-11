@@ -106,56 +106,6 @@ final class DefaultStepReporterTest {
     }
 
     @Test
-    void reportFailedStepMethodThrowsExceptionForNullStepName() {
-        final StepListener[] stepListeners = mockedStepListeners(3);
-        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-
-        assertThatThrownXtepsException(
-            () -> stepReporter.reportFailedStep((String) null, "step description", new RuntimeException()),
-            stepListeners
-        );
-    }
-
-    @Test
-    void reportFailedStepMethodThrowsExceptionForNullStepDescription() {
-        final StepListener[] stepListeners = mockedStepListeners(3);
-        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-
-        assertThatThrownXtepsException(
-            () -> stepReporter.reportFailedStep("step name", (String) null, new RuntimeException()),
-            stepListeners
-        );
-    }
-
-    @Test
-    void reportFailedStepMethodThrowsExceptionForException() {
-        final StepListener[] stepListeners = mockedStepListeners(3);
-        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-
-        assertThatThrownXtepsException(
-            () -> stepReporter.reportFailedStep("step name", "step description", (RuntimeException) null),
-            stepListeners
-        );
-    }
-
-    @Test
-    void reportFailedStepMethod() {
-        final StepListener[] stepListeners = mockedStepListeners(3);
-        final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
-        final String stepName = randomString();
-        final String stepDescription = randomString();
-        final RuntimeException exception = new RuntimeException();
-
-        assertThatStepFailed(
-            () -> stepReporter.reportFailedStep(stepName, stepDescription, exception),
-            stepName,
-            stepDescription,
-            exception,
-            stepListeners
-        );
-    }
-
-    @Test
     void reportRunnableStepMethodThrowsExceptionForNullStepName() {
         final StepListener[] stepListeners = mockedStepListeners(3);
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);

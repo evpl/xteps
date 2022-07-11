@@ -39,23 +39,6 @@ public interface StepReporter {
     );
 
     /**
-     * Reports an failed step.
-     *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param exception       the exception
-     * @param <E>             the exception type
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code exception} is null
-     *                        or if it's impossible to correctly report the step
-     * @throws E              in any other case
-     */
-    <E extends Throwable> void reportFailedStep(
-        String stepName,
-        String stepDescription,
-        E exception
-    ) throws E;
-
-    /**
      * Reports a runnable step.
      *
      * @param stepName        the step name
