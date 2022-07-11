@@ -1,17 +1,22 @@
 Change Log
 ==========
 
+Xteps 3.0 / Xteps Allure 3.0 / Xteps ReportPortal 3.0 *(2022-07-11)*
+-------------------------------
+* Added step description
+* Added `Unchecked.unchecked` method
+
 Xteps Allure 2.3 / Xteps ReportPortal 2.3 *(2022-06-26)*
 -------------------------------
-* Update Xteps dependency
+* Updated Xteps dependency
 
 Xteps 2.3 *(2022-06-26)*
 -------------------------------
-* Update unchecked exception mechanism
+* Updated unchecked exception mechanism
 
 Xteps Allure 2.2 / Xteps ReportPortal 2.2 *(2022-06-26)*
 -------------------------------
-* Update Xteps dependency
+* Updated Xteps dependency
 
 Xteps 2.2 *(2022-06-16)*
 -------------------------------
@@ -19,7 +24,7 @@ Xteps 2.2 *(2022-06-16)*
 
 Xteps Allure 2.1 / Xteps ReportPortal 2.1 *(2022-06-13)*
 -------------------------------
-* Update Xteps dependency
+* Updated Xteps dependency
 
 Xteps 2.1 *(2022-06-13)*
 -------------------------------

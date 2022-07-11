@@ -26,60 +26,60 @@ first. Then add listeners via Service Provider Interface or via properties. Youâ
 
 ## API
 Xteps API is a set of static methods located in the `com.plugatar.xteps.Xteps`.
-1. `step(String)` - performs empty step with given name.
+- `step(String)` and `step(String, String)` - performs empty step with given name (and description).
 ```java
 step("Step 1");
+step("Step 2", "Description");
 ```
-2. `step(String, ThrowingRunnable)` - performs given step with given name.
+- `step(String, ThrowingRunnable)` and `step(String, String, ThrowingRunnable)` - performs given step with given name (and description).
 ```java
 step("Step 1", () -> {
     ...
 });
-step("Step 2", () -> {
+step("Step 2", "Description", () -> {
     ...
-    step("Inner step 1", () -> {
+    step("Nested step 1", () -> {
         ...
     });
 });
 ```
-3. `stepTo(String, ThrowingSupplier)` - performs given step with given name and returns the step result.
+- `stepTo(String, ThrowingSupplier)` and `stepTo(String, String, ThrowingSupplier)` - performs given step with given name (and description) and returns the step result.
 ```java
 String step1Result = stepTo("Step 1", () -> {
     ...
     return "result1";
 });
-String step2Result = stepTo("Step 2", () -> {
+String step2Result = stepTo("Step 2", "Description", () -> {
     ...
-    return stepTo("Inner step 1", () -> {
+    return stepTo("Nested step 1", () -> {
         ...
         return "result2";
     });
 });
 ```
-4. `stepsChain()` - returns initial steps chain.
+- `stepsChain()` - returns initial steps chain.
 ```java
 stepsChain()
     .step("Step 1", () -> {
         ...
     })
     .nestedSteps("Step 2", stepsChain -> stepsChain
-        .step("Inner step 1", () -> {
+        .step("Nested step 1", "Description",() -> {
             ...
         })
-        .step("Inner step 2", () -> {
+        .step("Nested step 2", () -> {
             ...
         })
     );
-
 stepsChain().withContext("context")
     .step("Step 3", ctx -> {
         ...
     })
     .nestedSteps("Step 4", stepsChain -> stepsChain
-        .step("Inner step 1", ctx -> {
+        .step("Nested step 1", "Description", ctx -> {
             ...
         })
-        .step("Inner step 2", ctx -> {
+        .step("Nested step 2", ctx -> {
             ...
         })
     );
@@ -125,7 +125,7 @@ overridden by system properties.
 
 | Name | Type | Default value | Description |
 | --- | --- | --- | --- |
-| xteps.enabled   | Boolean | `true` | Enable/disable steps logging |
+| xteps.enabled   | Boolean | `true` | Enable/disable steps logging. |
 | xteps.spi       | Boolean | `true` | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.core.StepListener` implementations. Implementations should have zero-argument public constructor. |
 | xteps.listeners | String  |        | List of `com.plugatar.xteps.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
 
@@ -150,7 +150,7 @@ You may run into a problem if you use Java 8. The problem is caused by generic e
 ```java
 stepsChain()
     .nestedStepsTo("Step 1", stepsChain -> stepsChain
-        .step("Inner step 1", () -> {})
+        .step("Nested step 1", () -> {})
     );
 ```
 
@@ -161,6 +161,6 @@ You can switch to Java 9+ or use `com.plugatar.xteps.Unchecked` static methods t
 ```java
 stepsChain()
     .nestedStepsTo("Step 1", uncheckedFunction(stepsChain -> stepsChain
-        .step("Inner step 1", () -> {}))
+        .step("Nested step 1", () -> {}))
     );
 ```
