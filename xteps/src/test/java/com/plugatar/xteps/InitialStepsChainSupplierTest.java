@@ -186,7 +186,7 @@ final class InitialStepsChainSupplierTest {
 
         @Override
         public void stepFailed(final String uuid,
-                               final Throwable throwable) {
+                               final Throwable exception) {
         }
     }
 
@@ -215,7 +215,7 @@ final class InitialStepsChainSupplierTest {
 
         @Override
         public void stepFailed(final String uuid,
-                               final Throwable throwable) {
+                               final Throwable exception) {
         }
     }
 }
