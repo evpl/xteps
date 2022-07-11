@@ -42,28 +42,6 @@ import java.util.stream.Collectors;
 public final class Xteps {
 
     /**
-     * Cached InitialStepsChain instance supplier.
-     */
-    private static final Supplier<InitialStepsChain> INITIAL_STEPS_CHAIN_SUPPLIER = new Supplier<InitialStepsChain>() {
-        private volatile InitialStepsChain instance = null;
-
-        @Override
-        public InitialStepsChain get() {
-            InitialStepsChain result;
-            if ((result = this.instance) == null) {
-                synchronized (this) {
-                    if ((result = this.instance) == null) {
-                        result = new InitialStepsChainSupplier().get();
-                        this.instance = result;
-                    }
-                    return result;
-                }
-            }
-            return result;
-        }
-    };
-
-    /**
      * Utility class ctor.
      */
     private Xteps() {
@@ -83,7 +61,7 @@ public final class Xteps {
      * @see #step(String, String)
      */
     public static void step(final String stepName) {
-        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName);
+        InitialStepsChainSupplier.CACHED.get().step(stepName);
     }
 
     /**
@@ -102,7 +80,7 @@ public final class Xteps {
      */
     public static void step(final String stepName,
                             final String stepDescription) {
-        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, stepDescription);
+        InitialStepsChainSupplier.CACHED.get().step(stepName, stepDescription);
     }
 
     /**
@@ -114,7 +92,7 @@ public final class Xteps {
      * });
      * step("Step 2", () -> {
      *     ...
-     *     step("Inner step 1", () -> {
+     *     step("Nested step 1", () -> {
      *         ...
      *     });
      * });
@@ -133,7 +111,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, step);
+        InitialStepsChainSupplier.CACHED.get().step(stepName, step);
     }
 
     /**
@@ -145,7 +123,7 @@ public final class Xteps {
      * });
      * step("Step 2", "Description", () -> {
      *     ...
-     *     step("Inner step 1", "Description", () -> {
+     *     step("Nested step 1", "Description", () -> {
      *         ...
      *     });
      * });
@@ -166,7 +144,7 @@ public final class Xteps {
         final String stepDescription,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        INITIAL_STEPS_CHAIN_SUPPLIER.get().step(stepName, stepDescription, step);
+        InitialStepsChainSupplier.CACHED.get().step(stepName, stepDescription, step);
     }
 
     /**
@@ -179,7 +157,7 @@ public final class Xteps {
      * });
      * String step2Result = stepTo("Step 2", () -> {
      *     ...
-     *     return stepTo("Inner step 1", () -> {
+     *     return stepTo("Nested step 1", () -> {
      *         ...
      *         return "result2";
      *     });
@@ -201,7 +179,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return INITIAL_STEPS_CHAIN_SUPPLIER.get().stepTo(stepName, step);
+        return InitialStepsChainSupplier.CACHED.get().stepTo(stepName, step);
     }
 
     /**
@@ -214,7 +192,7 @@ public final class Xteps {
      * });
      * String step2Result = stepTo("Step 2", "Description", () -> {
      *     ...
-     *     return stepTo("Inner step 1", "Description", () -> {
+     *     return stepTo("Nested step 1", "Description", () -> {
      *         ...
      *         return "result2";
      *     });
@@ -238,7 +216,7 @@ public final class Xteps {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return INITIAL_STEPS_CHAIN_SUPPLIER.get().stepTo(stepName, stepDescription, step);
+        return InitialStepsChainSupplier.CACHED.get().stepTo(stepName, stepDescription, step);
     }
 
     /**
@@ -250,23 +228,22 @@ public final class Xteps {
      *         ...
      *     })
      *     .nestedSteps("Step 2", stepsChain -> stepsChain
-     *         .step("Inner step 1", () -> {
+     *         .step("Nested step 1", () -> {
      *             ...
      *         })
-     *         .step("Inner step 2", "Description", () -> {
+     *         .step("Nested step 2", "Description", () -> {
      *             ...
      *         })
      *     );
-     *
      * stepsChain().withContext("context")
      *     .step("Step 3", ctx -> {
      *         ...
      *     })
      *     .nestedSteps("Step 4", stepsChain -> stepsChain
-     *         .step("Inner step 1", ctx -> {
+     *         .step("Nested step 1", ctx -> {
      *             ...
      *         })
-     *         .step("Inner step 2", "Description", ctx -> {
+     *         .step("Nested step 2", "Description", ctx -> {
      *             ...
      *         })
      *     );
@@ -276,13 +253,34 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static InitialStepsChain stepsChain() {
-        return INITIAL_STEPS_CHAIN_SUPPLIER.get();
+        return InitialStepsChainSupplier.CACHED.get();
     }
 
     /**
      * {@link Supplier} implementation for {@link InitialStepsChain}.
      */
     static final class InitialStepsChainSupplier implements Supplier<InitialStepsChain> {
+        /**
+         * Cached InitialStepsChain instance supplier.
+         */
+        private static final Supplier<InitialStepsChain> CACHED = new Supplier<InitialStepsChain>() {
+            private volatile InitialStepsChain instance = null;
+
+            @Override
+            public InitialStepsChain get() {
+                InitialStepsChain result;
+                if ((result = this.instance) == null) {
+                    synchronized (this) {
+                        if ((result = this.instance) == null) {
+                            result = new InitialStepsChainSupplier().get();
+                            this.instance = result;
+                        }
+                        return result;
+                    }
+                }
+                return result;
+            }
+        };
         private final Properties properties;
 
         /**
