@@ -55,7 +55,7 @@ final class InitialStepsChainSupplierTest {
         System.setProperty("xteps.enabled", "true");
         System.setProperty("xteps.listeners", "com.plugatar.xteps.InitialStepsChainSupplierTest$StaticStepListener");
 
-        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueTrueWithListener", () -> {});
+        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueTrueWithListener", () -> { });
         assertThat(StaticStepListener.lastStepName()).isEqualTo("enablePropertyCorrectValueTrueWithListener");
     }
 
@@ -72,7 +72,7 @@ final class InitialStepsChainSupplierTest {
         System.setProperty("xteps.enabled", "false");
         System.setProperty("xteps.listeners", "com.plugatar.xteps.InitialStepsChainSupplierTest$StaticStepListener");
 
-        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueFalseWithListener", () -> {});
+        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueFalseWithListener", () -> { });
         assertThat(StaticStepListener.lastStepName()).isNull();
     }
 
@@ -80,7 +80,7 @@ final class InitialStepsChainSupplierTest {
     void enablePropertyCorrectValueFalseWithoutListener() {
         System.setProperty("xteps.enabled", "false");
 
-        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueFalseWithoutListener", () -> {});
+        new InitialStepsChainSupplier().get().step("enablePropertyCorrectValueFalseWithoutListener", () -> { });
         assertThat(StaticStepListener.lastStepName()).isNull();
     }
 
@@ -88,7 +88,7 @@ final class InitialStepsChainSupplierTest {
     void enablePropertyDefaultValue() {
         System.setProperty("xteps.listeners", "com.plugatar.xteps.InitialStepsChainSupplierTest$StaticStepListener");
 
-        new InitialStepsChainSupplier().get().step("enablePropertyDefaultValue", () -> {});
+        new InitialStepsChainSupplier().get().step("enablePropertyDefaultValue", () -> { });
         assertThat(StaticStepListener.lastStepName()).isEqualTo("enablePropertyDefaultValue");
     }
 
@@ -112,7 +112,7 @@ final class InitialStepsChainSupplierTest {
     void listenersPropertyCorrectValue1Listener() {
         System.setProperty("xteps.listeners", "com.plugatar.xteps.InitialStepsChainSupplierTest$StaticStepListener");
 
-        new InitialStepsChainSupplier().get().step("listenersPropertyCorrectValue1Listener", () -> {});
+        new InitialStepsChainSupplier().get().step("listenersPropertyCorrectValue1Listener", () -> { });
         assertThat(StaticStepListener.lastStepName()).isEqualTo("listenersPropertyCorrectValue1Listener");
     }
 
@@ -124,7 +124,7 @@ final class InitialStepsChainSupplierTest {
                 "com.plugatar.xteps.InitialStepsChainSupplierTest$StaticStepListener2"
         );
 
-        new InitialStepsChainSupplier().get().step("listenersPropertyCorrectValue2Listeners", () -> {});
+        new InitialStepsChainSupplier().get().step("listenersPropertyCorrectValue2Listeners", () -> { });
         assertThat(StaticStepListener.lastStepName()).isEqualTo("listenersPropertyCorrectValue2Listeners");
         assertThat(StaticStepListener2.lastStepName()).isEqualTo("listenersPropertyCorrectValue2Listeners");
     }

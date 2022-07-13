@@ -66,14 +66,14 @@ final class InitialStepsChainImplTest {
                 action(chain -> chain.step("", (String) null))),
 
             Arguments.of("step method with action null stepName arg",
-                action(chain -> chain.step((String) null, () -> {}))),
+                action(chain -> chain.step((String) null, () -> { }))),
             Arguments.of("step method with action null runnable arg",
                 action(chain -> chain.step("", (ThrowingRunnable<RuntimeException>) null))),
 
             Arguments.of("step method with description and action null stepName arg",
-                action(chain -> chain.step((String) null, "", () -> {}))),
+                action(chain -> chain.step((String) null, "", () -> { }))),
             Arguments.of("step method with description and action null stepDescription arg",
-                action(chain -> chain.step("", (String) null, () -> {}))),
+                action(chain -> chain.step("", (String) null, () -> { }))),
             Arguments.of("step method with description and action null runnable arg",
                 action(chain -> chain.step("", "", (ThrowingRunnable<RuntimeException>) null))),
 
@@ -102,14 +102,14 @@ final class InitialStepsChainImplTest {
                 action(chain -> chain.stepTo("", "", (ThrowingSupplier<Object, RuntimeException>) null))),
 
             Arguments.of("nestedSteps method null stepName arg",
-                action(chain -> chain.nestedSteps((String) null, c -> {}))),
+                action(chain -> chain.nestedSteps((String) null, c -> { }))),
             Arguments.of("nestedSteps method null consumer arg",
                 action(chain -> chain.nestedSteps("", (ThrowingConsumer<InitialStepsChain, RuntimeException>) null))),
 
             Arguments.of("nestedSteps method null stepName arg",
-                action(chain -> chain.nestedSteps((String) null, "", c -> {}))),
+                action(chain -> chain.nestedSteps((String) null, "", c -> { }))),
             Arguments.of("nestedSteps method null stepDescription arg",
-                action(chain -> chain.nestedSteps("", (String) null, c -> {}))),
+                action(chain -> chain.nestedSteps("", (String) null, c -> { }))),
             Arguments.of("nestedSteps method null consumer arg",
                 action(chain -> chain.nestedSteps("", "", (ThrowingConsumer<InitialStepsChain, RuntimeException>) null))),
 
@@ -219,7 +219,7 @@ final class InitialStepsChainImplTest {
         final StepReporter stepReporter = mockedStepReporter();
         final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
         final String stepName = "step name";
-        final ThrowingRunnable<RuntimeException> runnable = () -> {};
+        final ThrowingRunnable<RuntimeException> runnable = () -> { };
 
         final InitialStepsChain methodResult = chain.step(stepName, runnable);
         assertThat(methodResult).isSameAs(chain);
@@ -232,7 +232,7 @@ final class InitialStepsChainImplTest {
         final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
         final String stepName = "step name";
         final String stepDescription = "step description";
-        final ThrowingRunnable<RuntimeException> runnable = () -> {};
+        final ThrowingRunnable<RuntimeException> runnable = () -> { };
 
         final InitialStepsChain methodResult = chain.step(stepName, stepDescription, runnable);
         assertThat(methodResult).isSameAs(chain);
@@ -300,7 +300,7 @@ final class InitialStepsChainImplTest {
         final StepReporter stepReporter = mockedStepReporter();
         final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
         final String stepName = "step name";
-        final ThrowingConsumer<InitialStepsChain, RuntimeException> consumer = c -> {};
+        final ThrowingConsumer<InitialStepsChain, RuntimeException> consumer = c -> { };
 
         final InitialStepsChain methodResult = chain.nestedSteps(stepName, consumer);
         assertThat(methodResult).isSameAs(chain);
@@ -313,7 +313,7 @@ final class InitialStepsChainImplTest {
         final InitialStepsChain chain = new InitialStepsChainImpl(stepReporter);
         final String stepName = "step name";
         final String stepDescription = "step description";
-        final ThrowingConsumer<InitialStepsChain, RuntimeException> consumer = c -> {};
+        final ThrowingConsumer<InitialStepsChain, RuntimeException> consumer = c -> { };
 
         final InitialStepsChain methodResult = chain.nestedSteps(stepName, stepDescription, consumer);
         assertThat(methodResult).isSameAs(chain);

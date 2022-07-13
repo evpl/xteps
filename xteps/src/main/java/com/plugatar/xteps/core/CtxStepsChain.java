@@ -24,15 +24,16 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
  * @param <C> the context type
  * @param <P> the previous steps chain type
  */
-public interface CtxStepsChain<C, P extends BaseStepsChain<?>>
-    extends BaseStepsChain<CtxStepsChain<C, P>>, MemorizingStepsChain<CtxStepsChain<C, P>, P> {
+public interface CtxStepsChain<C, P extends BaseStepsChain<?>> extends
+    BaseStepsChain<CtxStepsChain<C, P>>,
+    MemorizingStepsChain<CtxStepsChain<C, P>, P>,
+    ACContextsStepsChain<CtxStepsChain<C, P>> {
 
     /**
      * Returns the context.
      *
      * @return the context
-     * @see #supplyContextTo(ThrowingConsumer)
-     * @see #applyContextTo(ThrowingFunction)
+     * @see #contextIsAutoClosable()
      */
     C context();
 
@@ -102,6 +103,21 @@ public interface CtxStepsChain<C, P extends BaseStepsChain<?>>
      * @see #withContext(ThrowingFunction)
      */
     NoCtxStepsChain<CtxStepsChain<C, P>> withoutContext();
+
+    /**
+     * Append the current context to the cleanup queue. This context will be closed
+     * in case of any exception or in case of {@link #closeAutoClosableContexts()}
+     * method invocation.
+     *
+     * @return this steps chain
+     * @throws XtepsException if the current context is not an {@link AutoCloseable} instance
+     * @see #context()
+     * @see #supplyContextTo(ThrowingConsumer)
+     * @see #applyContextTo(ThrowingFunction)
+     * @see #contextIsAutoClosable()
+     * @see #closeAutoClosableContexts()
+     */
+    CtxStepsChain<C, P> contextIsAutoClosable();
 
     /**
      * Performs given step with given name and returns this steps chain.

@@ -16,18 +16,18 @@
 package com.plugatar.xteps.core;
 
 /**
- * Steps chain memorizing a previous steps chain.
+ * Steps chain containing an {@link AutoCloseable} contexts.
  *
- * @param <S> the type of the steps chain implementing {@code MemorizingStepsChain}
- * @param <P> the previous steps chain type
+ * @param <S> the type of the steps chain implementing {@code ACStepsChain}
  */
-public interface MemorizingStepsChain<S extends BaseStepsChain<S>, P extends BaseStepsChain<?>>
-    extends BaseStepsChain<S> {
+public interface ACContextsStepsChain<S extends BaseStepsChain<S>> extends BaseStepsChain<S> {
 
     /**
-     * Returns the previous steps chain.
+     * Close all {@link AutoCloseable} contexts.
      *
-     * @return previous steps chain
+     * @return this steps chain
+     * @throws XtepsException if at least one of {@link AutoCloseable#close()} methods
+     *                        invocation throws any exception
      */
-    P previousStepsChain();
+    S closeAutoClosableContexts();
 }

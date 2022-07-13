@@ -24,6 +24,12 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 
+import java.util.Deque;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+/**
+ * Initial steps chain implementation.
+ */
 public class InitialStepsChainImpl implements InitialStepsChain {
     private final StepReporter stepReporter;
 
@@ -43,7 +49,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
 
     @Override
     public final <U> CtxStepsChain<U, InitialStepsChain> withContext(final U context) {
-        return new CtxStepsChainImpl<>(this.stepReporter, context, this);
+        return new CtxStepsChainImpl<>(this.stepReporter, context, this, newACDeque());
     }
 
     @Override
@@ -51,7 +57,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         final ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E {
         if (contextSupplier == null) { throwNullArgException("contextSupplier"); }
-        return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this);
+        return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this, newACDeque());
     }
 
     @Override
@@ -60,7 +66,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public InitialStepsChain step(
+    public final InitialStepsChain step(
         final String stepName,
         final String stepDescription
     ) {
@@ -79,7 +85,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public <E extends Throwable> InitialStepsChain step(
+    public final <E extends Throwable> InitialStepsChain step(
         final String stepName,
         final String stepDescription,
         final ThrowingRunnable<? extends E> step
@@ -100,7 +106,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public <U, E extends Throwable> CtxStepsChain<U, InitialStepsChain> stepToContext(
+    public final <U, E extends Throwable> CtxStepsChain<U, InitialStepsChain> stepToContext(
         final String stepName,
         final String stepDescription,
         final ThrowingSupplier<? extends U, ? extends E> step
@@ -111,7 +117,8 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         return new CtxStepsChainImpl<>(
             this.stepReporter,
             this.stepReporter.reportSupplierStep(stepName, stepDescription, step),
-            this
+            this,
+            newACDeque()
         );
     }
 
@@ -124,7 +131,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public <R, E extends Throwable> R stepTo(
+    public final <R, E extends Throwable> R stepTo(
         final String stepName,
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
@@ -144,7 +151,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public <E extends Throwable> InitialStepsChain nestedSteps(
+    public final <E extends Throwable> InitialStepsChain nestedSteps(
         final String stepName,
         final String stepDescription,
         final ThrowingConsumer<InitialStepsChain, ? extends E> stepsChain
@@ -165,7 +172,7 @@ public class InitialStepsChainImpl implements InitialStepsChain {
     }
 
     @Override
-    public <R, E extends Throwable> R nestedStepsTo(
+    public final <R, E extends Throwable> R nestedStepsTo(
         final String stepName,
         final String stepDescription,
         final ThrowingFunction<InitialStepsChain, ? extends R, ? extends E> stepsChain
@@ -174,5 +181,9 @@ public class InitialStepsChainImpl implements InitialStepsChain {
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
         if (stepsChain == null) { throwNullArgException("stepsChain"); }
         return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
+    }
+
+    private static Deque<AutoCloseable> newACDeque() {
+        return new ConcurrentLinkedDeque<>();
     }
 }

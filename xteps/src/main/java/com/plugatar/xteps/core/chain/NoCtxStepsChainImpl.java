@@ -25,22 +25,37 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
 import com.plugatar.xteps.util.function.ThrowingRunnable;
 import com.plugatar.xteps.util.function.ThrowingSupplier;
 
+import java.util.Deque;
+
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosables;
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosablesAndRethrow;
+
+/**
+ * No context steps chain implementation.
+ *
+ * @param <P> the previous steps chain type
+ */
 public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxStepsChain<P> {
     private final StepReporter stepReporter;
     private final P previousStepsChain;
+    private final Deque<AutoCloseable> acContextsDeque;
 
     /**
      * Ctor.
      *
      * @param stepReporter       the step reporter
      * @param previousStepsChain the previous steps chain
+     * @param acContextsDeque    the {@code AutoClosable} contexts deque
      */
     public NoCtxStepsChainImpl(final StepReporter stepReporter,
-                               final P previousStepsChain) {
+                               final P previousStepsChain,
+                               final Deque<AutoCloseable> acContextsDeque) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (previousStepsChain == null) { throw new NullPointerException("previousStepsChain arg is null"); }
+        if (acContextsDeque == null) { throw new NullPointerException("acContextsDeque arg is null"); }
         this.stepReporter = stepReporter;
         this.previousStepsChain = previousStepsChain;
+        this.acContextsDeque = acContextsDeque;
     }
 
     private static void throwNullArgException(final String argName) {
@@ -54,15 +69,29 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
 
     @Override
     public final <U> CtxStepsChain<U, NoCtxStepsChain<P>> withContext(final U context) {
-        return new CtxStepsChainImpl<>(this.stepReporter, context, this);
+        try {
+            return new CtxStepsChainImpl<>(this.stepReporter, context, this, this.acContextsDeque);
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
     public final <U, E extends Throwable> CtxStepsChain<U, NoCtxStepsChain<P>> withContext(
         final ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E {
-        if (contextSupplier == null) { throwNullArgException("contextSupplier"); }
-        return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this);
+        try {
+            if (contextSupplier == null) { throwNullArgException("contextSupplier"); }
+            return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this, this.acContextsDeque);
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
+    }
+
+    @Override
+    public final NoCtxStepsChain<P> closeAutoClosableContexts() {
+        closeAllAutoClosables(this.acContextsDeque);
+        return this;
     }
 
     @Override
@@ -71,14 +100,18 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public NoCtxStepsChain<P> step(
+    public final NoCtxStepsChain<P> step(
         final String stepName,
         final String stepDescription
     ) {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        this.stepReporter.reportEmptyStep(stepName, stepDescription);
-        return this;
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            this.stepReporter.reportEmptyStep(stepName, stepDescription);
+            return this;
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
@@ -90,16 +123,20 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public <E extends Throwable> NoCtxStepsChain<P> step(
+    public final <E extends Throwable> NoCtxStepsChain<P> step(
         final String stepName,
         final String stepDescription,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (step == null) { throwNullArgException("step"); }
-        this.stepReporter.reportRunnableStep(stepName, stepDescription, step);
-        return this;
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            if (step == null) { throwNullArgException("step"); }
+            this.stepReporter.reportRunnableStep(stepName, stepDescription, step);
+            return this;
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
@@ -111,19 +148,24 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public <U, E extends Throwable> CtxStepsChain<U, NoCtxStepsChain<P>> stepToContext(
+    public final <U, E extends Throwable> CtxStepsChain<U, NoCtxStepsChain<P>> stepToContext(
         final String stepName,
         final String stepDescription,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (step == null) { throwNullArgException("step"); }
-        return new CtxStepsChainImpl<>(
-            this.stepReporter,
-            this.stepReporter.reportSupplierStep(stepName, stepDescription, step),
-            this
-        );
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            if (step == null) { throwNullArgException("step"); }
+            return new CtxStepsChainImpl<>(
+                this.stepReporter,
+                this.stepReporter.reportSupplierStep(stepName, stepDescription, step),
+                this,
+                this.acContextsDeque
+            );
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
@@ -135,15 +177,19 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public <R, E extends Throwable> R stepTo(
+    public final <R, E extends Throwable> R stepTo(
         final String stepName,
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (step == null) { throwNullArgException("step"); }
-        return this.stepReporter.reportSupplierStep(stepName, stepDescription, step);
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            if (step == null) { throwNullArgException("step"); }
+            return this.stepReporter.reportSupplierStep(stepName, stepDescription, step);
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
@@ -155,16 +201,20 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public <E extends Throwable> NoCtxStepsChain<P> nestedSteps(
+    public final <E extends Throwable> NoCtxStepsChain<P> nestedSteps(
         final String stepName,
         final String stepDescription,
         final ThrowingConsumer<NoCtxStepsChain<P>, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (stepsChain == null) { throwNullArgException("stepsChain"); }
-        this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
-        return this;
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            if (stepsChain == null) { throwNullArgException("stepsChain"); }
+            this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
+            return this;
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 
     @Override
@@ -176,14 +226,18 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
     }
 
     @Override
-    public <R, E extends Throwable> R nestedStepsTo(
+    public final <R, E extends Throwable> R nestedStepsTo(
         final String stepName,
         final String stepDescription,
         final ThrowingFunction<NoCtxStepsChain<P>, ? extends R, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (stepsChain == null) { throwNullArgException("stepsChain"); }
-        return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
+        try {
+            if (stepName == null) { throwNullArgException("stepName"); }
+            if (stepDescription == null) { throwNullArgException("stepDescription"); }
+            if (stepsChain == null) { throwNullArgException("stepsChain"); }
+            return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
+        } catch (final Throwable ex) {
+            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+        }
     }
 }

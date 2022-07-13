@@ -172,7 +172,7 @@ public class DefaultStepReporter implements StepReporter {
     }
 
     private static XtepsException listenerException() {
-        return new XtepsException("One or more listeners threw exceptions");
+        return new XtepsException("one or more listeners threw exceptions");
     }
 
     private static void cleanStackTraceIfNotXtepsException(final Throwable mainTh) {

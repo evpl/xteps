@@ -111,7 +111,7 @@ final class DefaultStepReporterTest {
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
         assertThatThrownXtepsException(
-            () -> stepReporter.reportRunnableStep((String) null, "step description", () -> {}),
+            () -> stepReporter.reportRunnableStep((String) null, "step description", () -> { }),
             stepListeners
         );
     }
@@ -122,7 +122,7 @@ final class DefaultStepReporterTest {
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
         assertThatThrownXtepsException(
-            () -> stepReporter.reportRunnableStep("step name", (String) null, () -> {}),
+            () -> stepReporter.reportRunnableStep("step name", (String) null, () -> { }),
             stepListeners
         );
     }
@@ -183,7 +183,7 @@ final class DefaultStepReporterTest {
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
         assertThatThrownXtepsException(
-            () -> stepReporter.reportConsumerStep((String) null, "step description", new Object(), x -> {}),
+            () -> stepReporter.reportConsumerStep((String) null, "step description", new Object(), x -> { }),
             stepListeners
         );
     }
@@ -194,7 +194,7 @@ final class DefaultStepReporterTest {
         final DefaultStepReporter stepReporter = new DefaultStepReporter(stepListeners);
 
         assertThatThrownXtepsException(
-            () -> stepReporter.reportConsumerStep("step name", (String) null, new Object(), x -> {}),
+            () -> stepReporter.reportConsumerStep("step name", (String) null, new Object(), x -> { }),
             stepListeners
         );
     }
@@ -455,7 +455,7 @@ final class DefaultStepReporterTest {
         );
         assertThat(methodException)
             .isInstanceOf(XtepsException.class)
-            .hasMessage("One or more listeners threw exceptions")
+            .hasMessage("one or more listeners threw exceptions")
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);
         {

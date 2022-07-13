@@ -20,7 +20,9 @@ package com.plugatar.xteps.core;
  *
  * @param <P> the previous steps chain type
  */
-public interface NoCtxStepsChain<P extends BaseStepsChain<?>>
-    extends BaseNoCtxStepsChain<NoCtxStepsChain<P>>, MemorizingStepsChain<NoCtxStepsChain<P>, P> {
+public interface NoCtxStepsChain<P extends BaseStepsChain<?>> extends
+    BaseNoCtxStepsChain<NoCtxStepsChain<P>>,
+    MemorizingStepsChain<NoCtxStepsChain<P>, P>,
+    ACContextsStepsChain<NoCtxStepsChain<P>> {
 
 }
