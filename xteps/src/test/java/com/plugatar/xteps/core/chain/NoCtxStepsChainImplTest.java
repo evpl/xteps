@@ -454,10 +454,10 @@ final class NoCtxStepsChainImplTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("nullArgsTestCases")
-    void autoClosableContextsIfException(final String testCaseName,
+    void AutoCloseableContextsIfException(final String testCaseName,
                                          final Consumer<NoCtxStepsChain<FakeStepsChain>> action) throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
-        final AutoCloseable[] autoCloseables = mockedAutoClosable(3);
+        final AutoCloseable[] autoCloseables = mockedAutoCloseable(3);
         final RuntimeException exception1 = new RuntimeException();
         doThrow(exception1).when(autoCloseables[0]).close();
         final RuntimeException exception2 = new RuntimeException();
@@ -482,23 +482,23 @@ final class NoCtxStepsChainImplTest {
     }
 
     @Test
-    void closeAutoClosableContextsMethodWithEmptyDeque() throws Throwable {
+    void closeAutoCloseableContextsMethodWithEmptyDeque() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
         final Deque<AutoCloseable> acDeque = new ArrayDeque<>();
         final NoCtxStepsChain<FakeStepsChain> chain = new NoCtxStepsChainImpl<>(
             stepReporter, new FakeStepsChain(), acDeque
         );
 
-        final Object methodResult = chain.closeAutoClosableContexts();
+        final Object methodResult = chain.closeAutoCloseableContexts();
         assertThat(methodResult).isSameAs(chain);
         assertThat(acDeque).isEmpty();
         verifyNoInteractions(stepReporter);
     }
 
     @Test
-    void closeAutoClosableContextsMethodWithNonEmptyDeque() throws Throwable {
+    void closeAutoCloseableContextsMethodWithNonEmptyDeque() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
-        final AutoCloseable[] autoCloseables = mockedAutoClosable(3);
+        final AutoCloseable[] autoCloseables = mockedAutoCloseable(3);
         final Deque<AutoCloseable> acDeque = new ArrayDeque<>();
         acDeque.offerLast(autoCloseables[0]);
         acDeque.offerLast(autoCloseables[1]);
@@ -507,7 +507,7 @@ final class NoCtxStepsChainImplTest {
             stepReporter, new FakeStepsChain(), acDeque
         );
 
-        final Object methodResult = chain.closeAutoClosableContexts();
+        final Object methodResult = chain.closeAutoCloseableContexts();
         assertThat(methodResult).isSameAs(chain);
         assertThat(acDeque).isEmpty();
         verify(autoCloseables[0], times(1)).close();
@@ -517,9 +517,9 @@ final class NoCtxStepsChainImplTest {
     }
 
     @Test
-    void closeAutoClosableContextsMethodWithThrowingAutoClosablesDeque() throws Throwable {
+    void closeAutoCloseableContextsMethodWithThrowingAutoCloseablesDeque() throws Throwable {
         final StepReporter stepReporter = mockedStepReporter();
-        final AutoCloseable[] autoCloseables = mockedAutoClosable(3);
+        final AutoCloseable[] autoCloseables = mockedAutoCloseable(3);
         final RuntimeException exception1 = new RuntimeException();
         doThrow(exception1).when(autoCloseables[0]).close();
         final RuntimeException exception2 = new RuntimeException();
@@ -532,7 +532,7 @@ final class NoCtxStepsChainImplTest {
             stepReporter, new FakeStepsChain(), acDeque
         );
 
-        assertThatCode(() -> chain.closeAutoClosableContexts())
+        assertThatCode(() -> chain.closeAutoCloseableContexts())
             .isInstanceOf(XtepsException.class)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);
@@ -562,7 +562,7 @@ final class NoCtxStepsChainImplTest {
         return stepReporter;
     }
 
-    private static AutoCloseable[] mockedAutoClosable(final int count) {
+    private static AutoCloseable[] mockedAutoCloseable(final int count) {
         final AutoCloseable[] array = new AutoCloseable[count];
         for (int idx = 0; idx < count; ++idx) {
             array[idx] = mock(AutoCloseable.class);

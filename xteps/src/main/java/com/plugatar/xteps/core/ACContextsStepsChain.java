@@ -29,5 +29,5 @@ public interface ACContextsStepsChain<S extends BaseStepsChain<S>> extends BaseS
      * @throws XtepsException if at least one of {@link AutoCloseable#close()} methods
      *                        invocation throws any exception
      */
-    S closeAutoClosableContexts();
+    S closeAutoCloseableContexts();
 }

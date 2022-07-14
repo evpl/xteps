@@ -33,7 +33,7 @@ public interface CtxStepsChain<C, P extends BaseStepsChain<?>> extends
      * Returns the context.
      *
      * @return the context
-     * @see #contextIsAutoClosable()
+     * @see #contextIsAutoCloseable()
      */
     C context();
 
@@ -105,8 +105,8 @@ public interface CtxStepsChain<C, P extends BaseStepsChain<?>> extends
     NoCtxStepsChain<CtxStepsChain<C, P>> withoutContext();
 
     /**
-     * Append the current context to the cleanup queue. This context will be closed
-     * in case of any exception or in case of {@link #closeAutoClosableContexts()}
+     * Append the current context to the cleanup queue. This context will be closed in case
+     * of any exception in steps chain or in case of {@link #closeAutoCloseableContexts()}
      * method invocation.
      *
      * @return this steps chain
@@ -114,10 +114,10 @@ public interface CtxStepsChain<C, P extends BaseStepsChain<?>> extends
      * @see #context()
      * @see #supplyContextTo(ThrowingConsumer)
      * @see #applyContextTo(ThrowingFunction)
-     * @see #contextIsAutoClosable()
-     * @see #closeAutoClosableContexts()
+     * @see #contextIsAutoCloseable()
+     * @see #closeAutoCloseableContexts()
      */
-    CtxStepsChain<C, P> contextIsAutoClosable();
+    CtxStepsChain<C, P> contextIsAutoCloseable();
 
     /**
      * Performs given step with given name and returns this steps chain.

@@ -40,8 +40,8 @@ final class StepsChainUtils {
      * @return fake value
      * @throws Throwable {@code baseException} if any case
      */
-    static RuntimeException closeAllAutoClosablesAndRethrow(final Deque<AutoCloseable> acDeque,
-                                                            final Throwable baseException) {
+    static RuntimeException closeAllAutoCloseablesAndSneakyRethrow(final Deque<AutoCloseable> acDeque,
+                                                                   final Throwable baseException) {
         for (AutoCloseable ac = acDeque.pollLast(); ac != null; ac = acDeque.pollLast()) {
             try {
                 ac.close();
@@ -59,14 +59,16 @@ final class StepsChainUtils {
      * @throws XtepsException if one of {@link AutoCloseable#close()} methods
      *                        invocation throws any exception
      */
-    static void closeAllAutoClosables(final Deque<AutoCloseable> acDeque) {
+    static void closeAllAutoCloseables(final Deque<AutoCloseable> acDeque) {
         XtepsException baseException = null;
         for (AutoCloseable ac = acDeque.pollLast(); ac != null; ac = acDeque.pollLast()) {
             try {
                 ac.close();
             } catch (final Throwable ex) {
                 if (baseException == null) {
-                    baseException = new XtepsException("cannot close AutoClosable context");
+                    baseException = new XtepsException(
+                        "One or more AutoCloseable contexts cannot be closed (see suppressed exceptions)"
+                    );
                 }
                 baseException.addSuppressed(ex);
             }

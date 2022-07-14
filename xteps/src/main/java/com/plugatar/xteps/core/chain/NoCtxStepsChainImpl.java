@@ -27,8 +27,8 @@ import com.plugatar.xteps.util.function.ThrowingSupplier;
 
 import java.util.Deque;
 
-import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosables;
-import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosablesAndRethrow;
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoCloseables;
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoCloseablesAndSneakyRethrow;
 
 /**
  * No context steps chain implementation.
@@ -45,7 +45,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
      *
      * @param stepReporter       the step reporter
      * @param previousStepsChain the previous steps chain
-     * @param acContextsDeque    the {@code AutoClosable} contexts deque
+     * @param acContextsDeque    the {@code AutoCloseable} contexts deque
      */
     public NoCtxStepsChainImpl(final StepReporter stepReporter,
                                final P previousStepsChain,
@@ -72,7 +72,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
         try {
             return new CtxStepsChainImpl<>(this.stepReporter, context, this, this.acContextsDeque);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -84,13 +84,13 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             if (contextSupplier == null) { throwNullArgException("contextSupplier"); }
             return new CtxStepsChainImpl<>(this.stepReporter, contextSupplier.get(), this, this.acContextsDeque);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
     @Override
-    public final NoCtxStepsChain<P> closeAutoClosableContexts() {
-        closeAllAutoClosables(this.acContextsDeque);
+    public final NoCtxStepsChain<P> closeAutoCloseableContexts() {
+        closeAllAutoCloseables(this.acContextsDeque);
         return this;
     }
 
@@ -110,7 +110,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             this.stepReporter.reportEmptyStep(stepName, stepDescription);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -135,7 +135,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             this.stepReporter.reportRunnableStep(stepName, stepDescription, step);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -164,7 +164,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
                 this.acContextsDeque
             );
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -188,7 +188,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             if (step == null) { throwNullArgException("step"); }
             return this.stepReporter.reportSupplierStep(stepName, stepDescription, step);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -213,7 +213,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -237,7 +237,7 @@ public class NoCtxStepsChainImpl<P extends BaseStepsChain<?>> implements NoCtxSt
             if (stepsChain == null) { throwNullArgException("stepsChain"); }
             return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 }

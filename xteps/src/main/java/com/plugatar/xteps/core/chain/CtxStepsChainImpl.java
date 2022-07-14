@@ -25,8 +25,8 @@ import com.plugatar.xteps.util.function.ThrowingFunction;
 
 import java.util.Deque;
 
-import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosables;
-import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoClosablesAndRethrow;
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoCloseables;
+import static com.plugatar.xteps.core.chain.StepsChainUtils.closeAllAutoCloseablesAndSneakyRethrow;
 
 /**
  * Contextual steps chain implementation.
@@ -46,7 +46,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
      * @param stepReporter       the step reporter
      * @param context            the context
      * @param previousStepsChain the previous steps chain
-     * @param acContextsDeque    the {@code AutoClosable} contexts deque
+     * @param acContextsDeque    the {@code AutoCloseable} contexts deque
      */
     public CtxStepsChainImpl(final StepReporter stepReporter,
                              final C context,
@@ -84,7 +84,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             consumer.accept(this.context);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -96,7 +96,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             if (function == null) { throwNullArgException("function"); }
             return function.apply(this.context);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -105,7 +105,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         try {
             return new CtxStepsChainImpl<>(this.stepReporter, context, this, this.acContextsDeque);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -119,7 +119,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
                 this.stepReporter, contextFunction.apply(this.context), this, this.acContextsDeque
             );
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -128,26 +128,26 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
         try {
             return new NoCtxStepsChainImpl<>(this.stepReporter, this, this.acContextsDeque);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
     @Override
-    public final CtxStepsChain<C, P> contextIsAutoClosable() {
+    public final CtxStepsChain<C, P> contextIsAutoCloseable() {
         try {
             if (this.context instanceof AutoCloseable) {
                 this.acContextsDeque.offerLast((AutoCloseable) this.context);
                 return this;
             }
-            throw new XtepsException("the current context is not an AutoClosable instance");
+            throw new XtepsException("the current context is not an AutoCloseable instance");
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
     @Override
-    public final CtxStepsChain<C, P> closeAutoClosableContexts() {
-        closeAllAutoClosables(this.acContextsDeque);
+    public final CtxStepsChain<C, P> closeAutoCloseableContexts() {
+        closeAllAutoCloseables(this.acContextsDeque);
         return this;
     }
 
@@ -167,7 +167,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             this.stepReporter.reportEmptyStep(stepName, stepDescription);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -192,7 +192,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             this.stepReporter.reportConsumerStep(stepName, stepDescription, this.context, step);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -221,7 +221,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
                 this.acContextsDeque
             );
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -245,7 +245,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             if (step == null) { throwNullArgException("step"); }
             return this.stepReporter.reportFunctionStep(stepName, stepDescription, this.context, step);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -270,7 +270,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             this.stepReporter.reportConsumerStep(stepName, stepDescription, this, stepsChain);
             return this;
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 
@@ -294,7 +294,7 @@ public class CtxStepsChainImpl<C, P extends BaseStepsChain<?>> implements CtxSte
             if (stepsChain == null) { throwNullArgException("stepsChain"); }
             return this.stepReporter.reportFunctionStep(stepName, stepDescription, this, stepsChain);
         } catch (final Throwable ex) {
-            throw closeAllAutoClosablesAndRethrow(this.acContextsDeque, ex);
+            throw closeAllAutoCloseablesAndSneakyRethrow(this.acContextsDeque, ex);
         }
     }
 }
