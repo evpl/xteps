@@ -1,15 +1,20 @@
 Change Log
 ==========
 
-Xteps 3.1
+3.2 *(2022-07-14)*
+-------------------------------
+* Updated DefaultStepReporter logic
+* Fixed typo in AutoCloseable
+
+3.1 *(2022-07-13)*
 -------------------------------
 * Added closing mechanism for steps chains
 
-Xteps 3.0.1 / Xteps Allure 3.0.1 / Xteps ReportPortal 3.0.1 *(2022-07-11)*
+3.0.1 *(2022-07-11)*
 -------------------------------
 * Fix pom files
 
-Xteps 3.0 / Xteps Allure 3.0 / Xteps ReportPortal 3.0 *(2022-07-11)*
+3.0 *(2022-07-11)*
 -------------------------------
 * Added step description
 * Added `Unchecked.unchecked` method

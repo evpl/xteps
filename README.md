@@ -85,6 +85,26 @@ stepsChain().withContext("context")
     );
 ```
 
+## Safe AutoCloseable context
+Don't worry about closing resources, just use steps chain. Context will be closed in case of any exception in
+steps chain or in case of `closeAutoCloseableContexts()` method invocation.
+```java
+stepsChain().withContext(new AutoCloseableImpl1())
+    .contextIsAutoCloseable()
+    .step("Step 1", ctx -> {
+        ...
+    })
+    .stepToContext("Step 2", ctx -> {
+        ...
+        return new AutoCloseableImpl2();
+    })
+    .contextIsAutoCloseable()
+    .step("Step 3", ctx -> {
+        ...
+    })
+    .closeAutoCloseableContexts();
+```
+
 ## Checked exceptions
 
 Xteps is tolerant to checked exceptions. Each method allows you to throw generic exception, the type of this exception
