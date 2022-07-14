@@ -120,59 +120,58 @@ public class DefaultStepReporter implements StepReporter {
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
         if (function == null) { throwNullArgException("function"); }
-        final String uuid = UUID.randomUUID().toString();
-        XtepsException baseException = null;
         // step start
+        final String uuid = UUID.randomUUID().toString();
+        XtepsException listenerException = null;
         for (final StepListener listener : this.listeners) {
             try {
                 listener.stepStarted(uuid, stepName, stepDescription);
             } catch (final Throwable ex) {
-                if (baseException == null) {
-                    baseException = listenerException();
+                if (listenerException == null) {
+                    listenerException = listenerException();
                 }
-                baseException.addSuppressed(ex);
+                listenerException.addSuppressed(ex);
             }
         }
         // step action
-        E stepEx = null;
-        R result = null;
+        E stepException = null;
+        R stepResult = null;
         try {
-            result = function.apply(input);
+            stepResult = function.apply(input);
         } catch (final Throwable ex) {
             cleanStackTraceIfNotXtepsException(ex);
-            if (baseException != null) {
-                baseException.addSuppressed(ex);
-            }
-            stepEx = (E) ex;
+            stepException = (E) ex;
         }
         // step finish
         for (final StepListener listener : this.listeners) {
             try {
-                if (baseException != null) {
-                    listener.stepFailed(uuid, baseException);
-                } else if (stepEx != null) {
-                    listener.stepFailed(uuid, stepEx);
-                } else {
+                if (stepException == null) {
                     listener.stepPassed(uuid);
+                } else {
+                    listener.stepFailed(uuid, stepException);
                 }
             } catch (final Throwable ex) {
-                if (baseException == null) {
-                    baseException = listenerException();
+                if (listenerException == null) {
+                    listenerException = listenerException();
                 }
-                baseException.addSuppressed(ex);
+                listenerException.addSuppressed(ex);
             }
         }
-        if (baseException != null) {
-            throw baseException;
-        } else if (stepEx != null) {
-            throw stepEx;
+        // result
+        if (listenerException != null) {
+            if (stepException != null) {
+                listenerException.addSuppressed(stepException);
+            }
+            throw listenerException;
+        } else if (stepException != null) {
+            throw stepException;
         } else {
-            return result;
+            return stepResult;
         }
     }
 
     private static XtepsException listenerException() {
-        return new XtepsException("one or more listeners threw exceptions");
+        return new XtepsException("One or more listeners threw exceptions (see suppressed exceptions)");
     }
 
     private static void cleanStackTraceIfNotXtepsException(final Throwable mainTh) {

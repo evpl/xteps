@@ -445,19 +445,20 @@ final class DefaultStepReporterTest {
         );
         final String stepName = randomString();
         final String stepDescription = randomString();
-        final RuntimeException exception1 = new RuntimeException("listener 1 step started exception");
-        final RuntimeException exception2 = new RuntimeException("listener 2 step failed exception");
-        doThrow(exception1).when(stepListener1).stepStarted(any(), any(), any());
-        doThrow(exception2).when(stepListener2).stepFailed(any(), any());
+        final RuntimeException listenerException1 = new RuntimeException("listener 1 step started exception");
+        final RuntimeException listenerException2 = new RuntimeException("listener 2 step failed exception");
+        doThrow(listenerException1).when(stepListener1).stepStarted(any(), any(), any());
+        doThrow(listenerException2).when(stepListener2).stepFailed(any(), any());
+        final RuntimeException stepException = new RuntimeException("listener 2 step failed exception");
 
         final Throwable methodException = assertThrows(Throwable.class, () ->
-            stepReporter.reportEmptyStep(stepName, stepDescription)
+            stepReporter.reportRunnableStep(stepName, stepDescription, () -> { throw stepException; })
         );
         assertThat(methodException)
             .isInstanceOf(XtepsException.class)
-            .hasMessage("one or more listeners threw exceptions")
-            .hasSuppressedException(exception1)
-            .hasSuppressedException(exception2);
+            .hasSuppressedException(listenerException1)
+            .hasSuppressedException(listenerException2)
+            .hasSuppressedException(stepException);
         {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
             final ArgumentCaptor<String> stepFailedUUID = ArgumentCaptor.forClass(String.class);
@@ -465,7 +466,7 @@ final class DefaultStepReporterTest {
             verify(stepListener1, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(stepListener1, times(1)).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
             assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
-            assertThat(stepFailedException.getValue()).isSameAs(methodException);
+            assertThat(stepFailedException.getValue()).isSameAs(stepException);
         }
         {
             final ArgumentCaptor<String> stepStartedUUID = ArgumentCaptor.forClass(String.class);
@@ -474,7 +475,7 @@ final class DefaultStepReporterTest {
             verify(stepListener2, times(1)).stepStarted(stepStartedUUID.capture(), eq(stepName), eq(stepDescription));
             verify(stepListener2, times(1)).stepFailed(stepFailedUUID.capture(), stepFailedException.capture());
             assertThat(stepFailedUUID.getValue()).isSameAs(stepStartedUUID.getValue());
-            assertThat(stepFailedException.getValue()).isSameAs(methodException);
+            assertThat(stepFailedException.getValue()).isSameAs(stepException);
         }
     }
 
