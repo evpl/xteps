@@ -16,12 +16,11 @@
 package com.plugatar.xteps.util.function;
 
 /**
- * The {@link java.util.function.Function} specialization that might
- * throw an exception.
+ * The {@link java.util.function.Function} specialization that might throw an exception.
  *
  * @param <T> the type of the input argument
  * @param <R> the type of the result
- * @param <E> the type of the thrown exception
+ * @param <E> the type of the throwing exception
  * @see java.util.function.Function
  */
 @FunctionalInterface
