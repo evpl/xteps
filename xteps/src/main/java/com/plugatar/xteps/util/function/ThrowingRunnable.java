@@ -17,7 +17,7 @@ package com.plugatar.xteps.util.function;
 
 /**
  * The {@link Runnable} specialization that might
- * throw a exception.
+ * throw an exception.
  *
  * @param <E> the type of the thrown exception
  * @see Runnable

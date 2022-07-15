@@ -17,7 +17,7 @@ package com.plugatar.xteps.util.function;
 
 /**
  * The {@link java.util.function.Function} specialization that might
- * throw a exception.
+ * throw an exception.
  *
  * @param <T> the type of the input argument
  * @param <R> the type of the result

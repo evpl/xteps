@@ -17,7 +17,7 @@ package com.plugatar.xteps.util.function;
 
 /**
  * The {@link java.util.function.Consumer} specialization that might
- * throw a exception.
+ * throw an exception.
  *
  * @param <T> the type of the input argument
  * @param <E> the type of the thrown exception
