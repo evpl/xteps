@@ -22,6 +22,8 @@ import io.qameta.allure.model.Status;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.util.ResultsUtils;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * {@link StepListener} implementation reporting to Allure.
  */
@@ -41,12 +43,18 @@ public class AllureStepListener implements StepListener {
     public void stepStarted(final String uuid,
                             final String stepName,
                             final String stepDescription) {
+        final AllureLifecycle allureLifecycle = Allure.getLifecycle();
         final StepResult stepResult = new StepResult();
-        stepResult.setName(stepName.isEmpty() ? "Step" : stepName);
+        allureLifecycle.startStep(
+            uuid,
+            stepResult.setName(stepName.isEmpty() ? "Step" : stepName)
+        );
         if (!stepDescription.isEmpty()) {
-            stepResult.setDescription(stepDescription);
+            allureLifecycle.addAttachment( /* Step description can only be added via text attachments at the moment */
+                "Step description", "text/plain", ".txt", stepDescription.getBytes(StandardCharsets.UTF_8)
+            );
+            stepResult.setDescription(stepDescription); /* In case Allure starts adding step descriptions */
         }
-        Allure.getLifecycle().startStep(uuid, stepResult);
     }
 
     @Override
