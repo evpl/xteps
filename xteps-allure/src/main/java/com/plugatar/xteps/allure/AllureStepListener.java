@@ -50,10 +50,13 @@ public class AllureStepListener implements StepListener {
             stepResult.setName(stepName.isEmpty() ? "Step" : stepName)
         );
         if (!stepDescription.isEmpty()) {
-            allureLifecycle.addAttachment( /* Step description can only be added via text attachments at the moment */
+            /* Step description can only be added via text attachments at the moment
+                https://github.com/allure-framework/allure2/issues/1699 */
+            allureLifecycle.addAttachment(
                 "Step description", "text/plain", ".txt", stepDescription.getBytes(StandardCharsets.UTF_8)
             );
-            stepResult.setDescription(stepDescription); /* In case Allure starts adding step descriptions */
+            /* In case Allure starts adding step descriptions */
+            stepResult.setDescription(stepDescription);
         }
     }
 
