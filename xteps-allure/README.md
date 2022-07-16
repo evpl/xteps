@@ -15,3 +15,7 @@ For multi-module projects you need to add listener to `module-info.java` file. F
 provides com.plugatar.xteps.core.StepListener with com.plugatar.xteps.allure.AllureStepListener;
 ```
 Or just use property `xteps.listeners` to specify listeners.
+
+## Step description
+
+Step description in Allure can only be added via text attachments at the moment, see [issue](https://github.com/allure-framework/allure2/issues/1699).
