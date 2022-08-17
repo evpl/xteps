@@ -66,9 +66,14 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.plugatar.xteps</groupId>
+            <artifactId>base-reportportal</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
