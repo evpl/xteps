@@ -25,6 +25,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>base</module>
+        <module>base-allure</module>
+        <module>base-reportportal</module>
+        <module>unchecked-xteps</module>
+        <module>unchecked-xteps-allure</module>
+        <module>unchecked-xteps-reportportal</module>
         <module>xteps</module>
         <module>xteps-allure</module>
         <module>xteps-reportportal</module>
@@ -72,8 +78,43 @@
         <dependencies>
             <dependency>
                 <groupId>com.plugatar.xteps</groupId>
+                <artifactId>base</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.plugatar.xteps</groupId>
+                <artifactId>base-allure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.plugatar.xteps</groupId>
+                <artifactId>base-reportportal</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.plugatar.xteps</groupId>
                 <artifactId>xteps</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.plugatar.xteps</groupId>
+                <artifactId>unchecked-xteps</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.epam.reportportal</groupId>
+                <artifactId>client-java</artifactId>
+                <version>5.1.11</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-java-commons</artifactId>
+                <version>2.18.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-junit5</artifactId>
+                <version>2.18.1</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -94,21 +135,6 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>4.6.1</version>
-            </dependency>
-            <dependency>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-java-commons</artifactId>
-                <version>2.18.1</version>
-            </dependency>
-            <dependency>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-junit5</artifactId>
-                <version>2.18.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.epam.reportportal</groupId>
-                <artifactId>client-java</artifactId>
-                <version>5.1.11</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

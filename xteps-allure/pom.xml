@@ -66,9 +66,14 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.plugatar.xteps</groupId>
+            <artifactId>base-allure</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-java-commons</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
