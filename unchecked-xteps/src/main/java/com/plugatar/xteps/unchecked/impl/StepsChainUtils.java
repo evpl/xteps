@@ -15,8 +15,15 @@
  */
 package com.plugatar.xteps.unchecked.impl;
 
+/**
+ * Steps chain utils.
+ */
 final class StepsChainUtils {
 
+    private StepsChainUtils() {
+    }
+
+    @SuppressWarnings("unchecked")
     static <E extends Throwable> RuntimeException sneakyThrow(final Throwable exception) throws E {
         throw (E) exception;
     }
