@@ -152,12 +152,10 @@ final class XtepsTest {
         assertThatCode(() ->
             Xteps.stepsChain()
                 .withContext(autoCloseable1)
-                .contextIsAutoCloseable()
+                .contextIsCloseable()
                 .withContext(autoCloseable2)
-                .contextIsAutoCloseable()
-                .supplyContext(ctx -> {
-                    throw baseException;
-                })
+                .contextIsCloseable()
+                .supplyContext(ctx -> { throw baseException; })
         ).isSameAs(baseException)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);
@@ -173,10 +171,10 @@ final class XtepsTest {
         assertThatCode(() ->
             Xteps.stepsChain()
                 .withContext(autoCloseable1)
-                .contextIsAutoCloseable()
+                .contextIsCloseable()
                 .withContext(autoCloseable2)
-                .contextIsAutoCloseable()
-                .closeAutoCloseableContexts()
+                .contextIsCloseable()
+                .closeCloseableContexts()
         ).isInstanceOf(CloseException.class)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);

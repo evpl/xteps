@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.checked.base;
+package com.plugatar.xteps.unchecked.allure;
+
+import com.plugatar.xteps.unchecked.UncheckedXteps;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Steps chain memorizing a previous context steps chain.
- *
- * @param <S> the type of the steps chain implementing {@code MemorizingContextStepsChain}
- * @param <P> the previous context steps chain type
+ * Tests.
  */
-public interface MemorizingContextStepsChain<S extends BaseStepsChain<S>, P extends BaseCtxStepsChain<?, ?>>
-    extends BaseStepsChain<S> {
+final class UncheckedXtepsAllureTest {
 
-    /**
-     * Returns the previous context steps chain.
-     *
-     * @return previous context steps chain
-     */
-    P previousContextStepsChain();
+    @Test
+    void stepNameMethodWithString() {
+        assertThatCode(() -> UncheckedXteps.step("Step 1", () -> { })).doesNotThrowAnyException();
+    }
 }

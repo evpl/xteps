@@ -41,6 +41,8 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
      * @param stepReporter             the step reporter
      * @param exceptionHandler         the exception handler
      * @param safeACContainerGenerator the new chain safe AutoCloseable container generator
+     * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
+     *                              or {@code safeACContainerGenerator} is null
      */
     public NoCtxStepsChainImpl(
         final StepReporter stepReporter,
@@ -227,9 +229,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return this.stepReporter.report(
-            this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), step
-        );
+        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), step);
     }
 
     private void throwNullArgException(final String argName) {

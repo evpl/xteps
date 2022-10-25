@@ -15,46 +15,18 @@
  */
 package com.plugatar.xteps.unchecked;
 
-import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.unchecked.base.ACContextsStepsChain;
+import com.plugatar.xteps.unchecked.base.ACCtxStepsChain;
 import com.plugatar.xteps.unchecked.base.BaseCtxStepsChain;
 import com.plugatar.xteps.unchecked.base.BaseNoCtxStepsChain;
-import com.plugatar.xteps.unchecked.base.MemorizingContextStepsChain;
+import com.plugatar.xteps.unchecked.base.MemStepsChain;
 
 /**
  * Memorizing no context steps chain.
  *
- * @param <P> the previous context steps chain type
+ * @param <PS> the previous context steps chain type
  */
-public interface MemNoCtxStepsChain<P extends BaseCtxStepsChain<?, ?>> extends
-    BaseNoCtxStepsChain<MemNoCtxStepsChain<P>>,
-    MemorizingContextStepsChain<MemNoCtxStepsChain<P>, P>,
-    ACContextsStepsChain<MemNoCtxStepsChain<P>> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> MemCtxStepsChain<U, P> withContext(U context);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> MemCtxStepsChain<U, P> withContext(ThrowingSupplier<? extends U, ?> contextSupplier);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> MemCtxStepsChain<U, P> stepToContext(String stepName,
-                                             ThrowingSupplier<? extends U, ?> step);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> MemCtxStepsChain<U, P> stepToContext(String stepName,
-                                             String stepDescription,
-                                             ThrowingSupplier<? extends U, ?> step);
+public interface MemNoCtxStepsChain<PS extends BaseCtxStepsChain<?, ?>> extends
+    BaseNoCtxStepsChain<MemNoCtxStepsChain<PS>>,
+    MemStepsChain<PS>,
+    ACCtxStepsChain<MemNoCtxStepsChain<PS>> {
 }

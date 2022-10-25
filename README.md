@@ -30,15 +30,15 @@ Requires Java 8+ version. Just add suitable dependency.
     * with ReportPortal - `xteps-reportportal`
     * with custom reporting system - `xteps`
 
-## What are contextual steps?
+## What are steps chains?
 
-This is a way of writing steps in a chain, where each step is built around one specific context. This method has many
-advantages, like:
+This is a way of writing steps in a chain. The most suitable situation is when each step is built around one specific
+context. This method has many advantages, like:
 * Chaining reads better than disparate static method steps
 * Unnecessary variables are not created
 * It is possible to set additional behavior of the chain like safe AutoCloseable contexts
 
-Xteps provides both options for writing steps, static methods and contextual steps.
+Xteps provides both options for writing steps, static methods and steps chains.
 
 ## API
 
@@ -113,40 +113,9 @@ stepsChain()
         );
 ```
 
-## Simple REST Assured example
-```java
-final class ExampleTest {
+## Allure / ReportPortal integration
 
-    @Test
-    void test() {
-        POJO pojo = stepsChain()
-            .stepToContext("Step 1 - Request", () ->
-                RestAssured.given().get("https://....")
-            )
-            .step("Step 2 - Status code", response ->
-                response.then().statusCode(200)
-            )
-            .step("Step 3 - Schema", response ->
-                response.then().body(matchesJsonSchemaInClasspath("schema.json"))
-            )
-            .stepTo("Step 4 - POJO", response -> {
-                POJO responsePOJO = response.as(POJO.class);
-                verifyPOJO(responsePOJO);
-                return responsePOJO;
-            });
-
-        stepsChain()
-            .stepToContext("Step 5 - Database connection", () ->
-                Database.connection()
-            )
-            .contextIsAutoCloseable()
-            .step("Step 6 - Verify database", connection ->
-                compareResponsePOJOWithDatabase(pojo, connection)
-            )
-            .closeAutoCloseableContexts();
-    }
-}
-```
+Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
 
 ## Safe AutoCloseable context
 
@@ -156,12 +125,12 @@ steps chain or in case of `closeAutoCloseableContexts()` method invocation.
 ```java
 stepsChain().withContext(new AutoCloseableImpl1())
     .contextIsAutoCloseable()
-    .step("Step 1",ctx->{
+    .step("Step 1", ctx -> {
         //...
     })
     .stepToContext("Step 2", ctx -> {
         //...
-        return new AutoCloseableImpl2();
+        return new AutoCloseableImpl2(ctx);
     })
     .contextIsAutoCloseable()
     .step("Step 3", ctx -> {
@@ -171,6 +140,7 @@ stepsChain().withContext(new AutoCloseableImpl1())
 ```
 
 ## Clean stack trace
+
 `cleanStackTrace` option is enabled by default. It allows to clear the stack trace from Xteps calls.
 
 ```java
@@ -298,4 +268,40 @@ stepsChain()
     .nestedStepsTo("Step 1", uncheckedFunction(stepsChain -> stepsChain
         .step("Nested step 1", () -> {})
     ));
+```
+
+## Simple REST Assured example
+
+```java
+final class ExampleTest {
+
+    @Test
+    void test() {
+        POJO pojo = stepsChain()
+            .stepToContext("Step 1 - Request", () ->
+                RestAssured.given().get("https://....")
+            )
+            .step("Step 2 - Status code", response ->
+                response.then().statusCode(200)
+            )
+            .step("Step 3 - Schema", response ->
+                response.then().body(matchesJsonSchemaInClasspath("schema.json"))
+            )
+            .stepTo("Step 4 - POJO", response -> {
+                POJO responsePOJO = response.as(POJO.class);
+                verifyPOJO(responsePOJO);
+                return responsePOJO;
+            });
+
+        stepsChain()
+            .stepToContext("Step 5 - Database connection", () ->
+                Database.connection()
+            )
+            .contextIsAutoCloseable()
+            .step("Step 6 - Verify database", connection ->
+                compareResponsePOJOWithDatabase(pojo, connection)
+            )
+            .closeAutoCloseableContexts();
+    }
+}
 ```

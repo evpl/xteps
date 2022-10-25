@@ -1,55 +1,57 @@
-/*
- * Copyright 2022 Evgenii Plugatar
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.plugatar.xteps.checked.base;
 
-import com.plugatar.xteps.base.ThrowingRunnable;
-import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.ThrowingTriConsumer;
+import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.CtxStepsChain;
 
 /**
- * Base no context steps chain.
+ * Base triple context steps chain.
  *
- * @param <S> the type of the steps chain implementing {@code BaseNoCtxStepsChain}
+ * @param <C>  the context type
+ * @param <P1> the previous context type
+ * @param <P2> the previous context type
  */
-public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends BaseStepsChain<S> {
-
-    /**
-     * Returns a contextual steps chain of the new context.
-     *
-     * @param context the new context
-     * @param <U>     the new context type
-     * @return contextual steps chain
-     * @see #withContext(ThrowingSupplier)
-     */
-    <U> CtxStepsChain<U> withContext(U context);
+public interface Base3CtxStepsChain<C, P1, P2> {
 
     /**
      * Returns a context steps chain of the new context.
      *
-     * @param contextSupplier the context supplier
+     * @param contextFunction the context function
      * @param <U>             the context type
-     * @param <E>             the {@code contextSupplier} exception type
+     * @param <E>             the exception type
      * @return contextual steps chain
-     * @throws XtepsException if {@code contextSupplier} is null
-     * @throws E              if {@code contextSupplier} threw exception
-     * @see #withContext(Object)
+     * @throws XtepsException if {@code contextFunction} is null
+     * @throws E              if {@code contextFunction} threw exception
      */
-    <U, E extends Throwable> CtxStepsChain<U> withContext(
-        ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    <U, E extends Throwable> BaseCtxStepsChain<U, ?> withContext(
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> contextFunction
+    ) throws E;
+
+    /**
+     * Supply context to given consumer and returns this steps chain.
+     *
+     * @param consumer the consumer
+     * @param <E>      the {@code consumer} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code consumer} is null
+     * @throws E              if {@code consumer} threw exception
+     */
+    <E extends Throwable> BaseCtxStepsChain<C, ?> supplyContext(
+        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> consumer
+    ) throws E;
+
+    /**
+     * Apply context to given function and returns result.
+     *
+     * @param function the function
+     * @param <E>      the {@code function} exception type
+     * @param <R>      the {@code function} result type
+     * @return the {@code function} result
+     * @throws XtepsException if {@code function} is null
+     * @throws E              if {@code function} threw exception
+     */
+    <R, E extends Throwable> R applyContext(
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ? extends E> function
     ) throws E;
 
     /**
@@ -62,11 +64,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, String, ThrowingRunnable)
+     * @see #step(String, String, ThrowingTriConsumer)
      */
-    <E extends Throwable> S step(
+    <E extends Throwable> BaseCtxStepsChain<C, ?> step(
         String stepName,
-        ThrowingRunnable<? extends E> step
+        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> step
     ) throws E;
 
     /**
@@ -80,12 +82,12 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, ThrowingRunnable)
+     * @see #step(String, ThrowingTriConsumer)
      */
-    <E extends Throwable> S step(
+    <E extends Throwable> BaseCtxStepsChain<C, ?> step(
         String stepName,
         String stepDescription,
-        ThrowingRunnable<? extends E> step
+        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> step
     ) throws E;
 
     /**
@@ -99,11 +101,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepToContext(String, String, ThrowingSupplier)
+     * @see #stepToContext(String, String, ThrowingTriFunction)
      */
-    <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+    <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
-        ThrowingSupplier<? extends U, ? extends E> step
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
@@ -118,12 +120,12 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepToContext(String, ThrowingSupplier)
+     * @see #stepToContext(String, ThrowingTriFunction)
      */
-    <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+    <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
         String stepDescription,
-        ThrowingSupplier<? extends U, ? extends E> step
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
@@ -137,11 +139,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, String, ThrowingSupplier)
+     * @see #stepTo(String, String, ThrowingTriFunction)
      */
     <R, E extends Throwable> R stepTo(
         String stepName,
-        ThrowingSupplier<? extends R, ? extends E> step
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ? extends E> step
     ) throws E;
 
     /**
@@ -156,11 +158,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, ThrowingSupplier)
+     * @see #stepTo(String, ThrowingTriFunction)
      */
     <R, E extends Throwable> R stepTo(
         String stepName,
         String stepDescription,
-        ThrowingSupplier<? extends R, ? extends E> step
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ? extends E> step
     ) throws E;
 }

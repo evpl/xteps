@@ -15,38 +15,10 @@
  */
 package com.plugatar.xteps.unchecked;
 
-import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.base.BaseNoCtxStepsChain;
 
 /**
  * No context steps chain.
  */
 public interface NoCtxStepsChain extends BaseNoCtxStepsChain<NoCtxStepsChain> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> CtxStepsChain<U> withContext(U context);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> CtxStepsChain<U> withContext(ThrowingSupplier<? extends U, ?> contextSupplier);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> CtxStepsChain<U> stepToContext(String stepName,
-                                       ThrowingSupplier<? extends U, ?> step);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <U> CtxStepsChain<U> stepToContext(String stepName,
-                                       String stepDescription,
-                                       ThrowingSupplier<? extends U, ?> step);
 }

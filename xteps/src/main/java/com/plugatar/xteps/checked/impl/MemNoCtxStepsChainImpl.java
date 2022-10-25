@@ -24,7 +24,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.MemCtxStepsChain;
+import com.plugatar.xteps.checked.CtxStepsChain;
 import com.plugatar.xteps.checked.MemNoCtxStepsChain;
 import com.plugatar.xteps.checked.base.BaseCtxStepsChain;
 
@@ -46,6 +46,8 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
      * @param exceptionHandler          the exception handler
      * @param safeACContainer           the safe AutoCloseable container
      * @param previousContextStepsChain the previous context steps chain
+     * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
+     *                              or {@code safeACContainer} or {@code previousContextStepsChain} is null
      */
     public MemNoCtxStepsChainImpl(final StepReporter stepReporter,
                                   final ExceptionHandler exceptionHandler,
@@ -69,14 +71,14 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
-    public final <U> MemCtxStepsChain<U, P> withContext(final U context) {
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, context, this.previousContextStepsChain
+    public final <U> CtxStepsChain<U> withContext(final U context) {
+        return new CtxStepsChainImpl<>(
+            this.stepReporter, this.exceptionHandler, this.safeACContainer, context
         );
     }
 
     @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, P> withContext(
+    public final <U, E extends Throwable> CtxStepsChain<U> withContext(
         final ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E {
         if (contextSupplier == null) { this.throwNullArgException("contextSupplier"); }
@@ -88,13 +90,13 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
             this.exceptionHandler.handle(ex);
             throw ex;
         }
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, context, this.previousContextStepsChain
+        return new CtxStepsChainImpl<>(
+            this.stepReporter, this.exceptionHandler, this.safeACContainer, context
         );
     }
 
     @Override
-    public final MemNoCtxStepsChain<P> closeAutoCloseableContexts() {
+    public final MemNoCtxStepsChain<P> closeCloseableContexts() {
         try {
             this.safeACContainer.close();
         } catch (final Throwable ex) {
@@ -145,7 +147,7 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, P> stepToContext(
+    public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
@@ -153,7 +155,7 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, P> stepToContext(
+    public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         final String stepName,
         final String stepDescription,
         final ThrowingSupplier<? extends U, ? extends E> step
@@ -162,8 +164,8 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         final U context = this.reportStep(stepName, stepDescription, step);
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, context, this.previousContextStepsChain
+        return new CtxStepsChainImpl<>(
+            this.stepReporter, this.exceptionHandler, this.safeACContainer, context
         );
     }
 
@@ -251,9 +253,7 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return this.stepReporter.report(
-            this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), step
-        );
+        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), step);
     }
 
     private void throwNullArgException(final String argName) {

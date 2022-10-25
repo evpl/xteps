@@ -44,6 +44,8 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
      * @param stepReporter             the step reporter
      * @param exceptionHandler         the exception handler
      * @param safeACContainerGenerator the new chain safe AutoCloseable container generator
+     * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
+     *                              or {@code safeACContainerGenerator} is null
      */
     public NoCtxStepsChainImpl(
         final StepReporter stepReporter,
@@ -68,7 +70,9 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final <U> CtxStepsChain<U> withContext(final ThrowingSupplier<? extends U, ?> contextSupplier) {
+    public final <U> CtxStepsChain<U> withContext(
+        final ThrowingSupplier<? extends U, ?> contextSupplier
+    ) {
         if (contextSupplier == null) { this.throwNullArgException("contextSupplier"); }
         final U context;
         try {
@@ -88,8 +92,10 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final NoCtxStepsChain step(final String stepName,
-                                      final String stepDescription) {
+    public final NoCtxStepsChain step(
+        final String stepName,
+        final String stepDescription
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         this.reportStep(stepName, stepDescription, () -> null);
@@ -97,15 +103,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final NoCtxStepsChain step(final String stepName,
-                                      final ThrowingRunnable<?> step) {
+    public final NoCtxStepsChain step(
+        final String stepName,
+        final ThrowingRunnable<?> step
+    ) {
         return this.step(stepName, "", step);
     }
 
     @Override
-    public final NoCtxStepsChain step(final String stepName,
-                                      final String stepDescription,
-                                      final ThrowingRunnable<?> step) {
+    public final NoCtxStepsChain step(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingRunnable<?> step
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
@@ -117,15 +127,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final <U> CtxStepsChain<U> stepToContext(final String stepName,
-                                                    final ThrowingSupplier<? extends U, ?> step) {
+    public final <U> CtxStepsChain<U> stepToContext(
+        final String stepName,
+        final ThrowingSupplier<? extends U, ?> step
+    ) {
         return this.stepToContext(stepName, "", step);
     }
 
     @Override
-    public final <U> CtxStepsChain<U> stepToContext(final String stepName,
-                                                    final String stepDescription,
-                                                    final ThrowingSupplier<? extends U, ?> step) {
+    public final <U> CtxStepsChain<U> stepToContext(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends U, ?> step
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
@@ -136,15 +150,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final <R> R stepTo(final String stepName,
-                              final ThrowingSupplier<? extends R, ?> step) {
+    public final <R> R stepTo(
+        final String stepName,
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
         return this.stepTo(stepName, "", step);
     }
 
     @Override
-    public final <R> R stepTo(final String stepName,
-                              final String stepDescription,
-                              final ThrowingSupplier<? extends R, ?> step) {
+    public final <R> R stepTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
@@ -152,15 +170,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final NoCtxStepsChain nestedSteps(final String stepName,
-                                             final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain) {
+    public final NoCtxStepsChain nestedSteps(
+        final String stepName,
+        final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain
+    ) {
         return this.nestedSteps(stepName, "", stepsChain);
     }
 
     @Override
-    public final NoCtxStepsChain nestedSteps(final String stepName,
-                                             final String stepDescription,
-                                             final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain) {
+    public final NoCtxStepsChain nestedSteps(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
@@ -172,15 +194,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final <R> R nestedStepsTo(final String stepName,
-                                     final ThrowingFunction<NoCtxStepsChain, ? extends R, ?> stepsChain) {
+    public final <R> R nestedStepsTo(
+        final String stepName,
+        final ThrowingFunction<NoCtxStepsChain, ? extends R, ?> stepsChain
+    ) {
         return this.nestedStepsTo(stepName, "", stepsChain);
     }
 
     @Override
-    public final <R> R nestedStepsTo(final String stepName,
-                                     final String stepDescription,
-                                     final ThrowingFunction<NoCtxStepsChain, ? extends R, ?> stepsChain) {
+    public final <R> R nestedStepsTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingFunction<NoCtxStepsChain, ? extends R, ?> stepsChain
+    ) {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
@@ -188,7 +214,9 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
-    public final NoCtxStepsChain branchSteps(final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain) {
+    public final NoCtxStepsChain branchSteps(
+        final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain
+    ) {
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
         try {
             stepsChain.accept(this);
@@ -199,12 +227,13 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         return this;
     }
 
-    private <R> R reportStep(final String stepName,
-                             final String stepDescription,
-                             final ThrowingSupplier<? extends R, ?> step) {
-        return this.stepReporter.report(
-            this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), uncheckedSupplier(step)
-        );
+    private <R> R reportStep(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
+        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(),
+            uncheckedSupplier(step));
     }
 
     private void throwNullArgException(final String argName) {

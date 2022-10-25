@@ -21,11 +21,11 @@ import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
-import com.plugatar.xteps.base.ThrowingPredicate;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.autocloseable.AutoCloseableOf;
 import com.plugatar.xteps.checked.CtxStepsChain;
-import com.plugatar.xteps.checked.MemCtxStepsChain;
+import com.plugatar.xteps.checked.Mem1CtxStepsChain;
 import com.plugatar.xteps.checked.MemNoCtxStepsChain;
 
 /**
@@ -46,6 +46,8 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
      * @param exceptionHandler the exception handler
      * @param safeACContainer  the safe AutoCloseable container
      * @param context          the context
+     * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
+     *                              or {@code safeACContainer} is null
      */
     public CtxStepsChainImpl(final StepReporter stepReporter,
                              final ExceptionHandler exceptionHandler,
@@ -63,6 +65,43 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     @Override
     public final C context() {
         return this.optionalContext.value();
+    }
+
+    @Override
+    public final MemNoCtxStepsChain<CtxStepsChain<C>> withoutContext() {
+        return new MemNoCtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, this);
+    }
+
+    @Override
+    public final CtxStepsChain<C> contextIsCloseable() {
+        final C value = this.optionalContext.value();
+        if (value instanceof AutoCloseable) {
+            this.safeACContainer.add((AutoCloseable) value);
+            return this;
+        } else {
+            final XtepsException baseEx = new XtepsException("Current context is not an AutoCloseable instance");
+            this.safeACContainer.close(baseEx);
+            this.exceptionHandler.handle(baseEx);
+            throw baseEx;
+        }
+    }
+
+    @Override
+    public final CtxStepsChain<C> contextIsCloseable(final ThrowingConsumer<? super C, ?> close) {
+        if (close == null) { this.throwNullArgException("close"); }
+        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.optionalContext.value())));
+        return this;
+    }
+
+    @Override
+    public final CtxStepsChain<C> closeCloseableContexts() {
+        try {
+            this.safeACContainer.close();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
+        return this;
     }
 
     @Override
@@ -95,28 +134,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     }
 
     @Override
-    public <E extends Throwable> boolean testContext(
-        final ThrowingPredicate<? super C, ? extends E> predicate
-    ) throws E {
-        if (predicate == null) { this.throwNullArgException("predicate"); }
-        try {
-            return predicate.test(this.optionalContext.value());
-        } catch (final Throwable ex) {
-            this.safeACContainer.close(ex);
-            this.exceptionHandler.handle(ex);
-            throw ex;
-        }
+    public final <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(final U context) {
+        return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, context,
+            this.optionalContext.value(), this);
     }
 
     @Override
-    public final <U> MemCtxStepsChain<U, CtxStepsChain<C>> withContext(final U context) {
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, context, this
-        );
-    }
-
-    @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, CtxStepsChain<C>> withContext(
+    public final <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(
         final ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
     ) throws E {
         if (contextFunction == null) { this.throwNullArgException("contextFunction"); }
@@ -128,39 +152,8 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
             this.exceptionHandler.handle(ex);
             throw ex;
         }
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext, this
-        );
-    }
-
-    @Override
-    public final MemNoCtxStepsChain<CtxStepsChain<C>> withoutContext() {
-        return new MemNoCtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, this);
-    }
-
-    @Override
-    public final CtxStepsChain<C> contextIsAutoCloseable() {
-        final C value = this.optionalContext.value();
-        if (value instanceof AutoCloseable) {
-            this.safeACContainer.add((AutoCloseable) value);
-            return this;
-        } else {
-            final XtepsException baseEx = new XtepsException("Current context is not an AutoCloseable instance");
-            this.safeACContainer.close(baseEx);
-            this.exceptionHandler.handle(baseEx);
-            throw baseEx;
-        }
-    }
-
-    @Override
-    public final CtxStepsChain<C> closeAutoCloseableContexts() {
-        try {
-            this.safeACContainer.close();
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw ex;
-        }
-        return this;
+        return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
+            this.optionalContext.value(), this);
     }
 
     @Override
@@ -204,7 +197,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     }
 
     @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, CtxStepsChain<C>> stepToContext(
+    public final <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E {
@@ -212,7 +205,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     }
 
     @Override
-    public final <U, E extends Throwable> MemCtxStepsChain<U, CtxStepsChain<C>> stepToContext(
+    public final <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         final String stepName,
         final String stepDescription,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
@@ -221,9 +214,8 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         final U newContext = this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
-        return new MemCtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext, this
-        );
+        return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
+            this.optionalContext.value(), this);
     }
 
     @Override
@@ -310,9 +302,8 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return this.stepReporter.report(
-            this.safeACContainer, this.exceptionHandler, stepName, stepDescription, this.optionalContext, step
-        );
+        return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
+            this.optionalContext, step);
     }
 
     private void throwNullArgException(final String argName) {

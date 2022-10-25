@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.checked;
+package com.plugatar.xteps.checked.allure;
 
-import com.plugatar.xteps.checked.base.ACCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseNoCtxStepsChain;
-import com.plugatar.xteps.checked.base.MemStepsChain;
+import com.plugatar.xteps.checked.Xteps;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Memorizing no context steps chain.
- *
- * @param <PS> the previous context steps chain type
+ * Tests.
  */
-public interface MemNoCtxStepsChain<PS extends BaseCtxStepsChain<?, ?>> extends
-    BaseNoCtxStepsChain<MemNoCtxStepsChain<PS>>,
-    MemStepsChain<PS>,
-    ACCtxStepsChain<MemNoCtxStepsChain<PS>> {
+final class XtepsAllureTest {
+
+    @Test
+    void stepNameMethodWithString() {
+        assertThatCode(() -> Xteps.step("Step 1", () -> { })).doesNotThrowAnyException();
+    }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.checked.base;
+package com.plugatar.xteps.unchecked.base;
 
 import com.plugatar.xteps.base.CloseException;
 
@@ -22,7 +22,7 @@ import com.plugatar.xteps.base.CloseException;
  *
  * @param <S> the type of the steps chain implementing {@code ACContextsStepsChain}
  */
-public interface ACContextsStepsChain<S extends BaseStepsChain<S>> extends BaseStepsChain<S> {
+public interface ACCtxStepsChain<S extends BaseStepsChain<S>> extends BaseStepsChain<S> {
 
     /**
      * Close all {@link AutoCloseable} contexts.
@@ -31,5 +31,5 @@ public interface ACContextsStepsChain<S extends BaseStepsChain<S>> extends BaseS
      * @throws CloseException if at least one of {@link AutoCloseable#close()} methods
      *                        invocation throws any exception
      */
-    S closeAutoCloseableContexts();
+    S closeCloseableContexts();
 }

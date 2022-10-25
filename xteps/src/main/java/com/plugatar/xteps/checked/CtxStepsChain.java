@@ -15,12 +15,77 @@
  */
 package com.plugatar.xteps.checked;
 
+import com.plugatar.xteps.base.ThrowingConsumer;
+import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.checked.base.Base1CtxStepsChain;
 import com.plugatar.xteps.checked.base.BaseCtxStepsChain;
 
 /**
- * Memorizing contextual steps chain.
+ * Contextual steps chain.
  *
  * @param <C> the context type
  */
-public interface CtxStepsChain<C> extends BaseCtxStepsChain<C, CtxStepsChain<C>> {
+public interface CtxStepsChain<C> extends
+    BaseCtxStepsChain<C, CtxStepsChain<C>>,
+    Base1CtxStepsChain<C> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(U context);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(
+        ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> CtxStepsChain<C> supplyContext(
+        ThrowingConsumer<? super C, ? extends E> consumer
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> CtxStepsChain<C> step(
+        String stepName,
+        ThrowingConsumer<? super C, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> CtxStepsChain<C> step(
+        String stepName,
+        String stepDescription,
+        ThrowingConsumer<? super C, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
+        ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
+        String stepDescription,
+        ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E;
 }

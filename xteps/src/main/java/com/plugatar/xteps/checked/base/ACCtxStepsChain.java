@@ -13,20 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.checked;
+package com.plugatar.xteps.checked.base;
 
-import com.plugatar.xteps.checked.base.ACCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseNoCtxStepsChain;
-import com.plugatar.xteps.checked.base.MemStepsChain;
+import com.plugatar.xteps.base.CloseException;
 
 /**
- * Memorizing no context steps chain.
+ * Steps chain containing an {@link AutoCloseable} contexts.
  *
- * @param <PS> the previous context steps chain type
+ * @param <S> the type of the steps chain implementing {@code ACContextsStepsChain}
  */
-public interface MemNoCtxStepsChain<PS extends BaseCtxStepsChain<?, ?>> extends
-    BaseNoCtxStepsChain<MemNoCtxStepsChain<PS>>,
-    MemStepsChain<PS>,
-    ACCtxStepsChain<MemNoCtxStepsChain<PS>> {
+public interface ACCtxStepsChain<S extends BaseStepsChain<S>> extends BaseStepsChain<S> {
+
+    /**
+     * Close all {@link AutoCloseable} contexts.
+     *
+     * @return this steps chain
+     * @throws CloseException if at least one of {@link AutoCloseable#close()} methods
+     *                        invocation throws any exception
+     */
+    S closeCloseableContexts();
 }

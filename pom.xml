@@ -221,6 +221,7 @@
                 <version>3.4.1</version>
                 <configuration>
                     <source>${java.version}</source>
+                    <show>package</show>
                 </configuration>
                 <executions>
                     <execution>

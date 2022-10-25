@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.checked;
-
-import com.plugatar.xteps.checked.base.ACCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseCtxStepsChain;
-import com.plugatar.xteps.checked.base.BaseNoCtxStepsChain;
-import com.plugatar.xteps.checked.base.MemStepsChain;
+package com.plugatar.xteps.checked.reportportal;
 
 /**
- * Memorizing no context steps chain.
- *
- * @param <PS> the previous context steps chain type
+ * Placeholder for javadoc.
  */
-public interface MemNoCtxStepsChain<PS extends BaseCtxStepsChain<?, ?>> extends
-    BaseNoCtxStepsChain<MemNoCtxStepsChain<PS>>,
-    MemStepsChain<PS>,
-    ACCtxStepsChain<MemNoCtxStepsChain<PS>> {
+final class Placeholder {
+
+    private Placeholder() {
+    }
 }

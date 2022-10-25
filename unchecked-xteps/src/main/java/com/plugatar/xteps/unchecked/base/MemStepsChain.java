@@ -15,21 +15,17 @@
  */
 package com.plugatar.xteps.unchecked.base;
 
-import com.plugatar.xteps.base.CloseException;
-
 /**
- * Steps chain containing an {@link AutoCloseable} contexts.
+ * Steps chain memorizing a previous context steps chain.
  *
- * @param <S> the type of the steps chain implementing {@code ACContextsStepsChain}
+ * @param <PS> the previous context steps chain type
  */
-public interface ACContextsStepsChain<S extends BaseStepsChain<S>> extends BaseStepsChain<S> {
+public interface MemStepsChain<PS extends BaseCtxStepsChain<?, ?>> {
 
     /**
-     * Close all {@link AutoCloseable} contexts.
+     * Returns the previous context steps chain.
      *
-     * @return this steps chain
-     * @throws CloseException if at least one of {@link AutoCloseable#close()} methods
-     *                        invocation throws any exception
+     * @return previous context steps chain
      */
-    S closeAutoCloseableContexts();
+    PS previousContextStepsChain();
 }

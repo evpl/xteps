@@ -1,54 +1,53 @@
-/*
- * Copyright 2022 Evgenii Plugatar
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.plugatar.xteps.unchecked.base;
 
-import com.plugatar.xteps.base.ThrowingRunnable;
-import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.ThrowingBiConsumer;
+import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.CtxStepsChain;
 
 /**
- * Base no context steps chain.
+ * Base double context steps chain.
  *
- * @param <S> the type of the steps chain implementing {@code BaseNoCtxStepsChain}
+ * @param <C> the context type
+ * @param <P> the previous context type
  */
-public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends BaseStepsChain<S> {
-
-    /**
-     * Returns a contextual steps chain of the new context.
-     *
-     * @param context the new context
-     * @param <U>     the new context type
-     * @return contextual steps chain
-     * @see #withContext(ThrowingSupplier)
-     */
-    <U> CtxStepsChain<U> withContext(U context);
+public interface Base2CtxStepsChain<C, P> {
 
     /**
      * Returns a context steps chain of the new context.
      *
-     * @param contextSupplier the context supplier
+     * @param contextFunction the context function
      * @param <U>             the context type
      * @return contextual steps chain
-     * @throws XtepsException if {@code contextSupplier} is null
-     * @throws Throwable      if {@code contextSupplier} threw exception
-     * @see #withContext(Object)
+     * @throws XtepsException if {@code contextFunction} is null
+     * @throws Throwable      if {@code contextFunction} threw exception
      */
-    <U> CtxStepsChain<U> withContext(
-        ThrowingSupplier<? extends U, ?> contextSupplier
+    <U> BaseCtxStepsChain<U, ?> withContext(
+        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> contextFunction
+    );
+
+    /**
+     * Supply context to given consumer and returns this steps chain.
+     *
+     * @param consumer the consumer
+     * @return this steps chain
+     * @throws XtepsException if {@code consumer} is null
+     * @throws Throwable      if {@code consumer} threw exception
+     */
+    BaseCtxStepsChain<C, ?> supplyContext(
+        ThrowingBiConsumer<? super C, ? super P, ?> consumer
+    );
+
+    /**
+     * Apply context to given function and returns result.
+     *
+     * @param function the function
+     * @param <R>      the {@code function} result type
+     * @return the {@code function} result
+     * @throws XtepsException if {@code function} is null
+     * @throws Throwable      if {@code function} threw exception
+     */
+    <R> R applyContext(
+        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> function
     );
 
     /**
@@ -60,11 +59,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #step(String, String, ThrowingRunnable)
+     * @see #step(String, String, ThrowingBiConsumer)
      */
-    S step(
+    BaseCtxStepsChain<C, ?> step(
         String stepName,
-        ThrowingRunnable<?> step
+        ThrowingBiConsumer<? super C, ? super P, ?> step
     );
 
     /**
@@ -77,12 +76,12 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #step(String, ThrowingRunnable)
+     * @see #step(String, ThrowingBiConsumer)
      */
-    S step(
+    BaseCtxStepsChain<C, ?> step(
         String stepName,
         String stepDescription,
-        ThrowingRunnable<?> step
+        ThrowingBiConsumer<? super C, ? super P, ?> step
     );
 
     /**
@@ -95,11 +94,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #stepToContext(String, String, ThrowingSupplier)
+     * @see #stepToContext(String, String, ThrowingBiFunction)
      */
-    <U> CtxStepsChain<U> stepToContext(
+    <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
-        ThrowingSupplier<? extends U, ?> step
+        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
     );
 
     /**
@@ -113,12 +112,12 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #stepToContext(String, ThrowingSupplier)
+     * @see #stepToContext(String, ThrowingBiFunction)
      */
-    <U> CtxStepsChain<U> stepToContext(
+    <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
         String stepDescription,
-        ThrowingSupplier<? extends U, ?> step
+        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
     );
 
     /**
@@ -131,11 +130,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #stepTo(String, String, ThrowingSupplier)
+     * @see #stepTo(String, String, ThrowingBiFunction)
      */
     <R> R stepTo(
         String stepName,
-        ThrowingSupplier<? extends R, ?> step
+        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> step
     );
 
     /**
@@ -149,11 +148,11 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws Throwable      if {@code step} threw exception
-     * @see #stepTo(String, ThrowingSupplier)
+     * @see #stepTo(String, ThrowingBiFunction)
      */
     <R> R stepTo(
         String stepName,
         String stepDescription,
-        ThrowingSupplier<? extends R, ?> step
+        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> step
     );
 }
