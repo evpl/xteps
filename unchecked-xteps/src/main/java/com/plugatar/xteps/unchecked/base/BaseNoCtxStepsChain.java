@@ -44,7 +44,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @param <U>             the context type
      * @return contextual steps chain
      * @throws XtepsException if {@code contextSupplier} is null
-     * @throws Throwable      if {@code contextSupplier} threw exception
      * @see #withContext(Object)
      */
     <U> CtxStepsChain<U> withContext(
@@ -59,7 +58,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #step(String, String, ThrowingRunnable)
      */
     S step(
@@ -76,7 +74,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #step(String, ThrowingRunnable)
      */
     S step(
@@ -94,7 +91,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepToContext(String, String, ThrowingSupplier)
      */
     <U> CtxStepsChain<U> stepToContext(
@@ -112,7 +108,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepToContext(String, ThrowingSupplier)
      */
     <U> CtxStepsChain<U> stepToContext(
@@ -130,7 +125,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepTo(String, String, ThrowingSupplier)
      */
     <R> R stepTo(
@@ -148,7 +142,6 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepTo(String, ThrowingSupplier)
      */
     <R> R stepTo(

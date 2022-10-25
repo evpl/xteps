@@ -60,7 +60,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code stepsChain} threw exception
      * @see #nestedSteps(String, String, ThrowingConsumer)
      */
     S nestedSteps(
@@ -77,7 +76,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code stepsChain} threw exception
      * @see #nestedSteps(String, ThrowingConsumer)
      */
     S nestedSteps(
@@ -95,7 +93,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return {@code stepsChain} result
      * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code stepsChain} threw exception
      * @see #nestedStepsTo(String, String, ThrowingFunction)
      */
     <R> R nestedStepsTo(
@@ -113,7 +110,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return {@code stepsChain} result
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code stepsChain} threw exception
      * @see #nestedStepsTo(String, ThrowingFunction)
      */
     <R> R nestedStepsTo(
@@ -129,7 +125,6 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      * @return this steps chain
      * @throws XtepsException if {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code stepsChain} threw exception
      */
     S branchSteps(
         ThrowingConsumer<S, ?> stepsChain

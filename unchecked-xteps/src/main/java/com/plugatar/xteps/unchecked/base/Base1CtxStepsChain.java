@@ -18,7 +18,6 @@ public interface Base1CtxStepsChain<C> {
      * @param <U>             the context type
      * @return contextual steps chain
      * @throws XtepsException if {@code contextFunction} is null
-     * @throws Throwable      if {@code contextFunction} threw exception
      */
     <U> BaseCtxStepsChain<U, ?> withContext(
         ThrowingFunction<? super C, ? extends U, ?> contextFunction
@@ -30,7 +29,6 @@ public interface Base1CtxStepsChain<C> {
      * @param consumer the consumer
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
-     * @throws Throwable      if {@code consumer} threw exception
      */
     BaseCtxStepsChain<C, ?> supplyContext(
         ThrowingConsumer<? super C, ?> consumer
@@ -43,7 +41,6 @@ public interface Base1CtxStepsChain<C> {
      * @param <R>      the {@code function} result type
      * @return the {@code function} result
      * @throws XtepsException if {@code function} is null
-     * @throws Throwable      if {@code function} threw exception
      */
     <R> R applyContext(
         ThrowingFunction<? super C, ? extends R, ?> function
@@ -57,7 +54,6 @@ public interface Base1CtxStepsChain<C> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #step(String, String, ThrowingConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
@@ -74,7 +70,6 @@ public interface Base1CtxStepsChain<C> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #step(String, ThrowingConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
@@ -92,7 +87,6 @@ public interface Base1CtxStepsChain<C> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepToContext(String, String, ThrowingFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
@@ -110,7 +104,6 @@ public interface Base1CtxStepsChain<C> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepToContext(String, ThrowingFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
@@ -128,7 +121,6 @@ public interface Base1CtxStepsChain<C> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepTo(String, String, ThrowingFunction)
      */
     <R> R stepTo(
@@ -146,7 +138,6 @@ public interface Base1CtxStepsChain<C> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @throws Throwable      if {@code step} threw exception
      * @see #stepTo(String, ThrowingFunction)
      */
     <R> R stepTo(
