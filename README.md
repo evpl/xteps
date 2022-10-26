@@ -292,7 +292,7 @@ final class ExampleTest {
               verifyPOJO(responsePOJO);
               return responsePOJO;
           })
-          .stepToContext("Step 5 - Database connection", response ->
+          .stepToContext("Step 5 - Database connection", pojo ->
               Database.connection()
           )
           .contextIsAutoCloseable()
