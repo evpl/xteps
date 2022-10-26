@@ -275,33 +275,31 @@ stepsChain()
 ```java
 final class ExampleTest {
 
-    @Test
-    void test() {
-        POJO pojo = stepsChain()
-            .stepToContext("Step 1 - Request", () ->
-                RestAssured.given().get("https://....")
-            )
-            .step("Step 2 - Status code", response ->
-                response.then().statusCode(200)
-            )
-            .step("Step 3 - Schema", response ->
-                response.then().body(matchesJsonSchemaInClasspath("schema.json"))
-            )
-            .stepTo("Step 4 - POJO", response -> {
-                POJO responsePOJO = response.as(POJO.class);
-                verifyPOJO(responsePOJO);
-                return responsePOJO;
-            });
-
-        stepsChain()
-            .stepToContext("Step 5 - Database connection", () ->
-                Database.connection()
-            )
-            .contextIsAutoCloseable()
-            .step("Step 6 - Verify database", connection ->
-                compareResponsePOJOWithDatabase(pojo, connection)
-            )
-            .closeAutoCloseableContexts();
-    }
+  @Test
+  void test() {
+      stepsChain()
+          .stepToContext("Step 1 - Request", () ->
+              RestAssured.given().get("https://....")
+          )
+          .step("Step 2 - Status code", response ->
+              response.then().statusCode(200)
+          )
+          .step("Step 3 - Schema", response ->
+              response.then().body(matchesJsonSchemaInClasspath("schema.json"))
+          )
+          .stepToContext("Step 4 - POJO", response -> {
+              POJO responsePOJO = response.as(POJO.class);
+              verifyPOJO(responsePOJO);
+              return responsePOJO;
+          })
+          .stepToContext("Step 5 - Database connection", response ->
+              Database.connection()
+          )
+          .contextIsAutoCloseable()
+          .step("Step 6 - Verify database", (pojo, connection) ->
+              compareResponsePOJOWithDatabase(pojo, connection)
+          )
+          .closeAutoCloseableContexts();
+  }
 }
 ```
