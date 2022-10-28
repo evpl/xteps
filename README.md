@@ -443,4 +443,4 @@ void example() {
 
 Allure report looks like this:
 
-![webdriver_java_code_example](https://user-images.githubusercontent.com/54626653/198648928-62919f30-7db3-4501-88e3-db62099a6298.png)
+![webdriver_java_code_example](https://user-images.githubusercontent.com/54626653/198658991-f992a10d-7c88-46e7-afb0-bcb281822c96.png)
