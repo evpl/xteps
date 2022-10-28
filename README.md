@@ -15,6 +15,9 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
+Xteps is a library that provides a convenient way to log test steps. Integrations with Allure and Report Portal are
+now ready, but you can write your own listener for another reporting system or just create an issue.
+
 ## Table of Contents
 
 * [How to use](#How-to-use)
@@ -415,6 +418,7 @@ void example() {
             //...
             return new ChromeDriver();
         })
+        .contextIsCloseable(WebDriver::quit)
         .step("Step 3", "Log in as user1234", driver -> {
             //...
             driver.findElement(By.id("username")).sendKeys("user1234");
@@ -439,7 +443,8 @@ void example() {
             //...
             assertEquals(driver.findElements(By.id("header")).size(), 1);
             assertTrue(headerElement.isDisplayed());
-        });
+        })
+        .closeCloseableContexts();
 }
 ```
 
