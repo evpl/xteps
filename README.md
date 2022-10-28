@@ -17,20 +17,20 @@
 
 ## Table of Contents
 
-* [How to use](#How to use)
-* [Which version to choose?](#Which version to choose?)
-* [What are steps chains?](#What are steps chains?)
+* [How to use](#How-to-use)
+* [Which version to choose?](#Which-version-to-choose?)
+* [What are steps chains?](#What-are-steps-chains?)
 * [API](#API)
-* [Allure and ReportPortal integration](#Allure and ReportPortal integration)
-* [Safe AutoCloseable context](#Safe AutoCloseable context)
-* [Clean stack trace](#Clean stack trace)
-* [Checked exceptions](#Checked exceptions)
-* [How to provide parameters](#How to provide parameters)
-* [Xteps Java 8 unreported exception bug](#Xteps Java 8 unreported exception bug)
-* [Code examples](#Code examples)
-    * [Simple Java code example](#Simple Java code example)
-    * [Simple Kotlin code example](#Simple Java code example)
-    * [Selenium WebDriver Java code example](#Selenium WebDriver Java code example)
+* [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
+* [Safe AutoCloseable context](#Safe-AutoCloseable-context)
+* [Clean stack trace](#Clean-stack-trace)
+* [Checked exceptions](#Checked-exceptions)
+* [How to provide parameters](#How-to-provide-parameters)
+* [Xteps Java 8 unreported exception bug](#Xteps-Java-8-unreported-exception-bug)
+* [Code examples](#Code-examples)
+    * [Simple Java code example](#Simple-Java-code-example)
+    * [Simple Kotlin code example](#Simple-Java-code-example)
+    * [Selenium WebDriver Java code example](#Selenium-WebDriver-Java-code-example)
 
 ## How to use
 
