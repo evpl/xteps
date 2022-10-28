@@ -15,8 +15,8 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a library that provides a convenient way to log test steps. Integrations with Allure and Report Portal are
-now ready, but you can write your own listener for another reporting system or just create an issue.
+Xteps is a library that provides a convenient way to log test steps. Integrations with Allure and ReportPortal are
+ready, but you can write your own listener for another reporting tool or just create an issue.
 
 ## Table of Contents
 
@@ -44,11 +44,11 @@ Requires Java 8+ version. Just add suitable dependency.
 * If you use Kotlin or use Java but want to hide checked exceptions
     * with Allure - `unchecked-xteps-allure`
     * with ReportPortal - `unchecked-xteps-reportportal`
-    * with custom reporting system - `unchecked-xteps`
+    * with custom reporting tool - `unchecked-xteps`
 * If you use Java and want to work with checked exceptions (and maybe sometimes hide them)
     * with Allure - `xteps-allure`
     * with ReportPortal - `xteps-reportportal`
-    * with custom reporting system - `xteps`
+    * with custom reporting tool - `xteps`
 
 ## What are steps chains?
 
