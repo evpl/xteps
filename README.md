@@ -72,6 +72,8 @@ Main Xteps API is a set of static methods located in the `com.plugatar.xteps.che
   the step result.
 - `stepsChain()` - starts a chain of steps (returns no context steps chain).
 
+See examples in the [Code examples section](#Code-examples).
+
 ## Allure and ReportPortal integration
 
 Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
@@ -84,7 +86,7 @@ steps chain or in case of `closeAutoCloseableContexts()` method invocation.
 ```java
 stepsChain().withContext(new AutoCloseableImpl1())
     .contextIsAutoCloseable()
-    .step("Step 1", ctx ->{
+    .step("Step 1", ctx -> {
         //...
     })
     .stepToContext("Step 2", ctx -> {
