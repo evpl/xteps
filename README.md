@@ -15,6 +15,23 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
+## Table of Contents
+
+* [How to use](#How to use)
+* [Which version to choose?](#Which version to choose?)
+* [What are steps chains?](#What are steps chains?)
+* [API](#API)
+* [Allure and ReportPortal integration](#Allure and ReportPortal integration)
+* [Safe AutoCloseable context](#Safe AutoCloseable context)
+* [Clean stack trace](#Clean stack trace)
+* [Checked exceptions](#Checked exceptions)
+* [How to provide parameters](#How to provide parameters)
+* [Xteps Java 8 unreported exception bug](#Xteps Java 8 unreported exception bug)
+* [Code examples](#Code examples)
+    * [Simple Java code example](#Simple Java code example)
+    * [Simple Kotlin code example](#Simple Java code example)
+    * [Selenium WebDriver Java code example](#Selenium WebDriver Java code example)
+
 ## How to use
 
 Requires Java 8+ version. Just add suitable dependency.
@@ -34,6 +51,7 @@ Requires Java 8+ version. Just add suitable dependency.
 
 This is a way of writing steps in a chain. The most suitable situation is when each step is built around one specific
 context. This method has many advantages, like:
+
 * Chaining reads better than disparate static method steps
 * Unnecessary variables are not created
 * It is possible to set additional behavior of the chain like safe AutoCloseable contexts
@@ -42,78 +60,19 @@ Xteps provides both options for writing steps, static methods and steps chains.
 
 ## API
 
-Main Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps`
-or `com.plugatar.xteps.checked.UncheckedXteps` depending on the version.
+Main Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps` or
+`com.plugatar.xteps.checked.UncheckedXteps` depending on the version.
 
-- `step(String)` and `step(String, String)` - performs empty step with given name (and description).
+- `step(String)` - performs empty step with given name.
+- `step(String, String)` - performs empty step with given name and description.
+- `step(String, ThrowingRunnable)` - performs given step with given name.
+- `step(String, String, ThrowingRunnable)` - performs given step with given name and description.
+- `stepTo(String, ThrowingSupplier)` - performs given step with given name and returns the step result.
+- `stepTo(String, String, ThrowingSupplier)` - performs given step with given name and description and returns
+  the step result.
+- `stepsChain()` - starts a chain of steps (returns no context steps chain).
 
-```java
-step("Step 1");
-step("Step 2","Description");
-```
-
-- `step(String, ThrowingRunnable)` and `step(String, String, ThrowingRunnable)` - performs given step with given name
-(and description).
-
-```java
-step("Step 1", () -> {
-    //...
-});
-step("Step 2", "Description", () -> {
-    //...
-    step("Nested step 1", () -> {
-        //...
-    });
-});
-```
-
-- `stepTo(String, ThrowingSupplier)` and `stepTo(String, String, ThrowingSupplier)` - performs given step with given
-name (and description) and returns the step result.
-
-```java
-String step1Result = stepTo("Step 1", () -> {
-    //...
-    return"result1";
-});
-String step2Result = stepTo("Step 2", "Description", () -> {
-    //...
-    return stepTo("Nested step 1", () -> {
-        //...
-        return"result2";
-    });
-});
-```
-
-- `stepsChain()` - returns no context steps chain.
-
-```java
-stepsChain()
-    .step("Step 1", () -> {
-        //...
-    })
-    .nestedSteps("Step 2", stepsChain -> stepsChain
-        .step("Nested step 1", "Description", () -> {
-            //...
-        })
-        .step("Nested step 2", () -> {
-            //...
-        })
-    );
-    stepsChain().withContext("context")
-        .step("Step 3", ctx -> {
-            //...
-        })
-        .nestedSteps("Step 4", stepsChain -> stepsChain
-            .step("Nested step 1", "Description", ctx -> {
-                //...
-            })
-            .step("Nested step 2", ctx -> {
-                //...
-            })
-        );
-```
-
-## Allure / ReportPortal integration
+## Allure and ReportPortal integration
 
 Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
 
@@ -125,7 +84,7 @@ steps chain or in case of `closeAutoCloseableContexts()` method invocation.
 ```java
 stepsChain().withContext(new AutoCloseableImpl1())
     .contextIsAutoCloseable()
-    .step("Step 1", ctx -> {
+    .step("Step 1", ctx ->{
         //...
     })
     .stepToContext("Step 2", ctx -> {
@@ -160,6 +119,7 @@ final class ExampleTest {
 ```
 
 Stacktrace will look like this
+
 ```
 java.lang.RuntimeException: Nested step exception
 
@@ -181,23 +141,23 @@ void test() throws MalformedURLException {
         //...
         step("Nested step", () -> {
             new URL("abc");
-        })
+        });
     });
 }
 ```
 
 You can choose a mechanism to cheat checked exceptions if you want to hide them. Xteps give you the built-in static
 methods by `com.plugatar.xteps.base.ThrowingConsumer`, `com.plugatar.xteps.base.ThrowingFunction`,
-`com.plugatar.xteps.base.ThrowingPredicate`, `com.plugatar.xteps.base.ThrowingRunnable`,
-`com.plugatar.xteps.base.ThrowingSupplier` classes.
+`com.plugatar.xteps.base.ThrowingRunnable`, `com.plugatar.xteps.base.ThrowingSupplier` classes.
 
 ```java
+@Test
 void test() {
     step("Step", () -> {
         //...
         step("Nested step", ThrowingRunnable.unchecked(() -> {
             new URL("abc");
-        }))
+        }));
     });
 }
 ```
@@ -211,7 +171,7 @@ void test() {
         //...
         step("Nested step", () -> {
             new URL("abc");
-        })
+        });
     });
 }
 ```
@@ -253,8 +213,8 @@ this issue).
 
 ```java
 stepsChain()
-    .nestedStepsTo("Step 1", stepsChain -> stepsChain
-        .step("Nested step 1", () -> {})
+    .nestedStepsTo("Step", chain -> chain
+        .step("Nested step", () -> {})
     );
 ```
 
@@ -265,41 +225,222 @@ You can switch to Java 9+ or use functional interfaces static methods to hide an
 
 ```java
 stepsChain()
-    .nestedStepsTo("Step 1", uncheckedFunction(stepsChain -> stepsChain
-        .step("Nested step 1", () -> {})
+    .nestedStepsTo("Step", uncheckedFunction(chain -> chain
+        .step("Nested step", () -> {})
     ));
 ```
 
-## Simple REST Assured example
+## Code examples
+
+### Simple Java code example
 
 ```java
-final class ExampleTest {
+@Test
+void simpleMethodsExample() {
+    step("Step 1");
+    step("Step 2", "Description", () -> {
+        //...
+    });
+    step("Step 3", () -> {
+        step("Nested step 1", () -> {
+            //...
+        });
+        step("Nested step 2", "Description");
+    });
+    final String stepResult = stepTo("Step 4", () -> {    // = "step result"
+        step("Nested step 1", () -> {
+            //...
+        });
+        return stepTo("Nested step 2", () -> {
+            //...
+            return "step result";
+        });
+    });
+}
 
-  @Test
-  void test() {
-      stepsChain()
-          .stepToContext("Step 1 - Request", () ->
-              RestAssured.given().get("https://....")
-          )
-          .step("Step 2 - Status code", response ->
-              response.then().statusCode(200)
-          )
-          .step("Step 3 - Schema", response ->
-              response.then().body(matchesJsonSchemaInClasspath("schema.json"))
-          )
-          .stepToContext("Step 4 - POJO", response -> {
-              POJO responsePOJO = response.as(POJO.class);
-              verifyPOJO(responsePOJO);
-              return responsePOJO;
-          })
-          .stepToContext("Step 5 - Database connection", pojo ->
-              Database.connection()
-          )
-          .contextIsAutoCloseable()
-          .step("Step 6 - Verify database", (pojo, connection) ->
-              compareResponsePOJOWithDatabase(pojo, connection)
-          )
-          .closeAutoCloseableContexts();
-  }
+@Test
+void stepsChainWithoutContextExample() {
+    final String stepResult = stepsChain()    // = "step result"
+        .step("Step 1")
+        .step("Step 2", "Description", () -> {
+            //...
+        })
+        .nestedSteps("Step 3", chain -> chain
+            .step("Nested step 1", () -> {
+                //...
+            })
+            .step("Nested step 2", "Description")
+        )
+        .nestedStepsTo("Step 4", chain -> chain
+            .step("Nested step 1", () -> {
+                //...
+            })
+            .stepTo("Nested step 2", () -> {
+                //...
+                return "step result";
+            })
+        );
+}
+
+@Test
+void stepsChainWithContextExample() {
+    final String stepResult = stepsChain()    // = "step result"
+        .step("Step 1")
+        .stepToContext("Step 2", "Description", () -> {
+            //...
+            return "step";
+        })
+        .nestedStepsTo("Step 3", chain -> chain
+            .step("Nested step 1", ctx -> {
+                //...
+            })
+            .stepToContext("Nested step 2", "Description", ctx -> {
+                //...
+                return " ";
+            })
+        )
+        .withContext("result")
+        .nestedStepsTo("Step 4", chain -> chain
+            .step("Nested step 1", ctx -> {
+                //...
+            })
+            .stepTo("Nested step 2", (ctx, previousCtx1, previousCtx2) -> {
+                //...
+                return previousCtx2 + previousCtx1 + ctx;
+            })
+        );
 }
 ```
+
+Allure report looks like this for every test:
+
+![simple_java_code_example](https://user-images.githubusercontent.com/54626653/198648739-15ba8a27-4025-4902-8174-49baed3a69d2.png)
+
+### Simple Kotlin code example
+
+```java
+@Test
+fun simpleMethodsExample() {
+    step("Step 1")
+    step("Step 2", "Description") {
+        //...
+    }
+    step("Step 3") {
+        step("Nested step 1") {
+            //...
+        }
+        step("Nested step 2", "Description")
+    }
+    val stepResult: String = stepTo("Step 4") {    // = "step result"
+        step("Nested step 1") {
+            //...
+        }
+        stepTo("Nested step 2") {
+            //...
+            "step result"
+        }
+    }
+}
+
+@Test
+fun stepsChainWithoutContextExample() {
+    val stepResult = stepsChain()    // = "step result"
+        .step("Step 1")
+        .step("Step 2", "Description") {
+            //...
+        }
+        .nestedSteps("Step 3") { chain ->
+            chain
+                .step("Nested step 1") {
+                    //...
+                }
+                .step("Nested step 2", "Description")
+        }
+        .nestedStepsTo("Step 4") { chain ->
+            chain
+                .step("Nested step 1") {
+                    //...
+                }
+                .stepTo("Nested step 2") {
+                    //...
+                    "step result"
+                }
+        }
+}
+
+@Test
+fun stepsChainWithContextExample() {
+    val stepResult = stepsChain()    // = "step result"
+        .step("Step 1")
+        .stepToContext("Step 2", "Description") {
+            //...
+            "step"
+        }
+        .nestedStepsTo("Step 3") { chain ->
+            chain
+                .step("Nested step 1") { ctx ->
+                    //...
+                }
+                .stepToContext("Nested step 2", "Description") { ctx ->
+                    //...
+                    " "
+                }
+        }
+        .withContext("result")
+        .nestedStepsTo("Step 4") { chain ->
+            chain
+                .step("Nested step 1") { ctx ->
+                    //...
+                }
+                .stepTo("Nested step 2") { ctx, previousCtx1, previousCtx2 ->
+                    //...
+                    previousCtx2 + previousCtx1 + ctx
+                }
+        }
+}
+```
+
+### Selenium WebDriver Java code example
+
+```java
+@Test
+void example() {
+    stepsChain()
+        .step("Step 1", () -> {
+            //...
+        })
+        .stepToContext("Step 2", "Creating a driver with parameters: ...", () -> {
+            //...
+            return new ChromeDriver();
+        })
+        .step("Step 3", "Log in as user1234", driver -> {
+            //...
+            driver.findElement(By.id("username")).sendKeys("user1234");
+            driver.findElement(By.id("password")).sendKeys("12345678");
+            driver.findElement(By.id("sign_in")).click();
+        })
+        .stepToContext("Step 4", driver ->
+            //...
+            driver.findElement(By.id("header"))
+        )
+        .nestedSteps("Step 5", chain -> chain
+            .step("Nested step 1", headerElement -> {
+                //...
+                assertTrue(headerElement.isDisplayed());
+            })
+            .step("Nested step 2", headerElement -> {
+                //...
+                assertEquals(headerElement.getAttribute("attr"), "expected_attr");
+            })
+        )
+        .step("Step 6", (headerElement, driver) -> {
+            //...
+            assertEquals(driver.findElements(By.id("header")).size(), 1);
+            assertTrue(headerElement.isDisplayed());
+        });
+}
+```
+
+Allure report looks like this:
+
+![webdriver_java_code_example](https://user-images.githubusercontent.com/54626653/198648928-62919f30-7db3-4501-88e3-db62099a6298.png)
