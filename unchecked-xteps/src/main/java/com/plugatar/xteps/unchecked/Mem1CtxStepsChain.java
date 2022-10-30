@@ -82,6 +82,22 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
      */
     @Override
     Mem1CtxStepsChain<C, P, PS> step(
+        ThrowingConsumer<? super C, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem1CtxStepsChain<C, P, PS> step(
+        ThrowingBiConsumer<? super C, ? super P, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem1CtxStepsChain<C, P, PS> step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -113,6 +129,22 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
         String stepName,
         String stepDescription,
         ThrowingBiConsumer<? super C, ? super P, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        ThrowingFunction<? super C, ? extends U, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
     );
 
     /**

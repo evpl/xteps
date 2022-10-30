@@ -24,15 +24,17 @@ import com.plugatar.xteps.checked.impl.NoCtxStepsChainImpl;
 import java.util.function.Supplier;
 
 /**
- * Main Xteps API. Utility class.
+ * Xteps API.
  *
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class Xteps {
 
     /**
-     * Performs empty step with given name.<br>
-     * Code example:
+     * Performs and reports empty step with given name.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1");
      * }</pre>
@@ -48,8 +50,10 @@ public final class Xteps {
     }
 
     /**
-     * Performs empty step with given name and description.<br>
-     * Code example:
+     * Performs and reports empty step with given name and description.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", "Description");
      * }</pre>
@@ -67,16 +71,47 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name.<br>
-     * Code example:
+     * Performs given step.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * step(() -> {
+     *     //...
+     * });
+     * step(() -> {
+     *     //...
+     *     step(() -> {
+     *         //...
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param step the step
+     * @param <E>  the {@code step} exception type
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code step} is null
+     * @throws E              if {@code step} threw exception
+     */
+    public static <E extends Throwable> void step(
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        CACHED_NO_CTX_STEPS_CHAIN.get().step(step);
+    }
+
+    /**
+     * Performs and reports given step with given name.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", () -> {
-     *     ...
+     *     //...
      * });
      * step("Step 2", () -> {
-     *     ...
+     *     //...
      *     step("Nested step 1", () -> {
-     *         ...
+     *         //...
      *     });
      * });
      * }</pre>
@@ -98,16 +133,18 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name and description.<br>
-     * Code example:
+     * Performs and reports given step with given name and description.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", "Description", () -> {
-     *     ...
+     *     //...
      * });
      * step("Step 2", "Description", () -> {
-     *     ...
+     *     //...
      *     step("Nested step 1", "Description", () -> {
-     *         ...
+     *         //...
      *     });
      * });
      * }</pre>
@@ -131,17 +168,52 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name and returns the step result.<br>
-     * Code example:
+     * Performs given step and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * String step1Result = stepTo(() -> {
+     *     //...
+     *     return "result1";
+     * });
+     * String step2Result = stepTo(() -> {
+     *     //...
+     *     return stepTo(() -> {
+     *         //...
+     *         return "result2";
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param step the step
+     * @param <R>  the result type
+     * @param <E>  the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code step} is null
+     * @throws E              if {@code step} threw exception
+     */
+    public static <R, E extends Throwable> R stepTo(
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
+    }
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * String step1Result = stepTo("Step 1", () -> {
-     *     ...
+     *     //...
      *     return "result1";
      * });
      * String step2Result = stepTo("Step 2", () -> {
-     *     ...
+     *     //...
      *     return stepTo("Nested step 1", () -> {
-     *         ...
+     *         //...
      *         return "result2";
      *     });
      * });
@@ -166,17 +238,19 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step with given name and description and returns the step result.<br>
-     * Code example:
+     * Performs and reports given step with given name and description and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * String step1Result = stepTo("Step 1", "Description", () -> {
-     *     ...
+     *     //...
      *     return "result1";
      * });
      * String step2Result = stepTo("Step 2", "Description", () -> {
-     *     ...
+     *     //...
      *     return stepTo("Nested step 1", "Description", () -> {
-     *         ...
+     *         //...
      *         return "result2";
      *     });
      * });
@@ -203,31 +277,33 @@ public final class Xteps {
     }
 
     /**
-     * Returns no context steps chain.<br>
-     * Code example:
+     * Returns no context steps chain.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * stepsChain()
      *     .step("Step 1", () -> {
-     *         ...
+     *         //...
      *     })
      *     .nestedSteps("Step 2", stepsChain -> stepsChain
      *         .step("Nested step 1", () -> {
-     *             ...
+     *             //...
      *         })
      *         .step("Nested step 2", "Description", () -> {
-     *             ...
+     *             //...
      *         })
      *     );
      * stepsChain().withContext("context")
      *     .step("Step 3", ctx -> {
-     *         ...
+     *         //...
      *     })
      *     .nestedSteps("Step 4", stepsChain -> stepsChain
      *         .step("Nested step 1", ctx -> {
-     *             ...
+     *             //...
      *         })
      *         .step("Nested step 2", "Description", ctx -> {
-     *             ...
+     *             //...
      *         })
      *     );
      * }</pre>

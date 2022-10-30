@@ -32,7 +32,6 @@ import com.plugatar.xteps.unchecked.Mem2CtxStepsChain;
 import com.plugatar.xteps.unchecked.MemNoCtxStepsChain;
 import com.plugatar.xteps.unchecked.base.BaseCtxStepsChain;
 
-import static com.plugatar.xteps.base.ThrowingSupplier.uncheckedSupplier;
 import static com.plugatar.xteps.unchecked.impl.StepsChainUtils.sneakyThrow;
 
 /**
@@ -279,6 +278,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     }
 
     @Override
+    public final Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingConsumer<? super C, ?> step
+    ) {
+        return this.supplyContext(step);
+    }
+
+    @Override
+    public final Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingBiConsumer<? super C, ? super P1, ?> step
+    ) {
+        return this.supplyContext(step);
+    }
+
+    @Override
+    public final Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingTriConsumer<? super C, ? super P1, ? super P2, ?> step
+    ) {
+        return this.supplyContext(step);
+    }
+
+    @Override
     public final Mem2CtxStepsChain<C, P1, P2, PS> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -368,6 +388,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
 
     @Override
     public final <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingFunction<? super C, ? extends U, ?> step
+    ) {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingBiFunction<? super C, ? super P1, ? extends U, ?> step
+    ) {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ?> step
+    ) {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ?> step
     ) {
@@ -433,6 +474,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
             step.apply(this.optionalContext.value(), this.previousContext, this.previousContext2));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
             this.optionalContext.value(), this.previousContext, this);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final ThrowingFunction<? super C, ? extends R, ?> step
+    ) {
+        return this.applyContext(step);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final ThrowingBiFunction<? super C, ? super P1, ? extends R, ?> step
+    ) {
+        return this.applyContext(step);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ?> step
+    ) {
+        return this.applyContext(step);
     }
 
     @Override
@@ -561,7 +623,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         final ThrowingSupplier<? extends R, ?> step
     ) {
         return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
-            this.optionalContext, uncheckedSupplier(step));
+            this.optionalContext, ThrowingSupplier.unchecked(step));
     }
 
     private void throwNullArgException(final String argName) {

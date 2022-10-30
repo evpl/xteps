@@ -223,6 +223,20 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
     }
 
     @Override
+    public final <E extends Throwable> Mem1CtxStepsChain<C, P, PS> step(
+        final ThrowingConsumer<? super C, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
+    public final <E extends Throwable> Mem1CtxStepsChain<C, P, PS> step(
+        final ThrowingBiConsumer<? super C, ? super P, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
     public final Mem1CtxStepsChain<C, P, PS> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -288,6 +302,20 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
 
     @Override
     public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        final ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        final ThrowingBiFunction<? super C, ? super P, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E {
@@ -330,6 +358,20 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
             step.apply(this.optionalContext.value(), this.previousContext));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
             this.optionalContext.value(), this.previousContext, this);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingFunction<? super C, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingBiFunction<? super C, ? super P, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
     }
 
     @Override

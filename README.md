@@ -21,8 +21,8 @@ ready, but you can write your own listener for another reporting tool or just cr
 ## Table of Contents
 
 * [How to use](#How-to-use)
-* [Which version to choose?](#Which-version-to-choose?)
-* [What are steps chains?](#What-are-steps-chains?)
+* [Which version to choose](#Which-version-to-choose)
+* [What are steps chains](#What-are-steps-chains)
 * [API](#API)
 * [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
 * [Safe AutoCloseable context](#Safe-AutoCloseable-context)
@@ -39,7 +39,7 @@ ready, but you can write your own listener for another reporting tool or just cr
 
 Requires Java 8+ version. Just add suitable dependency.
 
-## Which version to choose?
+## Which version to choose
 
 * If you use Kotlin or use Java but want to hide checked exceptions
     * with Allure - `unchecked-xteps-allure`
@@ -50,7 +50,7 @@ Requires Java 8+ version. Just add suitable dependency.
     * with ReportPortal - `xteps-reportportal`
     * with custom reporting tool - `xteps`
 
-## What are steps chains?
+## What are steps chains
 
 This is a way of writing steps in a chain. The most suitable situation is when each step is built around one specific
 context. This method has many advantages, like:
@@ -66,16 +66,19 @@ Xteps provides both options for writing steps, static methods and steps chains.
 Main Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps` or
 `com.plugatar.xteps.checked.UncheckedXteps` depending on the version.
 
-- `step(String)` - performs empty step with given name.
-- `step(String, String)` - performs empty step with given name and description.
-- `step(String, ThrowingRunnable)` - performs given step with given name.
-- `step(String, String, ThrowingRunnable)` - performs given step with given name and description.
-- `stepTo(String, ThrowingSupplier)` - performs given step with given name and returns the step result.
-- `stepTo(String, String, ThrowingSupplier)` - performs given step with given name and description and returns
-  the step result.
-- `stepsChain()` - starts a chain of steps (returns no context steps chain).
+| Method                                     | Description                                                                                    |
+|--------------------------------------------|------------------------------------------------------------------------------------------------|
+| `step(String)`                             | Performs and reports empty step with given name.                                               |
+| `step(String, String)`                     | Performs and reports empty step with given name and description.                               |
+| `step(ThrowingRunnable)`                   | Performs given step.                                                                           |
+| `step(String, ThrowingRunnable)`           | Performs and reports given step with given name.                                               |
+| `step(String, String, ThrowingRunnable)`   | Performs and reports given step with given name and description.                               |
+| `stepTo(ThrowingSupplier)`                 | Performs given step and returns the step result.                                               |
+| `stepTo(String, ThrowingSupplier)`         | Performs and reports given step with given name and returns the step result.                   |
+| `stepTo(String, String, ThrowingSupplier)` | Performs and reports given step with given name and description and returns the step result.   |
+| `stepsChain()`                             | Starts a chain of steps (returns no context steps chain).                                      |
 
-See examples in the [Code examples section](#Code-examples).
+See [code examples](#Code-examples).
 
 ## Allure and ReportPortal integration
 
@@ -186,10 +189,10 @@ void test() {
 There are two ways to load parameters. Be aware that higher source override lower one - properties from file can be
 overridden by system properties.
 
-| Order | Source                               |
-|-------|--------------------------------------|
-| 1     | System properties                    |
-| 2     | Properties file (`xteps.properties`) |
+| Priority | Source                               |
+|----------|--------------------------------------|
+| 1        | System properties                    |
+| 2        | Properties file (`xteps.properties`) |
 
 ### Properties list
 
@@ -404,6 +407,8 @@ fun stepsChainWithContextExample() {
         }
 }
 ```
+
+Allure report looks like report for Java code example.
 
 ### Selenium WebDriver Java code example
 

@@ -84,6 +84,20 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
+    public final <E extends Throwable> NoCtxStepsChain step(
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
+        try {
+            step.run();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
+        return this;
+    }
+
+    @Override
     public final NoCtxStepsChain step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -125,6 +139,13 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
 
     @Override
     public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+        final ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
@@ -144,6 +165,19 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         return new CtxStepsChainImpl<>(
             this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(), context
         );
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
+        try {
+            return step.get();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
     }
 
     @Override

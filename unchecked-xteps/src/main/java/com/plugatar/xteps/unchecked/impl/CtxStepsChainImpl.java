@@ -28,7 +28,6 @@ import com.plugatar.xteps.unchecked.CtxStepsChain;
 import com.plugatar.xteps.unchecked.Mem1CtxStepsChain;
 import com.plugatar.xteps.unchecked.MemNoCtxStepsChain;
 
-import static com.plugatar.xteps.base.ThrowingSupplier.uncheckedSupplier;
 import static com.plugatar.xteps.unchecked.impl.StepsChainUtils.sneakyThrow;
 
 /**
@@ -160,6 +159,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     }
 
     @Override
+    public final CtxStepsChain<C> step(
+        final ThrowingConsumer<? super C, ?> step
+    ) {
+        return this.supplyContext(step);
+    }
+
+    @Override
     public final CtxStepsChain<C> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -201,6 +207,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
 
     @Override
     public final <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        final ThrowingFunction<? super C, ? extends U, ?> step
+    ) {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ?> step
     ) {
@@ -219,6 +232,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         final U newContext = this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
         return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
             this.optionalContext.value(), this);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final ThrowingFunction<? super C, ? extends R, ?> step
+    ) {
+        return this.applyContext(step);
     }
 
     @Override
@@ -306,7 +326,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         final ThrowingSupplier<? extends R, ?> step
     ) {
         return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
-            this.optionalContext, uncheckedSupplier(step));
+            this.optionalContext, ThrowingSupplier.unchecked(step));
     }
 
     private void throwNullArgException(final String argName) {

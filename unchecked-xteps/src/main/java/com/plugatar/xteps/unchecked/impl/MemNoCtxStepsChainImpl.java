@@ -28,7 +28,6 @@ import com.plugatar.xteps.unchecked.CtxStepsChain;
 import com.plugatar.xteps.unchecked.MemNoCtxStepsChain;
 import com.plugatar.xteps.unchecked.base.BaseCtxStepsChain;
 
-import static com.plugatar.xteps.base.ThrowingSupplier.uncheckedSupplier;
 import static com.plugatar.xteps.unchecked.impl.StepsChainUtils.sneakyThrow;
 
 /**
@@ -74,6 +73,17 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
+    public final MemNoCtxStepsChain<P> closeCloseableContexts() {
+        try {
+            this.safeACContainer.close();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw sneakyThrow(ex);
+        }
+        return this;
+    }
+
+    @Override
     public final <U> CtxStepsChain<U> withContext(final U context) {
         return new CtxStepsChainImpl<>(
             this.stepReporter, this.exceptionHandler, this.safeACContainer, context
@@ -99,10 +109,14 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
-    public final MemNoCtxStepsChain<P> closeCloseableContexts() {
+    public final MemNoCtxStepsChain<P> step(
+        final ThrowingRunnable<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
         try {
-            this.safeACContainer.close();
+            step.run();
         } catch (final Throwable ex) {
+            this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
             throw sneakyThrow(ex);
         }
@@ -151,6 +165,13 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
 
     @Override
     public final <U> CtxStepsChain<U> stepToContext(
+        final ThrowingSupplier<? extends U, ?> step
+    ) {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ?> step
     ) {
@@ -170,6 +191,20 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         return new CtxStepsChainImpl<>(
             this.stepReporter, this.exceptionHandler, this.safeACContainer, context
         );
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        try {
+            return step.get();
+        } catch (final Throwable ex) {
+            this.safeACContainer.close(ex);
+            this.exceptionHandler.handle(ex);
+            throw sneakyThrow(ex);
+        }
     }
 
     @Override
@@ -257,7 +292,7 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         final ThrowingSupplier<? extends R, ?> step
     ) {
         return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(),
-            uncheckedSupplier(step));
+            ThrowingSupplier.unchecked(step));
     }
 
     private void throwNullArgException(final String argName) {

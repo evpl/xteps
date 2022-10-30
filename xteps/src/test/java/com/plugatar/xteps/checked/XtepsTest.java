@@ -60,20 +60,69 @@ final class XtepsTest {
         System.clearProperty("xteps.cleanStackTrace");
     }
 
-    @Test
-    void stepMethod() {
-        Xteps.step("stepMethod");
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepMethod");
-        assertThat(StaticStepListener.lastStepDescription()).isEmpty();
+    private static void assertThatStepPassed(final String stepName,
+                                             final String stepDescription,
+                                             final OptionalValue<?> optionalContext) {
+        /* stepStarted method */
+        final String stepStartedUuid = StaticStepListener.stepStartedUUID();
+        assertThat(stepStartedUuid).matches(uuidPattern());
+        assertThat(StaticStepListener.stepStartedName()).matches(stepName);
+        assertThat(StaticStepListener.stepStartedDescription()).matches(stepDescription);
+        final OptionalValue<?> stepStartedOptionalContext = StaticStepListener.stepStartedOptionalContext();
+        assertThat(stepStartedOptionalContext).isNotNull();
+        assertThat(stepStartedOptionalContext.isPresent()).isSameAs(optionalContext.isPresent());
+        if (stepStartedOptionalContext.isPresent()) {
+            assertThat(stepStartedOptionalContext.value()).isSameAs(optionalContext.value());
+        }
+        /* stepPassed method */
+        assertThat(StaticStepListener.stepPassedUUID()).isSameAs(stepStartedUuid);
+    }
+
+    private static void assertThatStepFailed(final String stepName,
+                                             final String stepDescription,
+                                             final OptionalValue<?> optionalContext,
+                                             final Throwable exception) {
+        /* stepStarted method */
+        final String stepStartedUuid = StaticStepListener.stepStartedUUID();
+        assertThat(stepStartedUuid).matches(uuidPattern());
+        assertThat(StaticStepListener.stepStartedName()).matches(stepName);
+        assertThat(StaticStepListener.stepStartedDescription()).matches(stepDescription);
+        final OptionalValue<?> stepStartedOptionalContext = StaticStepListener.stepStartedOptionalContext();
+        assertThat(stepStartedOptionalContext).isNotNull();
+        assertThat(stepStartedOptionalContext.isPresent()).isSameAs(optionalContext.isPresent());
+        if (stepStartedOptionalContext.isPresent()) {
+            assertThat(stepStartedOptionalContext.value()).isSameAs(optionalContext.value());
+        }
+        /* stepFailed method */
+        assertThat(StaticStepListener.stepFailedUUID()).isSameAs(stepStartedUuid);
+        assertThat(StaticStepListener.stepFailedException()).isSameAs(exception);
+    }
+
+    private static void assertThatNoStep() {
+        assertThat(StaticStepListener.stepStartedUUID()).isNull();
+        assertThat(StaticStepListener.stepStartedName()).isNull();
+        assertThat(StaticStepListener.stepStartedDescription()).isNull();
+        assertThat(StaticStepListener.stepStartedOptionalContext()).isNull();
+        assertThat(StaticStepListener.stepPassedUUID()).isNull();
+        assertThat(StaticStepListener.stepFailedUUID()).isNull();
+        assertThat(StaticStepListener.stepFailedException()).isNull();
     }
 
     @Test
-    void stepMethodWithDescription() {
-        Xteps.step("stepMethodWithDescription", "stepMethodWithDescription description");
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepMethodWithDescription");
-        assertThat(StaticStepListener.lastStepDescription()).isEqualTo("stepMethodWithDescription description");
+    void stepMethodWithName() {
+        final String stepName = "stepMethodWithName";
+
+        Xteps.step(stepName);
+        assertThatStepPassed(stepName, "", OptionalValue.empty());
+    }
+
+    @Test
+    void stepMethodWithNameAndDescription() {
+        final String stepName = "stepMethodWithNameAndDescription";
+        final String stepDescription = "stepMethodWithNameAndDescription description";
+
+        Xteps.step(stepName, stepDescription);
+        assertThatStepPassed(stepName, stepDescription, OptionalValue.empty());
     }
 
     @Test
@@ -81,52 +130,73 @@ final class XtepsTest {
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
 
-        Xteps.step("stepMethodWithAction", action);
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepMethodWithAction");
-        assertThat(StaticStepListener.lastStepDescription()).isEmpty();
+        Xteps.step(action);
+        assertThatNoStep();
         verify(action, times(1)).run();
     }
 
     @Test
-    void stepMethodWithDescriptionAndAction() {
+    void stepMethodWithNameAndAction() {
+        final String stepName = "stepMethodWithNameAndAction";
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
 
-        Xteps.step("stepMethodWithDescriptionAndAction", "stepMethodWithDescriptionAndAction description", action);
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepMethodWithDescriptionAndAction");
-        assertThat(StaticStepListener.lastStepDescription()).isEqualTo("stepMethodWithDescriptionAndAction description");
+        Xteps.step(stepName, action);
+        assertThatStepPassed(stepName, "", OptionalValue.empty());
         verify(action, times(1)).run();
     }
 
     @Test
-    void stepToMethod() {
+    void stepMethodWithNameAndDescriptionAndAction() {
+        final String stepName = "stepMethodWithNameAndDescriptionAndAction";
+        final String stepDescription = "stepMethodWithNameAndDescriptionAndAction description";
+        @SuppressWarnings("unchecked")
+        final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
+
+        Xteps.step(stepName, stepDescription, action);
+        assertThatStepPassed(stepName, stepDescription, OptionalValue.empty());
+        verify(action, times(1)).run();
+    }
+
+    @Test
+    void stepToMethodWithAction() {
         @SuppressWarnings("unchecked")
         final ThrowingSupplier<Object, RuntimeException> action = mock(ThrowingSupplier.class);
         final Object result = new Object();
         when(action.get()).thenReturn(result);
 
-        assertThat(Xteps.stepTo("stepToMethod", action)).isSameAs(result);
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToMethod");
-        assertThat(StaticStepListener.lastStepDescription()).isEmpty();
+        assertThat(Xteps.stepTo(action)).isSameAs(result);
+        assertThatNoStep();
         verify(action, times(1)).get();
     }
 
     @Test
-    void stepToMethodWithDescription() {
+    void stepToMethodWithNameAndAction() {
+        final String stepName = "stepToMethodWithNameAndAction";
         @SuppressWarnings("unchecked")
         final ThrowingSupplier<Object, RuntimeException> action = mock(ThrowingSupplier.class);
         final Object result = new Object();
         when(action.get()).thenReturn(result);
 
-        assertThat(Xteps.stepTo("stepToMethodWithDescription", "stepToMethodWithDescription description", action)).isSameAs(result);
-        assertThat(StaticStepListener.lastUUID()).matches(uuidPattern());
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepToMethodWithDescription");
-        assertThat(StaticStepListener.lastStepDescription()).isEqualTo("stepToMethodWithDescription description");
+        assertThat(Xteps.stepTo(stepName, action)).isSameAs(result);
+        assertThatStepPassed(stepName, "", OptionalValue.empty());
         verify(action, times(1)).get();
     }
+
+    @Test
+    void stepToMethodWithNameAndDescriptionAndAction() {
+        final String stepName = "stepToMethodWithNameAndDescriptionAndAction";
+        final String stepDescription = "stepToMethodWithNameAndDescriptionAndAction description";
+        @SuppressWarnings("unchecked")
+        final ThrowingSupplier<Object, RuntimeException> action = mock(ThrowingSupplier.class);
+        final Object result = new Object();
+        when(action.get()).thenReturn(result);
+
+        assertThat(Xteps.stepTo(stepName, stepDescription, action)).isSameAs(result);
+        assertThatStepPassed(stepName, stepDescription, OptionalValue.empty());
+        verify(action, times(1)).get();
+    }
+
 
     @Test
     void stepsChainMethod() {
@@ -135,9 +205,10 @@ final class XtepsTest {
 
         final NoCtxStepsChain stepsChain = Xteps.stepsChain();
         assertThat(Xteps.stepsChain()).isSameAs(stepsChain);
-        stepsChain.step("stepsChainMethod", action);
-        assertThat(StaticStepListener.lastStepName()).isEqualTo("stepsChainMethod");
-        assertThat(StaticStepListener.lastStepDescription()).isEmpty();
+
+        final String stepName = "stepsChainMethod";
+        stepsChain.step(stepName, action);
+        assertThatStepPassed(stepName, "", OptionalValue.empty());
         verify(action, times(1)).run();
     }
 
@@ -194,28 +265,57 @@ final class XtepsTest {
     }
 
     public static final class StaticStepListener implements StepListener {
-        private static String lastUUID = null;
-        private static String lastStepName = null;
-        private static String lastStepDescription = null;
+        private static String stepStartedUUID = null;
+        private static String stepStartedName = null;
+        private static String stepStartedDescription = null;
+        private static OptionalValue<?> stepStartedOptionalContext = null;
+        private static String stepPassedUUID = null;
+        private static String stepFailedUUID = null;
+        private static Throwable stepFailedException = null;
+
 
         public StaticStepListener() {
         }
 
-        static String lastUUID() {
-            final String last = lastUUID;
-            lastUUID = null;
+        static String stepStartedUUID() {
+            final String last = stepStartedUUID;
+            stepStartedUUID = null;
             return last;
         }
 
-        static String lastStepName() {
-            final String last = lastStepName;
-            lastStepName = null;
+        static String stepStartedName() {
+            final String last = stepStartedName;
+            stepStartedName = null;
             return last;
         }
 
-        static String lastStepDescription() {
-            final String last = lastStepDescription;
-            lastStepDescription = null;
+        static String stepStartedDescription() {
+            final String last = stepStartedDescription;
+            stepStartedDescription = null;
+            return last;
+        }
+
+        static OptionalValue<?> stepStartedOptionalContext() {
+            final OptionalValue<?> last = stepStartedOptionalContext;
+            stepStartedOptionalContext = null;
+            return last;
+        }
+
+        static String stepPassedUUID() {
+            final String last = stepPassedUUID;
+            stepPassedUUID = null;
+            return last;
+        }
+
+        static String stepFailedUUID() {
+            final String last = stepFailedUUID;
+            stepFailedUUID = null;
+            return last;
+        }
+
+        static Throwable stepFailedException() {
+            final Throwable last = stepFailedException;
+            stepFailedException = null;
             return last;
         }
 
@@ -224,18 +324,22 @@ final class XtepsTest {
                                 final String stepName,
                                 final String stepDescription,
                                 final OptionalValue<?> optionalContext) {
-            lastUUID = stepUUID;
-            lastStepName = stepName;
-            lastStepDescription = stepDescription;
+            stepStartedUUID = stepUUID;
+            stepStartedName = stepName;
+            stepStartedDescription = stepDescription;
+            stepStartedOptionalContext = optionalContext;
         }
 
         @Override
         public void stepPassed(final String stepUUID) {
+            stepPassedUUID = stepUUID;
         }
 
         @Override
         public void stepFailed(final String stepUUID,
                                final Throwable exception) {
+            stepFailedUUID = stepUUID;
+            stepFailedException = exception;
         }
     }
 }

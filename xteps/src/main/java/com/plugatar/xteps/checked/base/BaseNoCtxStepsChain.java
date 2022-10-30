@@ -53,7 +53,20 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and returns this steps chain.
+     * Performs given step and returns this steps chain.
+     *
+     * @param step the step
+     * @param <E>  the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> S step(
+        ThrowingRunnable<? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given name and returns this steps chain.
      *
      * @param stepName the step name
      * @param step     the step
@@ -70,7 +83,7 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and description and returns this steps chain.
+     * Performs and reports given step with given name and description and returns this steps chain.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -89,7 +102,22 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and returns a contextual steps chain of the new context.
+     * Performs given step and returns a contextual steps chain of the new context.
+     *
+     * @param step the step
+     * @param <U>  the context type
+     * @param <E>  the {@code step} exception type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code step} is null
+     * @throws E              if {@code step} threw exception
+     */
+    <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+        ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given name and returns a contextual
+     * steps chain of the new context.
      *
      * @param stepName the step name
      * @param step     the step
@@ -107,7 +135,8 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and description and returns a contextual steps chain of the new context.
+     * Performs and reports given step with given name and description and returns
+     * a contextual steps chain of the new context.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -127,7 +156,21 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and returns the step result.
+     * Performs given step and returns the step result.
+     *
+     * @param step the step
+     * @param <R>  the result type
+     * @param <E>  the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if {@code step} is null
+     * @throws E              if {@code step} threw exception
+     */
+    <R, E extends Throwable> R stepTo(
+        ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
      *
      * @param stepName the step name
      * @param step     the step
@@ -145,7 +188,7 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
     ) throws E;
 
     /**
-     * Performs given step with given name and description and returns the step result.
+     * Performs and reports given step with given name and description and returns the step result.
      *
      * @param stepName        the step name
      * @param stepDescription the step description

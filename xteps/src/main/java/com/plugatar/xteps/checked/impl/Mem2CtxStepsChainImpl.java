@@ -276,6 +276,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     }
 
     @Override
+    public final <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingConsumer<? super C, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
+    public final <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingBiConsumer<? super C, ? super P1, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
+    public final <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        final ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
     public final Mem2CtxStepsChain<C, P1, P2, PS> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -365,6 +386,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
 
     @Override
     public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingBiFunction<? super C, ? super P1, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        final ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E {
@@ -430,6 +472,27 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
             step.apply(this.optionalContext.value(), this.previousContext, this.previousContext2));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
             this.optionalContext.value(), this.previousContext, this);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingFunction<? super C, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingBiFunction<? super C, ? super P1, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
     }
 
     @Override

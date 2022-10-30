@@ -24,15 +24,17 @@ import com.plugatar.xteps.unchecked.impl.NoCtxStepsChainImpl;
 import java.util.function.Supplier;
 
 /**
- * Main Unchecked Xteps API. Utility class.
+ * Unchecked Xteps API.
  *
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class UncheckedXteps {
 
     /**
-     * Performs empty step with given name.<br>
-     * Code example:
+     * Performs and reports empty step with given name.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1");
      * }</pre>
@@ -48,8 +50,10 @@ public final class UncheckedXteps {
     }
 
     /**
-     * Performs empty step with given name and description.<br>
-     * Code example:
+     * Performs and reports empty step with given name and description.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", "Description");
      * }</pre>
@@ -67,16 +71,45 @@ public final class UncheckedXteps {
     }
 
     /**
-     * Performs given step with given name.<br>
-     * Code example:
+     * Performs given step.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * step(() -> {
+     *     //...
+     * });
+     * step(() -> {
+     *     //...
+     *     step(() -> {
+     *         //...
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param step the step
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code step} is null
+     */
+    public static void step(
+        final ThrowingRunnable<?> step
+    ) {
+        CACHED_NO_CTX_STEPS_CHAIN.get().step(step);
+    }
+
+    /**
+     * Performs and reports given step with given name.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", () -> {
-     *     ...
+     *     //...
      * });
      * step("Step 2", () -> {
-     *     ...
+     *     //...
      *     step("Nested step 1", () -> {
-     *         ...
+     *         //...
      *     });
      * });
      * }</pre>
@@ -88,22 +121,26 @@ public final class UncheckedXteps {
      *                        or if it's impossible to correctly report the step
      * @see #step(String, String, ThrowingRunnable)
      */
-    public static void step(final String stepName,
-                            final ThrowingRunnable<?> step) {
+    public static void step(
+        final String stepName,
+        final ThrowingRunnable<?> step
+    ) {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName, step);
     }
 
     /**
-     * Performs given step with given name and description.<br>
-     * Code example:
+     * Performs and reports given step with given name and description.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * step("Step 1", "Description", () -> {
-     *     ...
+     *     //...
      * });
      * step("Step 2", "Description", () -> {
-     *     ...
+     *     //...
      *     step("Nested step 1", "Description", () -> {
-     *         ...
+     *         //...
      *     });
      * });
      * }</pre>
@@ -116,24 +153,59 @@ public final class UncheckedXteps {
      *                        or if it's impossible to correctly report the step
      * @see #step(String, ThrowingRunnable)
      */
-    public static void step(final String stepName,
-                            final String stepDescription,
-                            final ThrowingRunnable<?> step) {
+    public static void step(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingRunnable<?> step
+    ) {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName, stepDescription, step);
     }
 
     /**
-     * Performs given step with given name and returns the step result.<br>
-     * Code example:
+     * Performs given step and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * String step1Result = stepTo(() -> {
+     *     //...
+     *     return "result1";
+     * });
+     * String step2Result = stepTo(() -> {
+     *     //...
+     *     return stepTo(() -> {
+     *         //...
+     *         return "result2";
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param step the step
+     * @param <R>  the result type
+     * @return {@code step} result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code step} is null
+     */
+    public static <R> R stepTo(
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
+        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
+    }
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * String step1Result = stepTo("Step 1", () -> {
-     *     ...
+     *     //...
      *     return "result1";
      * });
      * String step2Result = stepTo("Step 2", () -> {
-     *     ...
+     *     //...
      *     return stepTo("Nested step 1", () -> {
-     *         ...
+     *         //...
      *         return "result2";
      *     });
      * });
@@ -148,23 +220,27 @@ public final class UncheckedXteps {
      *                        or if it's impossible to correctly report the step
      * @see #stepTo(String, String, ThrowingSupplier)
      */
-    public static <R> R stepTo(final String stepName,
-                               final ThrowingSupplier<? extends R, ?> step) {
+    public static <R> R stepTo(
+        final String stepName,
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
         return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepName, step);
     }
 
     /**
-     * Performs given step with given name and description and returns the step result.<br>
-     * Code example:
+     * Performs and reports given step with given name and description and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * String step1Result = stepTo("Step 1", "Description", () -> {
-     *     ...
+     *     //...
      *     return "result1";
      * });
      * String step2Result = stepTo("Step 2", "Description", () -> {
-     *     ...
+     *     //...
      *     return stepTo("Nested step 1", "Description", () -> {
-     *         ...
+     *         //...
      *         return "result2";
      *     });
      * });
@@ -180,38 +256,42 @@ public final class UncheckedXteps {
      *                        or if it's impossible to correctly report the step
      * @see #stepTo(String, ThrowingSupplier)
      */
-    public static <R> R stepTo(final String stepName,
-                               final String stepDescription,
-                               final ThrowingSupplier<? extends R, ?> step) {
+    public static <R> R stepTo(
+        final String stepName,
+        final String stepDescription,
+        final ThrowingSupplier<? extends R, ?> step
+    ) {
         return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepName, stepDescription, step);
     }
 
     /**
-     * Returns no context steps chain.<br>
-     * Code example:
+     * Returns no context steps chain.
+     *
+     * <p>Code example:</p>
+     *
      * <pre>{@code
      * stepsChain()
      *     .step("Step 1", () -> {
-     *         ...
+     *         //...
      *     })
      *     .nestedSteps("Step 2", stepsChain -> stepsChain
      *         .step("Nested step 1", () -> {
-     *             ...
+     *             //...
      *         })
      *         .step("Nested step 2", "Description", () -> {
-     *             ...
+     *             //...
      *         })
      *     );
      * stepsChain().withContext("context")
      *     .step("Step 3", ctx -> {
-     *         ...
+     *         //...
      *     })
      *     .nestedSteps("Step 4", stepsChain -> stepsChain
      *         .step("Nested step 1", ctx -> {
-     *             ...
+     *             //...
      *         })
      *         .step("Nested step 2", "Description", ctx -> {
-     *             ...
+     *             //...
      *         })
      *     );
      * }</pre>

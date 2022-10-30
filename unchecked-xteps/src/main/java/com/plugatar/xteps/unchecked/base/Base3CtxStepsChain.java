@@ -49,7 +49,18 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and returns this steps chain.
+     * Performs given step and returns this steps chain.
+     *
+     * @param step the step
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     */
+    BaseCtxStepsChain<C, ?> step(
+        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given name and returns this steps chain.
      *
      * @param stepName the step name
      * @param step     the step
@@ -64,7 +75,7 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and description and returns this steps chain.
+     * Performs and reports given step with given name and description and returns this steps chain.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -81,7 +92,20 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and returns a contextual steps chain of the new context.
+     * Performs given step and returns a contextual steps chain of the new context.
+     *
+     * @param step the step
+     * @param <U>  the context type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code step} is null
+     */
+    <U> BaseCtxStepsChain<U, ?> stepToContext(
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given name and returns a contextual
+     * steps chain of the new context.
      *
      * @param stepName the step name
      * @param step     the step
@@ -97,7 +121,8 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and description and returns a contextual steps chain of the new context.
+     * Performs and reports given step with given name and description and returns
+     * a contextual steps chain of the new context.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -115,7 +140,19 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and returns the step result.
+     * Performs given step and returns the step result.
+     *
+     * @param step the step
+     * @param <R>  the result type
+     * @return {@code step} result
+     * @throws XtepsException if {@code step} is null
+     */
+    <R> R stepTo(
+        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends R, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
      *
      * @param stepName the step name
      * @param step     the step
@@ -131,7 +168,7 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
-     * Performs given step with given name and description and returns the step result.
+     * Performs and reports given step with given name and description and returns the step result.
      *
      * @param stepName        the step name
      * @param stepDescription the step description

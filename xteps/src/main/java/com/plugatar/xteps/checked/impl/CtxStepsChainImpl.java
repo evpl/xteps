@@ -157,6 +157,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     }
 
     @Override
+    public final <E extends Throwable> CtxStepsChain<C> step(
+        final ThrowingConsumer<? super C, ? extends E> step
+    ) throws E {
+        return this.supplyContext(step);
+    }
+
+    @Override
     public final CtxStepsChain<C> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -198,6 +205,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
 
     @Override
     public final <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        final ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         final String stepName,
         final ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E {
@@ -216,6 +230,13 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         final U newContext = this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
         return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
             this.optionalContext.value(), this);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingFunction<? super C, ? extends R, ? extends E> step
+    ) throws E {
+        return this.applyContext(step);
     }
 
     @Override

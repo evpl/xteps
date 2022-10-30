@@ -71,6 +71,17 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
+    public final MemNoCtxStepsChain<P> closeCloseableContexts() {
+        try {
+            this.safeACContainer.close();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
+        return this;
+    }
+
+    @Override
     public final <U> CtxStepsChain<U> withContext(final U context) {
         return new CtxStepsChainImpl<>(
             this.stepReporter, this.exceptionHandler, this.safeACContainer, context
@@ -96,10 +107,14 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
-    public final MemNoCtxStepsChain<P> closeCloseableContexts() {
+    public final <E extends Throwable> MemNoCtxStepsChain<P> step(
+        final ThrowingRunnable<? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
         try {
-            this.safeACContainer.close();
+            step.run();
         } catch (final Throwable ex) {
+            this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
             throw ex;
         }
@@ -148,6 +163,13 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
 
     @Override
     public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+        final ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E {
+        return this.withContext(step);
+    }
+
+    @Override
+    public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
@@ -167,6 +189,20 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         return new CtxStepsChainImpl<>(
             this.stepReporter, this.exceptionHandler, this.safeACContainer, context
         );
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final ThrowingSupplier<? extends R, ? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
+        try {
+            return step.get();
+        } catch (final Throwable ex) {
+            this.safeACContainer.close(ex);
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
     }
 
     @Override

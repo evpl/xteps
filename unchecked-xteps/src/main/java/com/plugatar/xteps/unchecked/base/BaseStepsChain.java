@@ -27,7 +27,7 @@ import com.plugatar.xteps.base.XtepsException;
 public interface BaseStepsChain<S extends BaseStepsChain<S>> {
 
     /**
-     * Performs empty step with given name and returns this steps chain.
+     * Performs and reports empty step with given name and returns this steps chain.
      *
      * @param stepName the step name
      * @return this steps chain
@@ -38,7 +38,8 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     S step(String stepName);
 
     /**
-     * Performs empty step with given name and description and returns this steps chain.
+     * Performs and reports empty step with given name and description and returns
+     * this steps chain.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -53,7 +54,8 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     );
 
     /**
-     * Performs the step with given name and nested steps chain and returns this steps chain.
+     * Performs and reports the step with given name and nested steps chain and returns
+     * this steps chain.
      *
      * @param stepName   the step name
      * @param stepsChain the nested steps chain
@@ -68,7 +70,8 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     );
 
     /**
-     * Performs the step with given name and description and nested steps chain and returns this steps chain.
+     * Performs and reports the step with given name and description and nested steps chain
+     * and returns this steps chain.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
@@ -85,7 +88,7 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     );
 
     /**
-     * Performs given step with given name and returns the steps chain result.
+     * Performs and reports given step with given name and returns the steps chain result.
      *
      * @param stepName   the step name
      * @param stepsChain the nested steps chain
@@ -101,7 +104,8 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     );
 
     /**
-     * Performs given step with given name and description and returns the steps chain result.
+     * Performs and reports given step with given name and description and returns
+     * the steps chain result.
      *
      * @param stepName        the step name
      * @param stepDescription the step description
