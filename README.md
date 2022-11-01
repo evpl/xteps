@@ -576,8 +576,10 @@ Steps chain.
 ```java
 stepsChain()
     .stepToContext(new CreateWebDriver())
+    .contextIsCloseable(WebDriver::quit)
     .step(new Open("https://...com"))
     .step(new LoginAs("user1", "123123"))
     .stepToContext(new GetTitle())
-    .step(new AssertEquals<>("Expected title value"));
+    .step(new AssertEquals<>("Expected title value"))
+    .closeCloseableContexts();
 ```
