@@ -15,8 +15,9 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a library that provides a convenient way to log test steps. Integrations with Allure and ReportPortal are
-ready, but you can write your own listener for another reporting tool or just create an issue.
+Xteps is a library that provides a convenient way to log test steps. Xteps allows you to write code in
+[_Step objects chain_ style](https://github.com/evpl/step-objects-pattern). Integrations with Allure and ReportPortal
+are ready, but you can write your own listener for another reporting tool or just create an issue.
 
 ## Table of Contents
 
@@ -34,6 +35,7 @@ ready, but you can write your own listener for another reporting tool or just cr
     * [Simple Java code example](#Simple-Java-code-example)
     * [Simple Kotlin code example](#Simple-Java-code-example)
     * [Selenium WebDriver Java code example](#Selenium-WebDriver-Java-code-example)
+    * [Step objects pattern style](#Step-objects-pattern-style)
 
 ## How to use
 
@@ -456,3 +458,126 @@ void example() {
 Allure report looks like this:
 
 ![webdriver_java_code_example](https://user-images.githubusercontent.com/54626653/198658991-f992a10d-7c88-46e7-afb0-bcb281822c96.png)
+
+### Step objects pattern style
+
+Xteps allows you to write code in [Step objects chain style](https://github.com/evpl/step-objects-pattern).
+
+Step objects.
+
+```java
+public class CreateWebDriver implements ThrowingSupplier<WebDriver, RuntimeException> {
+
+    public CreateWebDriver() {
+    }
+
+    @Override
+    public WebDriver get() {
+        return null;
+    }
+}
+
+public class Open implements ThrowingConsumer<WebDriver, RuntimeException> {
+    private final String url;
+
+    public Open(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public void accept(WebDriver webDriver) {
+        webDriver.navigate().to(this.url);
+    }
+}
+
+public class TypeLogin implements ThrowingConsumer<WebDriver, RuntimeException> {
+    private final String login;
+
+    public TypeLogin(String login) {
+        this.login = login;
+    }
+
+    @Override
+    public void accept(WebDriver webDriver) {
+        webDriver.findElement(By.id("username")).sendKeys(this.login);
+    }
+}
+
+public class TypePassword implements ThrowingConsumer<WebDriver, RuntimeException> {
+    private final String password;
+
+    public TypePassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public void accept(WebDriver webDriver) {
+        webDriver.findElement(By.id("username")).sendKeys(this.password);
+    }
+}
+
+public class ClickOnLoginButton implements ThrowingConsumer<WebDriver, RuntimeException> {
+
+    public ClickOnLoginButton() {
+    }
+
+    @Override
+    public void accept(WebDriver webDriver) {
+        webDriver.findElement(By.id("sign_in")).click();
+    }
+}
+
+public class LoginAs implements ThrowingConsumer<WebDriver, RuntimeException> {
+    private final String login;
+    private final String password;
+
+    public LoginAs(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+    @Override
+    public void accept(WebDriver webDriver) {
+        new TypeLogin(this.login).accept(webDriver);
+        new TypePassword(this.password).accept(webDriver);
+        new ClickOnLoginButton().accept(webDriver);
+    }
+}
+
+public class GetTitle implements ThrowingFunction<WebDriver, String, RuntimeException> {
+
+    public GetTitle() {
+    }
+
+    @Override
+    public String apply(WebDriver webDriver) {
+        return webDriver.getTitle();
+    }
+}
+
+public class AssertEquals<T> implements ThrowingConsumer<T, RuntimeException> {
+    private final T expected;
+
+    public AssertEquals(T expected) {
+        this.expected = expected;
+    }
+
+    @Override
+    public void accept(T actual) {
+        if (Objects.equals(actual, this.expected)) {
+            throw new AssertionError();
+        }
+    }
+}
+```
+
+Steps chain.
+
+```java
+stepsChain()
+    .stepToContext(new CreateWebDriver())
+    .step(new Open("https://...com"))
+    .step(new LoginAs("user1", "123123"))
+    .stepToContext(new GetTitle())
+    .step(new AssertEquals<>("Expected title value"));
+```
