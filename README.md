@@ -54,14 +54,7 @@ Requires Java 8+ version. Just add suitable dependency.
 
 ## What are steps chains
 
-This is a way of writing steps in a chain. The most suitable situation is when each step is built around one specific
-context. This method has many advantages, like:
-
-* Chaining reads better than disparate static method steps
-* Unnecessary variables are not created
-* It is possible to set additional behavior of the chain like safe AutoCloseable contexts
-
-Xteps provides both options for writing steps, static methods and steps chains.
+See [Step objects chain style](https://github.com/evpl/step-objects-pattern).
 
 ## API
 
