@@ -359,7 +359,7 @@ Xteps allows you to write code in
 class RandomString extends SupplierStep<String, RuntimeException> {
 
     public RandomString(int length) {
-        super("Generate random string with length" + length, () -> {
+        super("Generate random string with length = " + length, () -> {
             byte[] array = new byte[length];
             new Random().nextBytes(array);
             return new String(array, StandardCharsets.UTF_8);
@@ -385,8 +385,8 @@ class AssertEquals<T> extends ConsumerStep<T, RuntimeException> {
 
     public AssertEquals(T expected) {
         super("Assert equals, actual = {context}, expected = " + expected, actual -> {
-            if (Objects.equals(actual, expected)) {
-                throw new AssertionError();
+            if (!Objects.equals(actual, expected)) {
+                throw new AssertionError("actual = " + actual + ", expected = " + expected);
             }
         });
     }
@@ -411,7 +411,7 @@ class ExampleTest {
                 new RandomString(expectedStringLength)
             )
             .step(
-                new Wait(5000).asConsumerStep()
+                new Wait(1000).asConsumerStep()
             )
             .stepToContext(
                 new GetStringLength()
@@ -422,3 +422,7 @@ class ExampleTest {
     }
 }
 ```
+
+Allure report looks like this for both tests.
+
+![step_objects_example](https://user-images.githubusercontent.com/54626653/200389156-241e5d10-2f00-4073-87f4-d6d33c7777ca.png)
