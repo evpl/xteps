@@ -35,11 +35,6 @@ final class ThrowingRunnableTest {
     }
 
     @Test
-    void uncheckedRunnableMethodReturnsNullForNullArg() {
-        assertThat(ThrowingRunnable.uncheckedRunnable(null)).isNull();
-    }
-
-    @Test
     void uncheckedMethodExceptionLambdaResult() throws Throwable {
         final Throwable throwable = new Throwable();
         @SuppressWarnings("unchecked")
@@ -53,34 +48,11 @@ final class ThrowingRunnableTest {
     }
 
     @Test
-    void uncheckedRunnableMethodExceptionLambdaResult() throws Throwable {
-        final Throwable throwable = new Throwable();
-        @SuppressWarnings("unchecked")
-        final ThrowingRunnable<Throwable> originRunnable = mock(ThrowingRunnable.class);
-        doThrow(throwable).when(originRunnable).run();
-
-        final ThrowingRunnable<RuntimeException> methodResult = ThrowingRunnable.uncheckedRunnable(originRunnable);
-        assertThatCode(() -> methodResult.run())
-            .isSameAs(throwable);
-        verify(originRunnable, times(1)).run();
-    }
-
-    @Test
     void uncheckedMethodLambdaResult() throws Throwable {
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<Throwable> originRunnable = mock(ThrowingRunnable.class);
 
         final ThrowingRunnable<RuntimeException> methodResult = ThrowingRunnable.unchecked(originRunnable);
-        methodResult.run();
-        verify(originRunnable, times(1)).run();
-    }
-
-    @Test
-    void uncheckedRunnableMethodLambdaResult() throws Throwable {
-        @SuppressWarnings("unchecked")
-        final ThrowingRunnable<Throwable> originRunnable = mock(ThrowingRunnable.class);
-
-        final ThrowingRunnable<RuntimeException> methodResult = ThrowingRunnable.uncheckedRunnable(originRunnable);
         methodResult.run();
         verify(originRunnable, times(1)).run();
     }

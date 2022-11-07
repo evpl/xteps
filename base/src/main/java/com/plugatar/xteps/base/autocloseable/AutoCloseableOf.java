@@ -17,8 +17,6 @@ package com.plugatar.xteps.base.autocloseable;
 
 import com.plugatar.xteps.base.ThrowingRunnable;
 
-import static com.plugatar.xteps.base.ThrowingRunnable.uncheckedRunnable;
-
 /**
  * AutoCloseable of another type object.
  */
@@ -37,6 +35,6 @@ public class AutoCloseableOf implements AutoCloseable {
 
     @Override
     public final void close() {
-        uncheckedRunnable(this.close).run();
+        ThrowingRunnable.unchecked(this.close).run();
     }
 }

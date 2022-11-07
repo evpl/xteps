@@ -42,25 +42,9 @@ public interface ThrowingFunction<T, R, E extends Throwable> {
      * @param <T>      the type of the {@code function} input argument
      * @param <R>      the type of the {@code function} result
      * @return unchecked function or null
-     * @see #uncheckedFunction(ThrowingFunction)
-     */
-    static <T, R> ThrowingFunction<T, R, RuntimeException> unchecked(
-        final ThrowingFunction<? super T, ? extends R, ?> function
-    ) {
-        return uncheckedFunction(function);
-    }
-
-    /**
-     * Returns given {@code ThrowingFunction} as unchecked or null if {@code function} is null.
-     *
-     * @param function the function
-     * @param <T>      the type of the {@code function} input argument
-     * @param <R>      the type of the {@code function} result
-     * @return unchecked function or null
-     * @see #unchecked(ThrowingFunction)
      */
     @SuppressWarnings("unchecked")
-    static <T, R> ThrowingFunction<T, R, RuntimeException> uncheckedFunction(
+    static <T, R> ThrowingFunction<T, R, RuntimeException> unchecked(
         final ThrowingFunction<? super T, ? extends R, ?> function
     ) {
         return (ThrowingFunction<T, R, RuntimeException>) function;

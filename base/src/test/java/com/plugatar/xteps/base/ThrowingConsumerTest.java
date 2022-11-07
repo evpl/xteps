@@ -36,11 +36,6 @@ final class ThrowingConsumerTest {
     }
 
     @Test
-    void uncheckedConsumerMethodReturnsNullForNullArg() {
-        assertThat(ThrowingConsumer.uncheckedConsumer(null)).isNull();
-    }
-
-    @Test
     void uncheckedMethodExceptionLambdaResult() throws Throwable {
         final Throwable throwable = new Throwable();
         @SuppressWarnings("unchecked")
@@ -55,37 +50,12 @@ final class ThrowingConsumerTest {
     }
 
     @Test
-    void uncheckedConsumerMethodExceptionLambdaResult() throws Throwable {
-        final Throwable throwable = new Throwable();
-        @SuppressWarnings("unchecked")
-        final ThrowingConsumer<Object, Throwable> originConsumer = mock(ThrowingConsumer.class);
-        final Object consumerInput = new Object();
-        doThrow(throwable).when(originConsumer).accept(same(consumerInput));
-
-        final ThrowingConsumer<Object, RuntimeException> methodResult = ThrowingConsumer.uncheckedConsumer(originConsumer);
-        assertThatCode(() -> methodResult.accept(consumerInput))
-            .isSameAs(throwable);
-        verify(originConsumer, times(1)).accept(same(consumerInput));
-    }
-
-    @Test
     void uncheckedMethodLambdaResult() throws Throwable {
         @SuppressWarnings("unchecked")
         final ThrowingConsumer<Object, Throwable> originConsumer = mock(ThrowingConsumer.class);
         final Object consumerInput = new Object();
 
         final ThrowingConsumer<Object, RuntimeException> methodResult = ThrowingConsumer.unchecked(originConsumer);
-        methodResult.accept(consumerInput);
-        verify(originConsumer, times(1)).accept(same(consumerInput));
-    }
-
-    @Test
-    void uncheckedConsumerMethodLambdaResult() throws Throwable {
-        @SuppressWarnings("unchecked")
-        final ThrowingConsumer<Object, Throwable> originConsumer = mock(ThrowingConsumer.class);
-        final Object consumerInput = new Object();
-
-        final ThrowingConsumer<Object, RuntimeException> methodResult = ThrowingConsumer.uncheckedConsumer(originConsumer);
         methodResult.accept(consumerInput);
         verify(originConsumer, times(1)).accept(same(consumerInput));
     }

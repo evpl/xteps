@@ -36,21 +36,9 @@ public interface ThrowingRunnable<E extends Throwable> {
      *
      * @param runnable the runnable
      * @return unchecked runnable or null
-     * @see #uncheckedRunnable(ThrowingRunnable)
-     */
-    static ThrowingRunnable<RuntimeException> unchecked(final ThrowingRunnable<?> runnable) {
-        return uncheckedRunnable(runnable);
-    }
-
-    /**
-     * Returns given {@code ThrowingRunnable} as unchecked or null if {@code runnable} is null.
-     *
-     * @param runnable the runnable
-     * @return unchecked runnable or null
-     * @see #unchecked(ThrowingRunnable)
      */
     @SuppressWarnings("unchecked")
-    static ThrowingRunnable<RuntimeException> uncheckedRunnable(final ThrowingRunnable<?> runnable) {
+    static ThrowingRunnable<RuntimeException> unchecked(final ThrowingRunnable<?> runnable) {
         return (ThrowingRunnable<RuntimeException>) runnable;
     }
 }

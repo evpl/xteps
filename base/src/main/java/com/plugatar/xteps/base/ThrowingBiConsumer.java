@@ -42,25 +42,9 @@ public interface ThrowingBiConsumer<T, U, E extends Throwable> {
      * @param <T>      the type of the {@code consumer} first input argument
      * @param <U>      the type of the {@code consumer} second input argument
      * @return unchecked consumer or null
-     * @see #uncheckedBiConsumer(ThrowingBiConsumer)
-     */
-    static <T, U> ThrowingBiConsumer<T, U, RuntimeException> unchecked(
-        final ThrowingBiConsumer<? super T, ? super U, ?> consumer
-    ) {
-        return uncheckedBiConsumer(consumer);
-    }
-
-    /**
-     * Returns given {@code ThrowingBiConsumer} as unchecked or null if {@code consumer} is null.
-     *
-     * @param consumer the consumer
-     * @param <T>      the type of the {@code consumer} first input argument
-     * @param <U>      the type of the {@code consumer} second input argument
-     * @return unchecked consumer or null
-     * @see #unchecked(ThrowingBiConsumer)
      */
     @SuppressWarnings("unchecked")
-    static <T, U> ThrowingBiConsumer<T, U, RuntimeException> uncheckedBiConsumer(
+    static <T, U> ThrowingBiConsumer<T, U, RuntimeException> unchecked(
         final ThrowingBiConsumer<? super T, ? super U, ?> consumer
     ) {
         return (ThrowingBiConsumer<T, U, RuntimeException>) consumer;

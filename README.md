@@ -15,15 +15,15 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a library that provides a convenient way to log test steps. Xteps allows you to write code in
-[_Step objects chain_ style](https://github.com/evpl/step-objects-pattern). Integrations with Allure and ReportPortal
-are ready, but you can write your own listener for another reporting tool or just create an issue.
+Xteps is a library that provides a convenient way to report test steps. Xteps allows you to write code in
+[_Step objects_ and _Step objects chain_ patterns](https://github.com/evpl/step-objects-pattern) style. Integrations
+with Allure and ReportPortal are ready, but you can write your own listener for another reporting tool or just
+create an issue.
 
 ## Table of Contents
 
 * [How to use](#How-to-use)
 * [Which version to choose](#Which-version-to-choose)
-* [What are steps chains](#What-are-steps-chains)
 * [API](#API)
 * [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
 * [Safe AutoCloseable context](#Safe-AutoCloseable-context)
@@ -33,9 +33,9 @@ are ready, but you can write your own listener for another reporting tool or jus
 * [Xteps Java 8 unreported exception bug](#Xteps-Java-8-unreported-exception-bug)
 * [Code examples](#Code-examples)
     * [Simple Java code example](#Simple-Java-code-example)
-    * [Simple Kotlin code example](#Simple-Java-code-example)
     * [Selenium WebDriver Java code example](#Selenium-WebDriver-Java-code-example)
-    * [Step objects pattern style](#Step-objects-pattern-style)
+    * [_Step objects_ and _Step objects
+      chain_ patterns example](#_Step-objects_-and-_Step-objects-chain_-patterns-example)
 
 ## How to use
 
@@ -52,26 +52,36 @@ Requires Java 8+ version. Just add suitable dependency.
     * with ReportPortal - `xteps-reportportal`
     * with custom reporting tool - `xteps`
 
-## What are steps chains
-
-See [Step objects chain style](https://github.com/evpl/step-objects-pattern).
-
 ## API
 
-Main Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps` or
-`com.plugatar.xteps.checked.UncheckedXteps` depending on the version.
+First part of Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps` or
+`com.plugatar.xteps.unchecked.UncheckedXteps` classes depending on the version.
 
-| Method                                     | Description                                                                                    |
-|--------------------------------------------|------------------------------------------------------------------------------------------------|
-| `step(String)`                             | Performs and reports empty step with given name.                                               |
-| `step(String, String)`                     | Performs and reports empty step with given name and description.                               |
-| `step(ThrowingRunnable)`                   | Performs given step.                                                                           |
-| `step(String, ThrowingRunnable)`           | Performs and reports given step with given name.                                               |
-| `step(String, String, ThrowingRunnable)`   | Performs and reports given step with given name and description.                               |
-| `stepTo(ThrowingSupplier)`                 | Performs given step and returns the step result.                                               |
-| `stepTo(String, ThrowingSupplier)`         | Performs and reports given step with given name and returns the step result.                   |
-| `stepTo(String, String, ThrowingSupplier)` | Performs and reports given step with given name and description and returns the step result.   |
-| `stepsChain()`                             | Starts a chain of steps (returns no context steps chain).                                      |
+| Method                                     | Description                                                                                  |
+|--------------------------------------------|----------------------------------------------------------------------------------------------|
+| `step(String)`                             | Performs and reports empty step with given name.                                             |
+| `step(String, String)`                     | Performs and reports empty step with given name and description.                             |
+| `step(RunnableStep)`                       | Performs and reports given step.                                                             |
+| `step(String, ThrowingRunnable)`           | Performs and reports given step with given name.                                             |
+| `step(String, String, ThrowingRunnable)`   | Performs and reports given step with given name and description.                             |
+| `stepTo(SupplierStep)`                     | Performs and reports given step and returns the step result.                                 |
+| `stepTo(String, ThrowingSupplier)`         | Performs and reports given step with given name and returns the step result.                 |
+| `stepTo(String, String, ThrowingSupplier)` | Performs and reports given step with given name and description and returns the step result. |
+| `stepsChain()`                             | Starts a chain of steps (returns no context steps chain).                                    |
+
+Second part is a set of steps objects located in the `com.plugatar.xteps.checked` or `com.plugatar.xteps.unchecked`
+packages depending on the version.
+
+| Step object       | Description                                                                       |
+|-------------------|-----------------------------------------------------------------------------------|
+| `RunnableStep`    | The step will be executed and reported when calling the `run()` method.           |
+| `SupplierStep`    | The step will be executed and reported when calling the `get()` method.           |
+| `ConsumerStep`    | The step will be executed and reported when calling the `accept(T)` method.       |
+| `BiConsumerStep`  | The step will be executed and reported when calling the `accept(T, U)` method.    |
+| `TriConsumerStep` | The step will be executed and reported when calling the `accept(T, U, V)` method. |
+| `FunctionStep`    | The step will be executed and reported when calling the `apply(T)` method.        |
+| `BiFunctionStep`  | The step will be executed and reported when calling the `apply(T, U)` method.     |
+| `TriFunctionStep` | The step will be executed and reported when calling the `apply(T, U, V)` method.  |
 
 See [code examples](#Code-examples).
 
@@ -85,20 +95,41 @@ Don't worry about closing resources, just use steps chain. Context will be close
 steps chain or in case of `closeAutoCloseableContexts()` method invocation.
 
 ```java
-stepsChain().withContext(new AutoCloseableImpl1())
-    .contextIsAutoCloseable()
-    .step("Step 1", ctx -> {
-        //...
-    })
-    .stepToContext("Step 2", ctx -> {
-        //...
-        return new AutoCloseableImpl2(ctx);
-    })
-    .contextIsAutoCloseable()
-    .step("Step 3", ctx -> {
-        //...
-    })
-    .closeAutoCloseableContexts();
+class AutoCloseableImpl implements AutoCloseable {
+
+    @Override
+    public void close() {
+        System.out.println("AutoCloseableImpl is closed");
+    }
+}
+
+class NotAutoCloseableImpl {
+
+    public void quit() {
+        System.out.println("NotAutoCloseableImpl is closed");
+    }
+}
+
+class ExampleTest {
+
+    @Test
+    void test() {
+        stepsChain().withContext(new AutoCloseableImpl())
+            .contextIsCloseable()
+            .step("Step 1", ctx -> {
+                //...
+            })
+            .stepToContext("Step 2", ctx -> {
+                //...
+                return new NotAutoCloseableImpl();
+            })
+            .contextIsCloseable(context -> context.quit())
+            .step("Step 3", ctx -> {
+                //...
+            })
+            .closeCloseableContexts();
+    }
+}
 ```
 
 ## Clean stack trace
@@ -228,7 +259,7 @@ You can switch to Java 9+ or use functional interfaces static methods to hide an
 
 ```java
 stepsChain()
-    .nestedStepsTo("Step", uncheckedFunction(chain -> chain
+    .nestedStepsTo("Step", ThrowingFunction.unchecked(chain -> chain
         .step("Nested step", () -> {})
     ));
 ```
@@ -315,264 +346,79 @@ void stepsChainWithContextExample() {
 }
 ```
 
-Allure report looks like this for every test:
+Allure report looks like this for every test.
 
 ![simple_java_code_example](https://user-images.githubusercontent.com/54626653/198648739-15ba8a27-4025-4902-8174-49baed3a69d2.png)
 
-### Simple Kotlin code example
+### _Step objects_ and _Step objects chain_ patterns example
+
+Xteps allows you to write code in
+[_Step objects_ and _Step objects chain_ patterns](https://github.com/evpl/step-objects-pattern) style.
 
 ```java
-@Test
-fun simpleMethodsExample() {
-    step("Step 1")
-    step("Step 2", "Description") {
-        //...
-    }
-    step("Step 3") {
-        step("Nested step 1") {
-            //...
-        }
-        step("Nested step 2", "Description")
-    }
-    val stepResult: String = stepTo("Step 4") {    // = "step result"
-        step("Nested step 1") {
-            //...
-        }
-        stepTo("Nested step 2") {
-            //...
-            "step result"
-        }
+class RandomString extends SupplierStep<String, RuntimeException> {
+
+    public RandomString(int length) {
+        super("Generate random string with length" + length, () -> {
+            byte[] array = new byte[length];
+            new Random().nextBytes(array);
+            return new String(array, StandardCharsets.UTF_8);
+        });
     }
 }
 
-@Test
-fun stepsChainWithoutContextExample() {
-    val stepResult = stepsChain()    // = "step result"
-        .step("Step 1")
-        .step("Step 2", "Description") {
-            //...
-        }
-        .nestedSteps("Step 3") { chain ->
-            chain
-                .step("Nested step 1") {
-                    //...
-                }
-                .step("Nested step 2", "Description")
-        }
-        .nestedStepsTo("Step 4") { chain ->
-            chain
-                .step("Nested step 1") {
-                    //...
-                }
-                .stepTo("Nested step 2") {
-                    //...
-                    "step result"
-                }
-        }
-}
+class Wait extends RunnableStep<InterruptedException> {
 
-@Test
-fun stepsChainWithContextExample() {
-    val stepResult = stepsChain()    // = "step result"
-        .step("Step 1")
-        .stepToContext("Step 2", "Description") {
-            //...
-            "step"
-        }
-        .nestedStepsTo("Step 3") { chain ->
-            chain
-                .step("Nested step 1") { ctx ->
-                    //...
-                }
-                .stepToContext("Nested step 2", "Description") { ctx ->
-                    //...
-                    " "
-                }
-        }
-        .withContext("result")
-        .nestedStepsTo("Step 4") { chain ->
-            chain
-                .step("Nested step 1") { ctx ->
-                    //...
-                }
-                .stepTo("Nested step 2") { ctx, previousCtx1, previousCtx2 ->
-                    //...
-                    previousCtx2 + previousCtx1 + ctx
-                }
-        }
-}
-```
-
-Allure report looks like report for Java code example.
-
-### Selenium WebDriver Java code example
-
-```java
-@Test
-void example() {
-    stepsChain()
-        .step("Step 1", () -> {
-            //...
-        })
-        .stepToContext("Step 2", "Creating a driver with parameters: ...", () -> {
-            //...
-            return new ChromeDriver();
-        })
-        .contextIsCloseable(WebDriver::quit)
-        .step("Step 3", "Log in as user1234", driver -> {
-            //...
-            driver.findElement(By.id("username")).sendKeys("user1234");
-            driver.findElement(By.id("password")).sendKeys("12345678");
-            driver.findElement(By.id("sign_in")).click();
-        })
-        .stepToContext("Step 4", driver ->
-            //...
-            driver.findElement(By.id("header"))
-        )
-        .nestedSteps("Step 5", chain -> chain
-            .step("Nested step 1", headerElement -> {
-                //...
-                assertTrue(headerElement.isDisplayed());
-            })
-            .step("Nested step 2", headerElement -> {
-                //...
-                assertEquals(headerElement.getAttribute("attr"), "expected_attr");
-            })
-        )
-        .step("Step 6", (headerElement, driver) -> {
-            //...
-            assertEquals(driver.findElements(By.id("header")).size(), 1);
-            assertTrue(headerElement.isDisplayed());
-        })
-        .closeCloseableContexts();
-}
-```
-
-Allure report looks like this:
-
-![webdriver_java_code_example](https://user-images.githubusercontent.com/54626653/198658991-f992a10d-7c88-46e7-afb0-bcb281822c96.png)
-
-### Step objects pattern style
-
-Xteps allows you to write code in [Step objects chain style](https://github.com/evpl/step-objects-pattern).
-
-Step objects.
-
-```java
-public class CreateWebDriver implements ThrowingSupplier<WebDriver, RuntimeException> {
-
-    public CreateWebDriver() {
-    }
-
-    @Override
-    public WebDriver get() {
-        return null;
+    public Wait(int millis) {
+        super("Wait for " + millis + " millis", () -> Thread.sleep(millis));
     }
 }
 
-public class Open implements ThrowingConsumer<WebDriver, RuntimeException> {
-    private final String url;
+class GetStringLength extends FunctionStep<String, Integer, RuntimeException> {
 
-    public Open(String url) {
-        this.url = url;
-    }
-
-    @Override
-    public void accept(WebDriver webDriver) {
-        webDriver.navigate().to(this.url);
+    public GetStringLength() {
+        super("Get string length", "Full string: {context}", String::length);
     }
 }
 
-public class TypeLogin implements ThrowingConsumer<WebDriver, RuntimeException> {
-    private final String login;
-
-    public TypeLogin(String login) {
-        this.login = login;
-    }
-
-    @Override
-    public void accept(WebDriver webDriver) {
-        webDriver.findElement(By.id("username")).sendKeys(this.login);
-    }
-}
-
-public class TypePassword implements ThrowingConsumer<WebDriver, RuntimeException> {
-    private final String password;
-
-    public TypePassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public void accept(WebDriver webDriver) {
-        webDriver.findElement(By.id("username")).sendKeys(this.password);
-    }
-}
-
-public class ClickOnLoginButton implements ThrowingConsumer<WebDriver, RuntimeException> {
-
-    public ClickOnLoginButton() {
-    }
-
-    @Override
-    public void accept(WebDriver webDriver) {
-        webDriver.findElement(By.id("sign_in")).click();
-    }
-}
-
-public class LoginAs implements ThrowingConsumer<WebDriver, RuntimeException> {
-    private final String login;
-    private final String password;
-
-    public LoginAs(String login, String password) {
-        this.login = login;
-        this.password = password;
-    }
-
-    @Override
-    public void accept(WebDriver webDriver) {
-        new TypeLogin(this.login).accept(webDriver);
-        new TypePassword(this.password).accept(webDriver);
-        new ClickOnLoginButton().accept(webDriver);
-    }
-}
-
-public class GetTitle implements ThrowingFunction<WebDriver, String, RuntimeException> {
-
-    public GetTitle() {
-    }
-
-    @Override
-    public String apply(WebDriver webDriver) {
-        return webDriver.getTitle();
-    }
-}
-
-public class AssertEquals<T> implements ThrowingConsumer<T, RuntimeException> {
-    private final T expected;
+class AssertEquals<T> extends ConsumerStep<T, RuntimeException> {
 
     public AssertEquals(T expected) {
-        this.expected = expected;
-    }
-
-    @Override
-    public void accept(T actual) {
-        if (Objects.equals(actual, this.expected)) {
-            throw new AssertionError();
-        }
+        super("Assert equals, actual = {context}, expected = " + expected, actual -> {
+            if (Objects.equals(actual, expected)) {
+                throw new AssertionError();
+            }
+        });
     }
 }
-```
 
-Steps chain.
+class ExampleTest {
 
-```java
-stepsChain()
-    .stepToContext(new CreateWebDriver())
-    .contextIsCloseable(WebDriver::quit)
-    .step(new Open("https://...com"))
-    .step(new LoginAs("user1", "123123"))
-    .stepToContext(new GetTitle())
-    .step(new AssertEquals<>("Expected title value"))
-    .closeCloseableContexts();
+    @Test
+    void noChainTest() throws InterruptedException {
+        int expectedStringLength = 10;
+        String randomString = new RandomString(expectedStringLength).get();
+        new Wait(1000).run();
+        int actualStringLength = new GetStringLength().apply(randomString);
+        new AssertEquals<>(expectedStringLength).accept(actualStringLength);
+    }
+
+    @Test
+    void chainTest() throws InterruptedException {
+        int expectedStringLength = 10;
+        stepsChain()
+            .stepToContext(
+                new RandomString(expectedStringLength)
+            )
+            .step(
+                new Wait(5000).asConsumerStep()
+            )
+            .stepToContext(
+                new GetStringLength()
+            )
+            .step(
+                new AssertEquals<>(expectedStringLength)
+            );
+    }
+}
 ```

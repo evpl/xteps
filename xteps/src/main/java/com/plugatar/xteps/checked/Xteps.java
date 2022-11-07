@@ -19,7 +19,8 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.impl.NoCtxStepsChainImpl;
+import com.plugatar.xteps.checked.chain.NoCtxStepsChain;
+import com.plugatar.xteps.checked.chain.impl.NoCtxStepsChainImpl;
 
 import java.util.function.Supplier;
 
@@ -71,30 +72,32 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step.
+     * Performs and reports given step.
      *
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * step(() -> {
-     *     //...
-     * });
-     * step(() -> {
-     *     //...
-     *     step(() -> {
-     *         //...
-     *     });
-     * });
+     * public class CustomStep extends RunnableStep<RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *         });
+     *     }
+     * }
+     *
+     * step(new CustomStep());
      * }</pre>
      *
      * @param step the step
      * @param <E>  the {@code step} exception type
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code step} is null
+     *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     public static <E extends Throwable> void step(
-        final ThrowingRunnable<? extends E> step
+        final RunnableStep<? extends E> step
     ) throws E {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(step);
     }
@@ -168,22 +171,22 @@ public final class Xteps {
     }
 
     /**
-     * Performs given step and returns the step result.
+     * Performs and reports given step and returns the step result.
      *
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * String step1Result = stepTo(() -> {
-     *     //...
-     *     return "result1";
-     * });
-     * String step2Result = stepTo(() -> {
-     *     //...
-     *     return stepTo(() -> {
-     *         //...
-     *         return "result2";
-     *     });
-     * });
+     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *             return "result";
+     *         });
+     *     }
+     * }
+     *
+     * String result = stepTo(new CustomStep());
      * }</pre>
      *
      * @param step the step
@@ -192,10 +195,11 @@ public final class Xteps {
      * @return {@code step} result
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code step} is null
+     *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     public static <R, E extends Throwable> R stepTo(
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final SupplierStep<? extends R, ? extends E> step
     ) throws E {
         return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
     }

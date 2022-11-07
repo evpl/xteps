@@ -48,27 +48,9 @@ public interface ThrowingTriFunction<T, U, V, R, E extends Throwable> {
      * @param <V>      the type of the {@code function} third input argument
      * @param <R>      the type of the {@code function} result
      * @return unchecked function or null
-     * @see #uncheckedBiFunction(ThrowingTriFunction)
-     */
-    static <T, U, V, R> ThrowingTriFunction<T, U, V, R, RuntimeException> unchecked(
-        final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ?> function
-    ) {
-        return uncheckedBiFunction(function);
-    }
-
-    /**
-     * Returns given {@code ThrowingTriFunction} as unchecked or null if {@code function} is null.
-     *
-     * @param function the function
-     * @param <T>      the type of the {@code function} first input argument
-     * @param <U>      the type of the {@code function} second input argument
-     * @param <V>      the type of the {@code function} third input argument
-     * @param <R>      the type of the {@code function} result
-     * @return unchecked function or null
-     * @see #unchecked(ThrowingTriFunction)
      */
     @SuppressWarnings("unchecked")
-    static <T, U, V, R> ThrowingTriFunction<T, U, V, R, RuntimeException> uncheckedBiFunction(
+    static <T, U, V, R> ThrowingTriFunction<T, U, V, R, RuntimeException> unchecked(
         final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ?> function
     ) {
         return (ThrowingTriFunction<T, U, V, R, RuntimeException>) function;

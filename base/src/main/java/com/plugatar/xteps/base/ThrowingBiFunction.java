@@ -45,26 +45,9 @@ public interface ThrowingBiFunction<T, U, R, E extends Throwable> {
      * @param <U>      the type of the {@code function} second input argument
      * @param <R>      the type of the {@code function} result
      * @return unchecked function or null
-     * @see #uncheckedBiFunction(ThrowingBiFunction)
-     */
-    static <T, U, R> ThrowingBiFunction<T, U, R, RuntimeException> unchecked(
-        final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> function
-    ) {
-        return uncheckedBiFunction(function);
-    }
-
-    /**
-     * Returns given {@code ThrowingBiFunction} as unchecked or null if {@code function} is null.
-     *
-     * @param function the function
-     * @param <T>      the type of the {@code function} first input argument
-     * @param <U>      the type of the {@code function} second input argument
-     * @param <R>      the type of the {@code function} result
-     * @return unchecked function or null
-     * @see #unchecked(ThrowingBiFunction)
      */
     @SuppressWarnings("unchecked")
-    static <T, U, R> ThrowingBiFunction<T, U, R, RuntimeException> uncheckedBiFunction(
+    static <T, U, R> ThrowingBiFunction<T, U, R, RuntimeException> unchecked(
         final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> function
     ) {
         return (ThrowingBiFunction<T, U, R, RuntimeException>) function;

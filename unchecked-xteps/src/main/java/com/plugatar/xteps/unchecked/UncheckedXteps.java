@@ -19,7 +19,8 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.impl.NoCtxStepsChainImpl;
+import com.plugatar.xteps.unchecked.chain.NoCtxStepsChain;
+import com.plugatar.xteps.unchecked.chain.impl.NoCtxStepsChainImpl;
 
 import java.util.function.Supplier;
 
@@ -76,23 +77,25 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * step(() -> {
-     *     //...
-     * });
-     * step(() -> {
-     *     //...
-     *     step(() -> {
-     *         //...
-     *     });
-     * });
+     * public class CustomStep extends RunnableStep {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *         });
+     *     }
+     * }
+     *
+     * step(new CustomStep());
      * }</pre>
      *
      * @param step the step
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code step} is null
+     *                        or if it's impossible to correctly report the step
      */
     public static void step(
-        final ThrowingRunnable<?> step
+        final RunnableStep step
     ) {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(step);
     }
@@ -167,17 +170,17 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * String step1Result = stepTo(() -> {
-     *     //...
-     *     return "result1";
-     * });
-     * String step2Result = stepTo(() -> {
-     *     //...
-     *     return stepTo(() -> {
-     *         //...
-     *         return "result2";
-     *     });
-     * });
+     * public class CustomStep extends SupplierStep<String> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *             return "result";
+     *         });
+     *     }
+     * }
+     *
+     * String result = stepTo(new CustomStep());
      * }</pre>
      *
      * @param step the step
@@ -185,9 +188,10 @@ public final class UncheckedXteps {
      * @return {@code step} result
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code step} is null
+     *                        or if it's impossible to correctly report the step
      */
     public static <R> R stepTo(
-        final ThrowingSupplier<? extends R, ?> step
+        final SupplierStep<? extends R> step
     ) {
         return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
     }

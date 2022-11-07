@@ -39,24 +39,9 @@ public interface ThrowingSupplier<R, E extends Throwable> {
      * @param supplier the supplier
      * @param <R>      the type of the {@code supplier} result
      * @return unchecked supplier or null
-     * @see #uncheckedSupplier(ThrowingSupplier)
-     */
-    static <R> ThrowingSupplier<R, RuntimeException> unchecked(
-        final ThrowingSupplier<? extends R, ?> supplier
-    ) {
-        return uncheckedSupplier(supplier);
-    }
-
-    /**
-     * Returns given {@code ThrowingSupplier} as unchecked or null if {@code supplier} is null.
-     *
-     * @param supplier the supplier
-     * @param <R>      the type of the {@code supplier} result
-     * @return unchecked supplier or null
-     * @see #unchecked(ThrowingSupplier)
      */
     @SuppressWarnings("unchecked")
-    static <R> ThrowingSupplier<R, RuntimeException> uncheckedSupplier(
+    static <R> ThrowingSupplier<R, RuntimeException> unchecked(
         final ThrowingSupplier<? extends R, ?> supplier
     ) {
         return (ThrowingSupplier<R, RuntimeException>) supplier;

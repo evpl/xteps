@@ -20,6 +20,7 @@ import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.unchecked.chain.NoCtxStepsChain;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -126,16 +127,6 @@ final class UncheckedXtepsTest {
     }
 
     @Test
-    void stepMethodWithAction() {
-        @SuppressWarnings("unchecked")
-        final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
-
-        UncheckedXteps.step(action);
-        assertThatNoStep();
-        verify(action, times(1)).run();
-    }
-
-    @Test
     void stepMethodWithNameAndAction() {
         final String stepName = "stepMethodWithNameAndAction";
         @SuppressWarnings("unchecked")
@@ -156,18 +147,6 @@ final class UncheckedXtepsTest {
         UncheckedXteps.step(stepName, stepDescription, action);
         assertThatStepPassed(stepName, stepDescription, OptionalValue.empty());
         verify(action, times(1)).run();
-    }
-
-    @Test
-    void stepToMethodWithAction() {
-        @SuppressWarnings("unchecked")
-        final ThrowingSupplier<Object, RuntimeException> action = mock(ThrowingSupplier.class);
-        final Object result = new Object();
-        when(action.get()).thenReturn(result);
-
-        assertThat(UncheckedXteps.stepTo(action)).isSameAs(result);
-        assertThatNoStep();
-        verify(action, times(1)).get();
     }
 
     @Test

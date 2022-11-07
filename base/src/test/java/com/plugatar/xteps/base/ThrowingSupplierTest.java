@@ -36,11 +36,6 @@ final class ThrowingSupplierTest {
     }
 
     @Test
-    void uncheckedSupplierMethodReturnsNullForNullArg() {
-        assertThat(ThrowingSupplier.uncheckedSupplier(null)).isNull();
-    }
-
-    @Test
     void uncheckedMethodExceptionLambdaResult() throws Throwable {
         final Throwable throwable = new Throwable();
         @SuppressWarnings("unchecked")
@@ -54,19 +49,6 @@ final class ThrowingSupplierTest {
     }
 
     @Test
-    void uncheckedSupplierMethodExceptionLambdaResult() throws Throwable {
-        final Throwable throwable = new Throwable();
-        @SuppressWarnings("unchecked")
-        final ThrowingSupplier<Object, Throwable> originSupplier = mock(ThrowingSupplier.class);
-        doThrow(throwable).when(originSupplier).get();
-
-        final ThrowingSupplier<Object, RuntimeException> methodResult = ThrowingSupplier.uncheckedSupplier(originSupplier);
-        assertThatCode(() -> methodResult.get())
-            .isSameAs(throwable);
-        verify(originSupplier, times(1)).get();
-    }
-
-    @Test
     void uncheckedMethodLambdaResult() throws Throwable {
         @SuppressWarnings("unchecked")
         final ThrowingSupplier<Object, Throwable> originSupplier = mock(ThrowingSupplier.class);
@@ -74,18 +56,6 @@ final class ThrowingSupplierTest {
         when(originSupplier.get()).thenReturn(supplierResult);
 
         final ThrowingSupplier<Object, RuntimeException> methodResult = ThrowingSupplier.unchecked(originSupplier);
-        assertThat(methodResult.get()).isSameAs(supplierResult);
-        verify(originSupplier, times(1)).get();
-    }
-
-    @Test
-    void uncheckedSupplierMethodLambdaResult() throws Throwable {
-        @SuppressWarnings("unchecked")
-        final ThrowingSupplier<Object, Throwable> originSupplier = mock(ThrowingSupplier.class);
-        final Object supplierResult = new Object();
-        when(originSupplier.get()).thenReturn(supplierResult);
-
-        final ThrowingSupplier<Object, RuntimeException> methodResult = ThrowingSupplier.uncheckedSupplier(originSupplier);
         assertThat(methodResult.get()).isSameAs(supplierResult);
         verify(originSupplier, times(1)).get();
     }

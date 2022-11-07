@@ -45,26 +45,9 @@ public interface ThrowingTriConsumer<T, U, V, E extends Throwable> {
      * @param <U>      the type of the {@code consumer} second input argument
      * @param <V>      the type of the {@code consumer} third input argument
      * @return unchecked consumer or null
-     * @see #uncheckedTriConsumer(ThrowingTriConsumer)
-     */
-    static <T, U, V> ThrowingTriConsumer<T, U, V, RuntimeException> unchecked(
-        final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> consumer
-    ) {
-        return uncheckedTriConsumer(consumer);
-    }
-
-    /**
-     * Returns given {@code ThrowingTriConsumer} as unchecked or null if {@code consumer} is null.
-     *
-     * @param consumer the consumer
-     * @param <T>      the type of the {@code consumer} first input argument
-     * @param <U>      the type of the {@code consumer} second input argument
-     * @param <V>      the type of the {@code consumer} third input argument
-     * @return unchecked consumer or null
-     * @see #unchecked(ThrowingTriConsumer)
      */
     @SuppressWarnings("unchecked")
-    static <T, U, V> ThrowingTriConsumer<T, U, V, RuntimeException> uncheckedTriConsumer(
+    static <T, U, V> ThrowingTriConsumer<T, U, V, RuntimeException> unchecked(
         final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> consumer
     ) {
         return (ThrowingTriConsumer<T, U, V, RuntimeException>) consumer;

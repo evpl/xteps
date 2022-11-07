@@ -39,24 +39,9 @@ public interface ThrowingConsumer<T, E extends Throwable> {
      * @param consumer the consumer
      * @param <T>      the type of the {@code consumer} input argument
      * @return unchecked consumer or null
-     * @see #uncheckedConsumer(ThrowingConsumer)
-     */
-    static <T> ThrowingConsumer<T, RuntimeException> unchecked(
-        final ThrowingConsumer<? super T, ?> consumer
-    ) {
-        return uncheckedConsumer(consumer);
-    }
-
-    /**
-     * Returns given {@code ThrowingConsumer} as unchecked or null if {@code consumer} is null.
-     *
-     * @param consumer the consumer
-     * @param <T>      the type of the {@code consumer} input argument
-     * @return unchecked consumer or null
-     * @see #unchecked(ThrowingConsumer)
      */
     @SuppressWarnings("unchecked")
-    static <T> ThrowingConsumer<T, RuntimeException> uncheckedConsumer(
+    static <T> ThrowingConsumer<T, RuntimeException> unchecked(
         final ThrowingConsumer<? super T, ?> consumer
     ) {
         return (ThrowingConsumer<T, RuntimeException>) consumer;

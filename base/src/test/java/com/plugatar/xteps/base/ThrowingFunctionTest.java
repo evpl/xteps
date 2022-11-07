@@ -37,11 +37,6 @@ final class ThrowingFunctionTest {
     }
 
     @Test
-    void uncheckedSupplierMethodReturnsNullForNullArg() {
-        assertThat(ThrowingFunction.uncheckedFunction(null)).isNull();
-    }
-
-    @Test
     void uncheckedMethodExceptionLambdaResult() throws Throwable {
         final Throwable throwable = new Throwable();
         @SuppressWarnings("unchecked")
@@ -56,20 +51,6 @@ final class ThrowingFunctionTest {
     }
 
     @Test
-    void uncheckedSupplierMethodExceptionLambdaResult() throws Throwable {
-        final Throwable throwable = new Throwable();
-        @SuppressWarnings("unchecked")
-        final ThrowingFunction<Object, Object, Throwable> originFunction = mock(ThrowingFunction.class);
-        final Object functionInput = new Object();
-        doThrow(throwable).when(originFunction).apply(same(functionInput));
-
-        final ThrowingFunction<Object, Object, RuntimeException> methodResult = ThrowingFunction.uncheckedFunction(originFunction);
-        assertThatCode(() -> methodResult.apply(functionInput))
-            .isSameAs(throwable);
-        verify(originFunction, times(1)).apply(same(functionInput));
-    }
-
-    @Test
     void uncheckedMethodLambdaResult() throws Throwable {
         @SuppressWarnings("unchecked")
         final ThrowingFunction<Object, Object, Throwable> originFunction = mock(ThrowingFunction.class);
@@ -78,19 +59,6 @@ final class ThrowingFunctionTest {
         when(originFunction.apply(functionInput)).thenReturn(functionResult);
 
         final ThrowingFunction<Object, Object, RuntimeException> methodResult = ThrowingFunction.unchecked(originFunction);
-        assertThat(methodResult.apply(functionInput)).isSameAs(functionResult);
-        verify(originFunction, times(1)).apply(same(functionInput));
-    }
-
-    @Test
-    void uncheckedSupplierMethodLambdaResult() throws Throwable {
-        @SuppressWarnings("unchecked")
-        final ThrowingFunction<Object, Object, Throwable> originFunction = mock(ThrowingFunction.class);
-        final Object functionInput = new Object();
-        final Object functionResult = new Object();
-        when(originFunction.apply(functionInput)).thenReturn(functionResult);
-
-        final ThrowingFunction<Object, Object, RuntimeException> methodResult = ThrowingFunction.uncheckedFunction(originFunction);
         assertThat(methodResult.apply(functionInput)).isSameAs(functionResult);
         verify(originFunction, times(1)).apply(same(functionInput));
     }
