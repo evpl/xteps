@@ -384,7 +384,7 @@ class GetStringLength extends FunctionStep<String, Integer, RuntimeException> {
 class AssertEquals<T> extends ConsumerStep<T, RuntimeException> {
 
     public AssertEquals(T expected) {
-        super("Assert equals, actual = {context}, expected = " + expected, actual -> {
+        super("Assert equals", "actual = {context}, expected = " + expected, actual -> {
             if (!Objects.equals(actual, expected)) {
                 throw new AssertionError("actual = " + actual + ", expected = " + expected);
             }
@@ -408,21 +408,17 @@ class ExampleTest {
         int expectedStringLength = 10;
         stepsChain()
             .stepToContext(
-                new RandomString(expectedStringLength)
-            )
+                new RandomString(expectedStringLength))
             .step(
-                new Wait(1000).asConsumerStep()
-            )
+                new Wait(1000).asConsumerStep())
             .stepToContext(
-                new GetStringLength()
-            )
+                new GetStringLength())
             .step(
-                new AssertEquals<>(expectedStringLength)
-            );
+                new AssertEquals<>(expectedStringLength));
     }
 }
 ```
 
 Allure report looks like this for both tests.
 
-![step_objects_example](https://user-images.githubusercontent.com/54626653/200389156-241e5d10-2f00-4073-87f4-d6d33c7777ca.png)
+![step_objects_example](https://user-images.githubusercontent.com/54626653/200616714-bdaf84f6-91e2-4e19-8e0e-10b7bd6124ad.png)
