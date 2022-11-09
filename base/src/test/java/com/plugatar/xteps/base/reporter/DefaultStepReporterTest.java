@@ -16,7 +16,6 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.StepReporter;
@@ -64,15 +63,15 @@ final class DefaultStepReporterTest {
         final StepReporter reporter = new DefaultStepReporter(new StepListener[]{stepListener1, stepListener2});
         final SafeACContainer container = mock(SafeACContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
-        final OptionalValue<Object> optionalContext = OptionalValue.of(new Object());
+        final Object[] contexts = new Object[]{};
         final Object expectedResult = new Object();
 
         final Object methodResult =
-            reporter.report(container, handler, "step name", "step description", optionalContext, () -> expectedResult);
+            reporter.report(container, handler, "step name", "step description", contexts, () -> expectedResult);
         assertThat(methodResult).isSameAs(expectedResult);
-        verify(stepListener1).stepStarted(any(), eq("step name"), eq("step description"), same(optionalContext));
+        verify(stepListener1).stepStarted(any(), eq("step name"), eq("step description"), same(contexts));
         verify(stepListener1).stepPassed(any());
-        verify(stepListener2).stepStarted(any(), eq("step name"), eq("step description"), same(optionalContext));
+        verify(stepListener2).stepStarted(any(), eq("step name"), eq("step description"), same(contexts));
         verify(stepListener2).stepPassed(any());
     }
 
@@ -83,17 +82,17 @@ final class DefaultStepReporterTest {
         final StepReporter reporter = new DefaultStepReporter(new StepListener[]{stepListener1, stepListener2});
         final SafeACContainer container = mock(SafeACContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
-        final OptionalValue<Object> optionalContext = OptionalValue.of(new Object());
+        final Object[] contexts = new Object[]{};
         final RuntimeException expectedException = new RuntimeException();
 
         assertThatCode(() -> {
-            reporter.report(container, handler, "step name", "step description", optionalContext, () -> {
+            reporter.report(container, handler, "step name", "step description", contexts, () -> {
                 throw expectedException;
             });
         }).isSameAs(expectedException);
-        verify(stepListener1).stepStarted(any(), eq("step name"), eq("step description"), same(optionalContext));
+        verify(stepListener1).stepStarted(any(), eq("step name"), eq("step description"), same(contexts));
         verify(stepListener1).stepFailed(any(), same(expectedException));
-        verify(stepListener2).stepStarted(any(), eq("step name"), eq("step description"), same(optionalContext));
+        verify(stepListener2).stepStarted(any(), eq("step name"), eq("step description"), same(contexts));
         verify(stepListener2).stepFailed(any(), same(expectedException));
     }
 }

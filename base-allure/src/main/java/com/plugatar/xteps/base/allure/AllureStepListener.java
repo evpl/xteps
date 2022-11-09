@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps.base.allure;
 
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.StepListener;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
@@ -25,6 +24,7 @@ import io.qameta.allure.util.NamingUtils;
 import io.qameta.allure.util.ResultsUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -79,17 +79,17 @@ public class AllureStepListener implements StepListener {
     public final void stepStarted(final String stepUUID,
                                   final String stepName,
                                   final String stepDescription,
-                                  final OptionalValue<?> optionalContext) {
+                                  final Object[] contexts) {
         Map<String, Object> replacements = null;
         /* Step name processing */
         final String processedStepName;
         if (stepName.isEmpty()) {
             processedStepName = this.emptyStepNameReplacement;
         } else {
-            if (!optionalContext.isPresent()) {
+            if (contexts.length == 0) {
                 processedStepName = stepName;
             } else {
-                replacements = this.contextSingletonMap(optionalContext.value());
+                replacements = this.contextsMap(contexts);
                 processedStepName = this.processedTemplate(stepName, replacements);
             }
         }
@@ -98,11 +98,11 @@ public class AllureStepListener implements StepListener {
         if (stepDescription.isEmpty()) {
             processedStepDescription = null;
         } else {
-            if (!optionalContext.isPresent()) {
+            if (contexts.length == 0) {
                 processedStepDescription = stepDescription;
             } else {
                 if (replacements == null) {
-                    replacements = this.contextSingletonMap(optionalContext.value());
+                    replacements = this.contextsMap(contexts);
                 }
                 processedStepDescription = this.processedTemplate(stepDescription, replacements);
             }
@@ -136,8 +136,16 @@ public class AllureStepListener implements StepListener {
         allureLifecycle.stopStep(stepUUID);
     }
 
-    private Map<String, Object> contextSingletonMap(final Object context) {
-        return Collections.singletonMap(this.contextParamName, context);
+    private Map<String, Object> contextsMap(final Object[] contexts) {
+        if (contexts.length != 0) {
+            final Map<String, Object> map = new HashMap<>(contexts.length, 1.0f);
+            map.put(this.contextParamName, contexts[0]);
+            for (int idx = 1; idx < contexts.length; ++idx) {
+                map.put(this.contextParamName + (idx + 1), contexts[idx]);
+            }
+            return map;
+        }
+        return Collections.emptyMap();
     }
 
     private String processedTemplate(final String template,

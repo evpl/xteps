@@ -16,7 +16,6 @@
 package com.plugatar.xteps.unchecked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingBiConsumer;
@@ -51,7 +50,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final SafeACContainer safeACContainer;
-    private final OptionalValue<C> optionalContext;
+    private final C context;
     private final P1 previousContext;
     private final P2 previousContext2;
     private final PS previousContextStepsChain;
@@ -85,7 +84,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
         this.safeACContainer = safeACContainer;
-        this.optionalContext = OptionalValue.of(context);
+        this.context = context;
         this.previousContext = previousContext;
         this.previousContext2 = previousContext2;
         this.previousContextStepsChain = previousContextStepsChain;
@@ -93,7 +92,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
 
     @Override
     public final C context() {
-        return this.optionalContext.value();
+        return this.context;
     }
 
     @Override
@@ -103,9 +102,8 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
 
     @Override
     public final Mem2CtxStepsChain<C, P1, P2, PS> contextIsCloseable() {
-        final C value = this.optionalContext.value();
-        if (value instanceof AutoCloseable) {
-            this.safeACContainer.add((AutoCloseable) value);
+        if (this.context instanceof AutoCloseable) {
+            this.safeACContainer.add((AutoCloseable) this.context);
             return this;
         } else {
             final XtepsException baseEx = new XtepsException("The current context is not an AutoCloseable instance");
@@ -118,7 +116,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     @Override
     public final Mem2CtxStepsChain<C, P1, P2, PS> contextIsCloseable(final ThrowingConsumer<? super C, ?> close) {
         if (close == null) { this.throwNullArgException("close"); }
-        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.optionalContext.value())));
+        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.context)));
         return this;
     }
 
@@ -139,7 +137,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (consumer == null) { this.throwNullArgException("consumer"); }
         try {
-            consumer.accept(this.optionalContext.value());
+            consumer.accept(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -154,7 +152,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (consumer == null) { this.throwNullArgException("consumer"); }
         try {
-            consumer.accept(this.optionalContext.value(), this.previousContext);
+            consumer.accept(this.context, this.previousContext);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -169,7 +167,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (consumer == null) { this.throwNullArgException("consumer"); }
         try {
-            consumer.accept(this.optionalContext.value(), this.previousContext, this.previousContext2);
+            consumer.accept(this.context, this.previousContext, this.previousContext2);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -184,7 +182,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (function == null) { this.throwNullArgException("function"); }
         try {
-            return function.apply(this.optionalContext.value());
+            return function.apply(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -198,7 +196,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (function == null) { this.throwNullArgException("function"); }
         try {
-            return function.apply(this.optionalContext.value(), this.previousContext);
+            return function.apply(this.context, this.previousContext);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -212,7 +210,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     ) {
         if (function == null) { this.throwNullArgException("function"); }
         try {
-            return function.apply(this.optionalContext.value(), this.previousContext, this.previousContext2);
+            return function.apply(this.context, this.previousContext, this.previousContext2);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -228,7 +226,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
     @Override
     public final <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> withContext(final U context) {
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, context,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -238,14 +236,14 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (contextFunction == null) { this.throwNullArgException("contextFunction"); }
         final U newContext;
         try {
-            newContext = contextFunction.apply(this.optionalContext.value());
+            newContext = contextFunction.apply(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
             throw sneakyThrow(ex);
         }
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -255,14 +253,14 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (contextFunction == null) { this.throwNullArgException("contextFunction"); }
         final U newContext;
         try {
-            newContext = contextFunction.apply(this.optionalContext.value(), this.previousContext);
+            newContext = contextFunction.apply(this.context, this.previousContext);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
             throw sneakyThrow(ex);
         }
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -272,7 +270,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (contextFunction == null) { this.throwNullArgException("contextFunction"); }
         final U newContext;
         try {
-            newContext = contextFunction.apply(this.optionalContext.value(), this.previousContext,
+            newContext = contextFunction.apply(this.context, this.previousContext,
                 this.previousContext2);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
@@ -280,7 +278,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
             throw sneakyThrow(ex);
         }
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer,
-            newContext, this.optionalContext.value(), this.previousContext, this);
+            newContext, this.context, this.previousContext, this);
     }
 
     @Override
@@ -354,7 +352,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.reportStep(stepName, stepDescription, () -> {
-            step.accept(this.optionalContext.value());
+            step.accept(this.context);
             return null;
         });
         return this;
@@ -370,7 +368,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.reportStep(stepName, stepDescription, () -> {
-            step.accept(this.optionalContext.value(), this.previousContext);
+            step.accept(this.context, this.previousContext);
             return null;
         });
         return this;
@@ -386,7 +384,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.reportStep(stepName, stepDescription, () -> {
-            step.accept(this.optionalContext.value(), this.previousContext, this.previousContext2);
+            step.accept(this.context, this.previousContext, this.previousContext2);
             return null;
         });
         return this;
@@ -447,9 +445,9 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         final U newContext = this.reportStep(stepName, stepDescription, () ->
-            step.apply(this.optionalContext.value()));
+            step.apply(this.context));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -462,9 +460,9 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         final U newContext = this.reportStep(stepName, stepDescription, () ->
-            step.apply(this.optionalContext.value(), this.previousContext));
+            step.apply(this.context, this.previousContext));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -477,9 +475,9 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         final U newContext = this.reportStep(stepName, stepDescription, () ->
-            step.apply(this.optionalContext.value(), this.previousContext, this.previousContext2));
+            step.apply(this.context, this.previousContext, this.previousContext2));
         return new Mem2CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this.previousContext, this);
+            this.context, this.previousContext, this);
     }
 
     @Override
@@ -535,7 +533,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
+        return this.reportStep(stepName, stepDescription, () -> step.apply(this.context));
     }
 
     @Override
@@ -548,7 +546,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.reportStep(stepName, stepDescription, () ->
-            step.apply(this.optionalContext.value(), this.previousContext));
+            step.apply(this.context, this.previousContext));
     }
 
     @Override
@@ -561,7 +559,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.reportStep(stepName, stepDescription, () ->
-            step.apply(this.optionalContext.value(), this.previousContext, this.previousContext2));
+            step.apply(this.context, this.previousContext, this.previousContext2));
     }
 
     @Override
@@ -629,7 +627,7 @@ public class Mem2CtxStepsChainImpl<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
         final ThrowingSupplier<? extends R, ?> step
     ) {
         return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
-            this.optionalContext, ThrowingSupplier.unchecked(step));
+            new Object[]{this.context, this.previousContext, this.previousContext2}, ThrowingSupplier.unchecked(step));
     }
 
     private void throwNullArgException(final String argName) {

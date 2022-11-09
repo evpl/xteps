@@ -16,7 +16,6 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import org.junit.jupiter.api.Test;
@@ -38,11 +37,11 @@ final class FakeStepReporterTest {
         final StepReporter reporter = new FakeStepReporter();
         final SafeACContainer container = mock(SafeACContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
-        final OptionalValue<Object> optionalContext = OptionalValue.of(new Object());
+        final Object[] contexts = new Object[]{};
         final Object expectedResult = new Object();
 
         final Object methodResult =
-            reporter.report(container, handler, "step name", "step description", optionalContext, () -> expectedResult);
+            reporter.report(container, handler, "step name", "step description", contexts, () -> expectedResult);
         assertThat(methodResult).isSameAs(expectedResult);
         verifyNoInteractions(container);
         verifyNoInteractions(handler);
@@ -53,11 +52,11 @@ final class FakeStepReporterTest {
         final StepReporter reporter = new FakeStepReporter();
         final SafeACContainer container = mock(SafeACContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
-        final OptionalValue<Object> optionalContext = OptionalValue.of(new Object());
+        final Object[] contexts = new Object[]{};
         final RuntimeException expectedException = new RuntimeException();
 
         assertThatCode(() -> {
-            reporter.report(container, handler, "step name", "step description", optionalContext, () -> {
+            reporter.report(container, handler, "step name", "step description", contexts, () -> {
                 throw expectedException;
             });
         }).isSameAs(expectedException);

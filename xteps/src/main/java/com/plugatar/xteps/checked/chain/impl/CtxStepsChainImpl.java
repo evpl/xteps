@@ -16,7 +16,6 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
@@ -39,7 +38,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final SafeACContainer safeACContainer;
-    private final OptionalValue<C> optionalContext;
+    private final C context;
 
     /**
      * Ctor.
@@ -61,12 +60,12 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
         this.safeACContainer = safeACContainer;
-        this.optionalContext = OptionalValue.of(context);
+        this.context = context;
     }
 
     @Override
     public final C context() {
-        return this.optionalContext.value();
+        return this.context;
     }
 
     @Override
@@ -76,9 +75,8 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
 
     @Override
     public final CtxStepsChain<C> contextIsCloseable() {
-        final C value = this.optionalContext.value();
-        if (value instanceof AutoCloseable) {
-            this.safeACContainer.add((AutoCloseable) value);
+        if (this.context instanceof AutoCloseable) {
+            this.safeACContainer.add((AutoCloseable) this.context);
             return this;
         } else {
             final XtepsException baseEx = new XtepsException("Current context is not an AutoCloseable instance");
@@ -91,7 +89,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     @Override
     public final CtxStepsChain<C> contextIsCloseable(final ThrowingConsumer<? super C, ?> close) {
         if (close == null) { this.throwNullArgException("close"); }
-        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.optionalContext.value())));
+        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.context)));
         return this;
     }
 
@@ -112,7 +110,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     ) throws E {
         if (consumer == null) { this.throwNullArgException("consumer"); }
         try {
-            consumer.accept(this.optionalContext.value());
+            consumer.accept(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -127,7 +125,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     ) throws E {
         if (function == null) { this.throwNullArgException("function"); }
         try {
-            return function.apply(this.optionalContext.value());
+            return function.apply(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
@@ -138,7 +136,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
     @Override
     public final <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(final U context) {
         return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, context,
-            this.optionalContext.value(), this);
+            this.context, this);
     }
 
     @Override
@@ -148,14 +146,14 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         if (contextFunction == null) { this.throwNullArgException("contextFunction"); }
         final U newContext;
         try {
-            newContext = contextFunction.apply(this.optionalContext.value());
+            newContext = contextFunction.apply(this.context);
         } catch (final Throwable ex) {
             this.safeACContainer.close(ex);
             this.exceptionHandler.handle(ex);
             throw ex;
         }
         return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this);
+            this.context, this);
     }
 
     @Override
@@ -199,7 +197,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.reportStep(stepName, stepDescription, () -> {
-            step.accept(this.optionalContext.value());
+            step.accept(this.context);
             return null;
         });
         return this;
@@ -229,9 +227,9 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
-        final U newContext = this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
+        final U newContext = this.reportStep(stepName, stepDescription, () -> step.apply(this.context));
         return new Mem1CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
-            this.optionalContext.value(), this);
+            this.context, this);
     }
 
     @Override
@@ -258,7 +256,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.reportStep(stepName, stepDescription, () -> step.apply(this.optionalContext.value()));
+        return this.reportStep(stepName, stepDescription, () -> step.apply(this.context));
     }
 
     @Override
@@ -326,7 +324,7 @@ public class CtxStepsChainImpl<C> implements CtxStepsChain<C> {
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
-            this.optionalContext, step);
+            new Object[]{this.context}, step);
     }
 
     private void throwNullArgException(final String argName) {

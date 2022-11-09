@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps.base.allure;
 
-import com.plugatar.xteps.base.OptionalValue;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
 import io.qameta.allure.model.Stage;
@@ -40,7 +39,7 @@ final class AllureStepListenerTest {
         final String uuid = UUID.randomUUID().toString();
         final String stepDescription = "step description";
 
-        listener.stepStarted(uuid, "", stepDescription, OptionalValue.of("context value"));
+        listener.stepStarted(uuid, "", stepDescription, new Object[]{});
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         allureLifecycle.updateStep(uuid, stepResult::set);
         assertThat(stepResult.get().getName()).isEqualTo("step");
@@ -55,7 +54,7 @@ final class AllureStepListenerTest {
         final String uuid = UUID.randomUUID().toString();
         final String stepName = "step name";
 
-        listener.stepStarted(uuid, stepName, "", OptionalValue.of("context value"));
+        listener.stepStarted(uuid, stepName, "", new Object[]{});
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
         assertThat(stepResult.get().getName()).isEqualTo(stepName);
@@ -71,7 +70,7 @@ final class AllureStepListenerTest {
         final String stepName = "step name";
         final String stepDescription = "step description";
 
-        listener.stepStarted(uuid, stepName, stepDescription, OptionalValue.of("context value"));
+        listener.stepStarted(uuid, stepName, stepDescription, new Object[]{});
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
         assertThat(stepResult.get().getName()).isEqualTo(stepName);
@@ -85,14 +84,18 @@ final class AllureStepListenerTest {
     void stepStartedMethodWithReplacements() {
         final AllureStepListener listener = new AllureStepListener();
         final String uuid = UUID.randomUUID().toString();
-        final String stepName = "step {context} name";
-        final String stepDescription = "step {context} description";
+        final String stepName = "step name, first context = {context}, second context = {context2}";
+        final String stepDescription = "step description, first context = {context}, second context = {context2}";
 
-        listener.stepStarted(uuid, stepName, stepDescription, OptionalValue.of("context value"));
+        listener.stepStarted(uuid, stepName, stepDescription, new Object[]{"context value 1", "context value 2"});
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
-        assertThat(stepResult.get().getName()).isEqualTo("step context value name");
-        assertThat(stepResult.get().getDescription()).isEqualTo("step context value description");
+        assertThat(stepResult.get().getName()).isEqualTo(
+            "step name, first context = context value 1, second context = context value 2"
+        );
+        assertThat(stepResult.get().getDescription()).isEqualTo(
+            "step description, first context = context value 1, second context = context value 2"
+        );
         assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
 
         Allure.getLifecycle().stopStep(uuid);

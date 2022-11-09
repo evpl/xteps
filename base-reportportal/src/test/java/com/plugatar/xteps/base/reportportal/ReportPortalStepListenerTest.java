@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps.base.reportportal;
 
-import com.plugatar.xteps.base.OptionalValue;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -30,7 +29,7 @@ final class ReportPortalStepListenerTest {
             UUID.randomUUID().toString(),
             "step name",
             "step description",
-            OptionalValue.empty()
+            new Object[]{}
         )).doesNotThrowAnyException();
     }
 

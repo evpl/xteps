@@ -16,7 +16,6 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
@@ -291,7 +290,7 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(), step);
+        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, new Object[]{}, step);
     }
 
     private void throwNullArgException(final String argName) {

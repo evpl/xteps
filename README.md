@@ -23,16 +23,16 @@ create an issue.
 ## Table of Contents
 
 * [How to use](#How-to-use)
-* [Which version to choose](#Which-version-to-choose)
 * [API](#API)
-* [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
-* [Safe AutoCloseable context](#Safe-AutoCloseable-context)
-* [Clean stack trace](#Clean-stack-trace)
-* [Checked exceptions](#Checked-exceptions)
+* [Features](#Features)
+    * [Safe AutoCloseable context](#Safe-AutoCloseable-context)
+    * [Clean stack trace](#Clean-stack-trace)
+    * [Checked exceptions](#Checked-exceptions)
+    * [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
 * [How to provide parameters](#How-to-provide-parameters)
 * [Xteps Java 8 unreported exception bug](#Xteps-Java-8-unreported-exception-bug)
 * [Code examples](#Code-examples)
-    * [Simple Java code example](#Simple-Java-code-example)
+    * [Simple example](#Simple-example)
     * [Selenium WebDriver Java code example](#Selenium-WebDriver-Java-code-example)
     * [_Step objects_ and _Step objects
       chain_ patterns example](#_Step-objects_-and-_Step-objects-chain_-patterns-example)
@@ -40,8 +40,6 @@ create an issue.
 ## How to use
 
 Requires Java 8+ version. Just add suitable dependency.
-
-## Which version to choose
 
 * If you use Kotlin or use Java but want to hide checked exceptions
     * with Allure - `unchecked-xteps-allure`
@@ -72,24 +70,22 @@ First part of Xteps API is a set of static methods located in the `com.plugatar.
 Second part is a set of steps objects located in the `com.plugatar.xteps.checked` or `com.plugatar.xteps.unchecked`
 packages depending on the version.
 
-| Step object       | Description                                                                       |
-|-------------------|-----------------------------------------------------------------------------------|
-| `RunnableStep`    | The step will be executed and reported when calling the `run()` method.           |
-| `SupplierStep`    | The step will be executed and reported when calling the `get()` method.           |
-| `ConsumerStep`    | The step will be executed and reported when calling the `accept(T)` method.       |
-| `BiConsumerStep`  | The step will be executed and reported when calling the `accept(T, U)` method.    |
-| `TriConsumerStep` | The step will be executed and reported when calling the `accept(T, U, V)` method. |
-| `FunctionStep`    | The step will be executed and reported when calling the `apply(T)` method.        |
-| `BiFunctionStep`  | The step will be executed and reported when calling the `apply(T, U)` method.     |
-| `TriFunctionStep` | The step will be executed and reported when calling the `apply(T, U, V)` method.  |
+| Step object       | Description                                                                        |
+|-------------------|------------------------------------------------------------------------------------|
+| `RunnableStep`    | This step will be executed and reported when calling the `run()` method.           |
+| `SupplierStep`    | This step will be executed and reported when calling the `get()` method.           |
+| `ConsumerStep`    | This step will be executed and reported when calling the `accept(T)` method.       |
+| `BiConsumerStep`  | This step will be executed and reported when calling the `accept(T, U)` method.    |
+| `TriConsumerStep` | This step will be executed and reported when calling the `accept(T, U, V)` method. |
+| `FunctionStep`    | This step will be executed and reported when calling the `apply(T)` method.        |
+| `BiFunctionStep`  | This step will be executed and reported when calling the `apply(T, U)` method.     |
+| `TriFunctionStep` | This step will be executed and reported when calling the `apply(T, U, V)` method.  |
 
 See [code examples](#Code-examples).
 
-## Allure and ReportPortal integration
+## Features
 
-Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
-
-## Safe AutoCloseable context
+### Safe AutoCloseable context
 
 Don't worry about closing resources, just use steps chain. Context will be closed in case of any exception in
 steps chain or in case of `closeAutoCloseableContexts()` method invocation.
@@ -132,7 +128,7 @@ class ExampleTest {
 }
 ```
 
-## Clean stack trace
+### Clean stack trace
 
 `cleanStackTrace` option is enabled by default. It allows to clear the stack trace from Xteps calls.
 
@@ -163,7 +159,7 @@ java.lang.RuntimeException: Nested step exception
 	...
 ```
 
-## Checked exceptions
+### Checked exceptions
 
 Xteps is tolerant to checked exceptions. Each method allows you to throw generic exception, the type of this exception
 is defined by the step body.
@@ -209,6 +205,23 @@ void test() {
     });
 }
 ```
+
+### Allure and ReportPortal integration
+
+Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
+
+You can use step name or step description replacements by the way provided by Allure / ReportPortal.
+
+```java
+stepsChain()
+    .withContext("value")
+    .withContext(111)
+    .step("Step with first context = {context} and previous context = {context2}", ((integer, string) -> {
+        //...
+    }));
+```
+
+This step will be reported with name "Step with first context = 111 and previous context = value".
 
 ## How to provide parameters
 
@@ -266,7 +279,7 @@ stepsChain()
 
 ## Code examples
 
-### Simple Java code example
+### Simple example
 
 ```java
 @Test
@@ -351,9 +364,6 @@ Allure report looks like this for every test.
 ![simple_java_code_example](https://user-images.githubusercontent.com/54626653/198648739-15ba8a27-4025-4902-8174-49baed3a69d2.png)
 
 ### _Step objects_ and _Step objects chain_ patterns example
-
-Xteps allows you to write code in
-[_Step objects_ and _Step objects chain_ patterns](https://github.com/evpl/step-objects-pattern) style.
 
 ```java
 class RandomString extends SupplierStep<String, RuntimeException> {

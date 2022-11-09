@@ -16,7 +16,6 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.StepReporter;
@@ -57,11 +56,11 @@ public class DefaultStepReporter implements StepReporter {
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
-        final OptionalValue<?> optionalContext,
+        final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         return this.report(
-            this.fakeSafeACContainer, exceptionHandler, stepName, stepDescription, optionalContext, step
+            this.fakeSafeACContainer, exceptionHandler, stepName, stepDescription, contexts, step
         );
     }
 
@@ -72,21 +71,21 @@ public class DefaultStepReporter implements StepReporter {
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
-        final OptionalValue<?> optionalContext,
+        final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         if (safeACContainer == null) { throwNullArgException("safeACContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (optionalContext == null) { throwNullArgException("optionalContext"); }
+        if (contexts == null) { throwNullArgException("contexts"); }
         if (step == null) { throwNullArgException("step"); }
         /* Step start */
         final String uuid = UUID.randomUUID().toString();
         XtepsException listenerException = null;
         for (final StepListener listener : this.listeners) {
             try {
-                listener.stepStarted(uuid, stepName, stepDescription, optionalContext);
+                listener.stepStarted(uuid, stepName, stepDescription, contexts);
             } catch (final Throwable ex) {
                 if (listenerException == null) {
                     listenerException = listenerException();
