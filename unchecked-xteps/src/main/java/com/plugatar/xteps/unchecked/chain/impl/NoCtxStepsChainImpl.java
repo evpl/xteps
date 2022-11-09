@@ -16,7 +16,6 @@
 package com.plugatar.xteps.unchecked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
@@ -267,7 +266,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ?> step
     ) {
-        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, OptionalValue.empty(),
+        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, new Object[]{},
             ThrowingSupplier.unchecked(step));
     }
 

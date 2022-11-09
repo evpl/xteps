@@ -26,13 +26,12 @@ public interface StepListener {
      * @param stepUUID        the step UUID (not null, UUID format)
      * @param stepName        the step name (not null, may be empty)
      * @param stepDescription the step description (not null, may be empty)
-     * @param optionalContext the optional step context (not null, but {@link OptionalValue#value()}
-     *                        method result may be null)
+     * @param contexts        the contexts array (not null, but elements may be null)
      */
     void stepStarted(String stepUUID,
                      String stepName,
                      String stepDescription,
-                     OptionalValue<?> optionalContext);
+                     Object[] contexts);
 
     /**
      * Invoked each time a step passes.

@@ -16,7 +16,6 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.OptionalValue;
 import com.plugatar.xteps.base.SafeACContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingSupplier;
@@ -38,13 +37,13 @@ public class FakeStepReporter implements StepReporter {
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
-        final OptionalValue<?> optionalContext,
+        final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (optionalContext == null) { throwNullArgException("optionalContext"); }
+        if (contexts == null) { throwNullArgException("contexts"); }
         if (step == null) { throwNullArgException("step"); }
         try {
             return step.get();
@@ -60,14 +59,14 @@ public class FakeStepReporter implements StepReporter {
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
-        final OptionalValue<?> optionalContext,
+        final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
         if (safeACContainer == null) { throwNullArgException("safeACContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (optionalContext == null) { throwNullArgException("optionalContext"); }
+        if (contexts == null) { throwNullArgException("contexts"); }
         if (step == null) { throwNullArgException("step"); }
         try {
             return step.get();

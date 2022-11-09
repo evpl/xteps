@@ -26,12 +26,12 @@ public interface StepReporter {
      * @param exceptionHandler the step name
      * @param stepName         the safe AutoCloseable container
      * @param stepDescription  the step description
-     * @param optionalContext  the optional context
+     * @param contexts         the contexts array
      * @param step             the origin supplier
      * @param <R>              the type of the {@code step} result
      * @param <E>              the {@code step} exception type
      * @return the {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code optionalContext}
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code contexts}
      *                        or {@code step} is null
      * @throws E              if {@code step} threw exception
      */
@@ -39,7 +39,7 @@ public interface StepReporter {
         ExceptionHandler exceptionHandler,
         String stepName,
         String stepDescription,
-        OptionalValue<?> optionalContext,
+        Object[] contexts,
         ThrowingSupplier<? extends R, ? extends E> step
     ) throws E;
 
@@ -51,12 +51,12 @@ public interface StepReporter {
      * @param safeACContainer  the exception handler
      * @param stepName         the safe AutoCloseable container
      * @param stepDescription  the step description
-     * @param optionalContext  the optional context
+     * @param contexts         the contexts array
      * @param step             the origin supplier
      * @param <R>              the type of the {@code step} result
      * @param <E>              the {@code step} exception type
      * @return the {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code optionalContext}
+     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code contexts}
      *                        or {@code step} is null
      * @throws E              if {@code step} threw exception
      */
@@ -65,7 +65,7 @@ public interface StepReporter {
         ExceptionHandler exceptionHandler,
         String stepName,
         String stepDescription,
-        OptionalValue<?> optionalContext,
+        Object[] contexts,
         ThrowingSupplier<? extends R, ? extends E> step
     ) throws E;
 }
