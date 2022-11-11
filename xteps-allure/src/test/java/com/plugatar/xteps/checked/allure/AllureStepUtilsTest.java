@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.base.allure;
+package com.plugatar.xteps.checked.allure;
 
+import com.plugatar.xteps.base.ThrowingConsumer;
+import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
 import io.qameta.allure.Allure;
 import io.qameta.allure.AllureLifecycle;
@@ -25,8 +27,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -55,7 +55,7 @@ final class AllureStepUtilsTest {
         final String stepUUID = UUID.randomUUID().toString();
         allureLifecycle.startStep(stepUUID, new StepResult());
 
-        assertThatCode(() -> AllureStepUtils.stepName((UnaryOperator<String>) null))
+        assertThatCode(() -> AllureStepUtils.stepName((ThrowingFunction<String, String, ?>) null))
             .isInstanceOf(XtepsException.class);
     }
 
@@ -91,7 +91,7 @@ final class AllureStepUtilsTest {
         final String stepUUID = UUID.randomUUID().toString();
         allureLifecycle.startStep(stepUUID, new StepResult());
 
-        assertThatCode(() -> AllureStepUtils.stepDescription((UnaryOperator<String>) null))
+        assertThatCode(() -> AllureStepUtils.stepDescription((ThrowingFunction<String, String, ?>) null))
             .isInstanceOf(XtepsException.class);
     }
 
@@ -195,7 +195,7 @@ final class AllureStepUtilsTest {
         final String stepUUID = UUID.randomUUID().toString();
         allureLifecycle.startStep(stepUUID, new StepResult());
 
-        assertThatCode(() -> AllureStepUtils.stepParameter((Consumer<Parameter>) null))
+        assertThatCode(() -> AllureStepUtils.stepParameter((ThrowingConsumer<Parameter, ?>) null))
             .isInstanceOf(XtepsException.class);
     }
 
