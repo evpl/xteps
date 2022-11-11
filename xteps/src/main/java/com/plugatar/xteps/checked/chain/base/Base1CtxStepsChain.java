@@ -18,7 +18,7 @@ public interface Base1CtxStepsChain<C> {
      *
      * @param contextFunction the context function
      * @param <U>             the context type
-     * @param <E>             the exception type
+     * @param <E>             the {@code contextFunction} exception type
      * @return contextual steps chain
      * @throws XtepsException if {@code contextFunction} is null
      * @throws E              if {@code contextFunction} threw exception
@@ -44,8 +44,8 @@ public interface Base1CtxStepsChain<C> {
      * Apply context to given function and returns result.
      *
      * @param function the function
-     * @param <E>      the {@code function} exception type
      * @param <R>      the {@code function} result type
+     * @param <E>      the {@code function} exception type
      * @return the {@code function} result
      * @throws XtepsException if {@code function} is null
      * @throws E              if {@code function} threw exception
