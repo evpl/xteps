@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.base.allure;
+package com.plugatar.xteps.unchecked.allure;
 
+import com.plugatar.xteps.base.ThrowingConsumer;
+import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
 import io.qameta.allure.util.ResultsUtils;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 /**
  * Utility class. Allure step utils.
@@ -49,15 +49,17 @@ public final class AllureStepUtils {
     /**
      * Updates the current step name.
      *
-     * @param update the update function
+     * @param updateFunction the update function
      * @return step name
-     * @throws XtepsException if {@code update} is null
+     * @throws XtepsException if {@code updateFunction} is null
      */
-    public static String stepName(final UnaryOperator<String> update) {
-        if (update == null) { throw new XtepsException("update arg is null"); }
+    public static String stepName(
+        final ThrowingFunction<String, String, ?> updateFunction
+    ) {
+        if (updateFunction == null) { throw new XtepsException("updateFunction arg is null"); }
         final AtomicReference<String> newNameRef = new AtomicReference<>();
         Allure.getLifecycle().updateStep(stepResult -> {
-            final String newName = update.apply(stepResult.getName());
+            final String newName = ThrowingFunction.unchecked(updateFunction).apply(stepResult.getName());
             newNameRef.set(newName);
             stepResult.setName(newName);
         });
@@ -78,15 +80,17 @@ public final class AllureStepUtils {
     /**
      * Updates the current step description.
      *
-     * @param update the update function
+     * @param updateFunction the update function
      * @return step description
-     * @throws XtepsException if {@code update} is null
+     * @throws XtepsException if {@code updateFunction} is null
      */
-    public static String stepDescription(final UnaryOperator<String> update) {
-        if (update == null) { throw new XtepsException("update arg is null"); }
+    public static String stepDescription(
+        final ThrowingFunction<String, String, ?> updateFunction
+    ) {
+        if (updateFunction == null) { throw new XtepsException("updateFunction arg is null"); }
         final AtomicReference<String> newDescriptionRef = new AtomicReference<>();
         Allure.getLifecycle().updateStep(stepResult -> {
-            final String newDescription = update.apply(stepResult.getDescription());
+            final String newDescription = ThrowingFunction.unchecked(updateFunction).apply(stepResult.getDescription());
             newDescriptionRef.set(newDescription);
             stepResult.setDescription(newDescription);
         });
@@ -158,13 +162,15 @@ public final class AllureStepUtils {
     /**
      * Adds parameter to the current step.
      *
-     * @param update the new parameter update function
-     * @throws XtepsException if {@code update} is null
+     * @param updateConsumer the new parameter update consumer
+     * @throws XtepsException if {@code updateConsumer} is null
      */
-    public static void stepParameter(final Consumer<Parameter> update) {
-        if (update == null) { throw new XtepsException("update arg is null"); }
+    public static void stepParameter(
+        final ThrowingConsumer<Parameter, ?> updateConsumer
+    ) {
+        if (updateConsumer == null) { throw new XtepsException("updateConsumer arg is null"); }
         final Parameter parameter = new Parameter();
-        update.accept(parameter);
+        ThrowingConsumer.unchecked(updateConsumer).accept(parameter);
         Allure.getLifecycle().updateStep(stepResult -> stepResult.getParameters().add(parameter));
     }
 }
