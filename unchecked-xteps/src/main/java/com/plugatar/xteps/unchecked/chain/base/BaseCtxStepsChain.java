@@ -33,8 +33,6 @@ public interface BaseCtxStepsChain<C, S extends BaseCtxStepsChain<C, S>> extends
      * Returns the context.
      *
      * @return the context
-     * @see #contextIsCloseable()
-     * @see #closeCloseableContexts()
      */
     C context();
 
@@ -46,24 +44,12 @@ public interface BaseCtxStepsChain<C, S extends BaseCtxStepsChain<C, S>> extends
     MemNoCtxStepsChain<S> withoutContext();
 
     /**
-     * Returns a contextual steps chain of the new context.
-     *
-     * @param context the new context
-     * @param <U>     the new context type
-     * @return contextual steps chain
-     */
-    <U> BaseCtxStepsChain<U, ?> withContext(U context);
-
-    /**
      * Append the current context to the cleanup queue. This context will be closed in case
      * of any exception in steps chain or in case of {@link #closeCloseableContexts()}
      * method invocation.
      *
      * @return this steps chain
      * @throws XtepsException if the current context is not an {@link AutoCloseable} instance
-     * @see #context()
-     * @see #closeCloseableContexts()
-     * @see #contextIsCloseable(ThrowingConsumer)
      */
     S contextIsCloseable();
 
@@ -75,9 +61,6 @@ public interface BaseCtxStepsChain<C, S extends BaseCtxStepsChain<C, S>> extends
      * @param close the close action
      * @return this steps chain
      * @throws XtepsException if {@code close} is null
-     * @see #context()
-     * @see #closeCloseableContexts()
-     * @see #contextIsCloseable()
      */
     S contextIsCloseable(ThrowingConsumer<? super C, ?> close);
 }

@@ -15,10 +15,7 @@
  */
 package com.plugatar.xteps.unchecked.chain.base;
 
-import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.RunnableStep;
 import com.plugatar.xteps.unchecked.SupplierStep;
 import com.plugatar.xteps.unchecked.chain.CtxStepsChain;
 
@@ -30,165 +27,43 @@ import com.plugatar.xteps.unchecked.chain.CtxStepsChain;
 public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends BaseStepsChain<S> {
 
     /**
-     * Returns a contextual steps chain of the new context.
-     *
-     * @param context the new context
-     * @param <U>     the new context type
-     * @return contextual steps chain
-     * @see #withContext(ThrowingSupplier)
+     * {@inheritDoc}
      */
+    @Override
     <U> CtxStepsChain<U> withContext(U context);
 
     /**
-     * Returns a context steps chain of the new context.
-     *
-     * @param contextSupplier the context supplier
-     * @param <U>             the context type
-     * @return contextual steps chain
-     * @throws XtepsException if {@code contextSupplier} is null
-     * @see #withContext(Object)
+     * {@inheritDoc}
      */
+    @Override
     <U> CtxStepsChain<U> withContext(
         ThrowingSupplier<? extends U, ?> contextSupplier
     );
 
     /**
-     * Performs and reports given step and returns this steps chain.
-     *
-     * @param step the step
-     * @return this steps chain
-     * @throws XtepsException if {@code step} is null
-     *                        or if it's impossible to correctly report the step
+     * {@inheritDoc}
      */
-    S step(
-        RunnableStep step
-    );
-
-    /**
-     * Performs and reports given step with given name and returns this steps chain.
-     *
-     * @param stepName the step name
-     * @param step     the step
-     * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #step(String, String, ThrowingRunnable)
-     */
-    S step(
-        String stepName,
-        ThrowingRunnable<?> step
-    );
-
-    /**
-     * Performs and reports given step with given name and description and returns this steps chain.
-     *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #step(String, ThrowingRunnable)
-     */
-    S step(
-        String stepName,
-        String stepDescription,
-        ThrowingRunnable<?> step
-    );
-
-    /**
-     * Performs and reports given step and returns a contextual steps chain of the new context.
-     *
-     * @param step the step
-     * @param <U>  the context type
-     * @return contextual steps chain
-     * @throws XtepsException if {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     */
+    @Override
     <U> CtxStepsChain<U> stepToContext(
         SupplierStep<? extends U> step
     );
 
     /**
-     * Performs and reports given step with given name and returns a contextual
-     * steps chain of the new context.
-     *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <U>      the context type
-     * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, String, ThrowingSupplier)
+     * {@inheritDoc}
      */
+    @Override
     <U> CtxStepsChain<U> stepToContext(
         String stepName,
         ThrowingSupplier<? extends U, ?> step
     );
 
     /**
-     * Performs and reports given step with given name and description and returns
-     * a contextual steps chain of the new context.
-     *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <U>             the context type
-     * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, ThrowingSupplier)
+     * {@inheritDoc}
      */
+    @Override
     <U> CtxStepsChain<U> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingSupplier<? extends U, ?> step
-    );
-
-    /**
-     * Performs and reports given step and returns the step result.
-     *
-     * @param step the step
-     * @param <R>  the result type
-     * @return {@code step} result
-     * @throws XtepsException if {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     */
-    <R> R stepTo(
-        SupplierStep<? extends R> step
-    );
-
-    /**
-     * Performs and reports given step with given name and returns the step result.
-     *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <R>      the result type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, String, ThrowingSupplier)
-     */
-    <R> R stepTo(
-        String stepName,
-        ThrowingSupplier<? extends R, ?> step
-    );
-
-    /**
-     * Performs and reports given step with given name and description and returns the step result.
-     *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <R>             the result type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, ThrowingSupplier)
-     */
-    <R> R stepTo(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends R, ?> step
     );
 }

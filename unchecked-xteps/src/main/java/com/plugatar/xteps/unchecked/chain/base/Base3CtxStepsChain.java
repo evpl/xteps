@@ -70,7 +70,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, String, ThrowingTriConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -86,7 +85,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, ThrowingTriConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -117,7 +115,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, String, ThrowingTriFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -135,7 +132,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, ThrowingTriFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -165,7 +161,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, String, ThrowingTriFunction)
      */
     <R> R stepTo(
         String stepName,
@@ -182,7 +177,6 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, ThrowingTriFunction)
      */
     <R> R stepTo(
         String stepName,

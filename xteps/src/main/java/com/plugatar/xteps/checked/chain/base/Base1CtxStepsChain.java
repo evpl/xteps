@@ -78,7 +78,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, String, ThrowingConsumer)
      */
     <E extends Throwable> BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -96,7 +95,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, ThrowingConsumer)
      */
     <E extends Throwable> BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -131,7 +129,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepToContext(String, String, ThrowingFunction)
      */
     <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -151,7 +148,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepToContext(String, ThrowingFunction)
      */
     <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -185,7 +181,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, String, ThrowingFunction)
      */
     <R, E extends Throwable> R stepTo(
         String stepName,
@@ -204,7 +199,6 @@ public interface Base1CtxStepsChain<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, ThrowingFunction)
      */
     <R, E extends Throwable> R stepTo(
         String stepName,

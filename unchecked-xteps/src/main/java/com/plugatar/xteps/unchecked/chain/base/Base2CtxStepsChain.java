@@ -69,7 +69,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, String, ThrowingBiConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -85,7 +84,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return this steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, ThrowingBiConsumer)
      */
     BaseCtxStepsChain<C, ?> step(
         String stepName,
@@ -116,7 +114,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, String, ThrowingBiFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -134,7 +131,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return contextual steps chain
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepToContext(String, ThrowingBiFunction)
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
         String stepName,
@@ -164,7 +160,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, String, ThrowingBiFunction)
      */
     <R> R stepTo(
         String stepName,
@@ -181,7 +176,6 @@ public interface Base2CtxStepsChain<C, P> {
      * @return {@code step} result
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, ThrowingBiFunction)
      */
     <R> R stepTo(
         String stepName,

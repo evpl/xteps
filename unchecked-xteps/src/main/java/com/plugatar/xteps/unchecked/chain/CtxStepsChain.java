@@ -17,8 +17,10 @@ package com.plugatar.xteps.unchecked.chain;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.ConsumerStep;
 import com.plugatar.xteps.unchecked.FunctionStep;
+import com.plugatar.xteps.unchecked.SupplierStep;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxStepsChain;
 
@@ -36,6 +38,14 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(U context);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(
+        ThrowingSupplier<? extends U, ?> contextSupplier
+    );
 
     /**
      * {@inheritDoc}
@@ -85,6 +95,14 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         FunctionStep<? super C, ? extends U> step
     );
 
@@ -94,7 +112,26 @@ public interface CtxStepsChain<C> extends
     @Override
     <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         String stepName,
+        ThrowingSupplier<? extends U, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
         ThrowingFunction<? super C, ? extends U, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
+        String stepDescription,
+        ThrowingSupplier<? extends U, ?> step
     );
 
     /**

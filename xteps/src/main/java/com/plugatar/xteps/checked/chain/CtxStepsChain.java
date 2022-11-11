@@ -17,8 +17,10 @@ package com.plugatar.xteps.checked.chain;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.checked.ConsumerStep;
 import com.plugatar.xteps.checked.FunctionStep;
+import com.plugatar.xteps.checked.SupplierStep;
 import com.plugatar.xteps.checked.chain.base.Base1CtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.BaseCtxStepsChain;
 
@@ -36,6 +38,14 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(U context);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> withContext(
+        ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    ) throws E;
 
     /**
      * {@inheritDoc}
@@ -85,6 +95,14 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        SupplierStep<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -94,7 +112,26 @@ public interface CtxStepsChain<C> extends
     @Override
     <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
         String stepName,
+        ThrowingSupplier<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
         ThrowingFunction<? super C, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepName,
+        String stepDescription,
+        ThrowingSupplier<? extends U, ? extends E> step
     ) throws E;
 
     /**
