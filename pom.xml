@@ -76,6 +76,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- self dependencies -->
             <dependency>
                 <groupId>com.plugatar.xteps</groupId>
                 <artifactId>base</artifactId>
@@ -101,6 +102,7 @@
                 <artifactId>unchecked-xteps</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- integration dependencies -->
             <dependency>
                 <groupId>com.epam.reportportal</groupId>
                 <artifactId>client-java</artifactId>
@@ -111,6 +113,7 @@
                 <artifactId>allure-java-commons</artifactId>
                 <version>2.20.1</version>
             </dependency>
+            <!-- test dependencies -->
             <dependency>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-junit5</artifactId>

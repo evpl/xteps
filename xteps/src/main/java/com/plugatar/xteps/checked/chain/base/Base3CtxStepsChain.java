@@ -20,7 +20,7 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      *
      * @param contextFunction the context function
      * @param <U>             the context type
-     * @param <E>             the exception type
+     * @param <E>             the {@code contextFunction} exception type
      * @return contextual steps chain
      * @throws XtepsException if {@code contextFunction} is null
      * @throws E              if {@code contextFunction} threw exception
