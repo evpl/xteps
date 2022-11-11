@@ -44,7 +44,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, String)
      */
     public static void step(final String stepName) {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName);
@@ -64,7 +63,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code stepDescription} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String)
      */
     public static void step(final String stepName,
                             final String stepDescription) {
@@ -72,12 +70,12 @@ public final class UncheckedXteps {
     }
 
     /**
-     * Performs given step.
+     * Performs and reports given step.
      *
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends RunnableStep {
+     * public class CustomStep extends RunnableStep<RuntimeException> {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -122,7 +120,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, String, ThrowingRunnable)
      */
     public static void step(
         final String stepName,
@@ -154,7 +151,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, ThrowingRunnable)
      */
     public static void step(
         final String stepName,
@@ -165,12 +161,12 @@ public final class UncheckedXteps {
     }
 
     /**
-     * Performs given step and returns the step result.
+     * Performs and reports given step and returns the step result.
      *
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends SupplierStep<String> {
+     * public class CustomStep extends SupplierStep<String, RuntimeException> {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -222,7 +218,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, String, ThrowingSupplier)
      */
     public static <R> R stepTo(
         final String stepName,
@@ -258,7 +253,6 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
-     * @see #stepTo(String, ThrowingSupplier)
      */
     public static <R> R stepTo(
         final String stepName,

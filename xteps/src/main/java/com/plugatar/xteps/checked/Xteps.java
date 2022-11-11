@@ -44,7 +44,6 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String, String)
      */
     public static void step(final String stepName) {
         CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName);
@@ -64,7 +63,6 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      *                        or if {@code stepName} or {@code stepDescription} is null
      *                        or if it's impossible to correctly report the step
-     * @see #step(String)
      */
     public static void step(final String stepName,
                             final String stepDescription) {
@@ -126,7 +124,6 @@ public final class Xteps {
      *                        or if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, String, ThrowingRunnable)
      */
     public static <E extends Throwable> void step(
         final String stepName,
@@ -160,7 +157,6 @@ public final class Xteps {
      *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #step(String, ThrowingRunnable)
      */
     public static <E extends Throwable> void step(
         final String stepName,
@@ -232,7 +228,6 @@ public final class Xteps {
      *                        or if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, String, ThrowingSupplier)
      */
     public static <R, E extends Throwable> R stepTo(
         final String stepName,
@@ -270,7 +265,6 @@ public final class Xteps {
      *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
-     * @see #stepTo(String, ThrowingSupplier)
      */
     public static <R, E extends Throwable> R stepTo(
         final String stepName,

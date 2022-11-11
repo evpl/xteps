@@ -64,9 +64,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
 
     @Override
     public final <U> CtxStepsChain<U> withContext(final U context) {
-        return new CtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(), context
-        );
+        return this.newCtxStepsChain(context);
     }
 
     @Override
@@ -74,16 +72,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final ThrowingSupplier<? extends U, ?> contextSupplier
     ) {
         if (contextSupplier == null) { this.throwNullArgException("contextSupplier"); }
-        final U context;
-        try {
-            context = contextSupplier.get();
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw sneakyThrow(ex);
-        }
-        return new CtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(), context
-        );
+        return this.newCtxStepsChain(this.execAction(contextSupplier));
     }
 
     @Override
@@ -91,12 +80,10 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final RunnableStep step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
-        try {
+        this.execAction(() -> {
             step.run();
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw sneakyThrow(ex);
-        }
+            return null;
+        });
         return this;
     }
 
@@ -144,7 +131,8 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     public final <U> CtxStepsChain<U> stepToContext(
         final SupplierStep<? extends U> step
     ) {
-        return this.withContext(step);
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newCtxStepsChain(this.execAction(step));
     }
 
     @Override
@@ -164,10 +152,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         if (stepName == null) { this.throwNullArgException("stepName"); }
         if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
         if (step == null) { this.throwNullArgException("step"); }
-        final U context = this.reportStep(stepName, stepDescription, step);
-        return new CtxStepsChainImpl<>(
-            this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(), context
-        );
+        return this.newCtxStepsChain(this.reportStep(stepName, stepDescription, step));
     }
 
     @Override
@@ -175,12 +160,7 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final SupplierStep<? extends R> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
-        try {
-            return step.get();
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw sneakyThrow(ex);
-        }
+        return this.execAction(step);
     }
 
     @Override
@@ -252,22 +232,36 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
         final ThrowingConsumer<NoCtxStepsChain, ?> stepsChain
     ) {
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
-        try {
+        this.execAction(() -> {
             stepsChain.accept(this);
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw sneakyThrow(ex);
-        }
+            return null;
+        });
         return this;
     }
 
     private <R> R reportStep(
         final String stepName,
         final String stepDescription,
-        final ThrowingSupplier<? extends R, ?> step
+        final ThrowingSupplier<R, ?> step
     ) {
         return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, new Object[]{},
             ThrowingSupplier.unchecked(step));
+    }
+
+    private <R> R execAction(
+        final ThrowingSupplier<R, ?> action
+    ) {
+        try {
+            return action.get();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw sneakyThrow(ex);
+        }
+    }
+
+    private <U> CtxStepsChain<U> newCtxStepsChain(final U newContext) {
+        return new CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(),
+            newContext);
     }
 
     private void throwNullArgException(final String argName) {

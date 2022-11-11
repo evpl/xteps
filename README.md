@@ -33,7 +33,6 @@ create an issue.
 * [Xteps Java 8 unreported exception bug](#Xteps-Java-8-unreported-exception-bug)
 * [Code examples](#Code-examples)
     * [Simple example](#Simple-example)
-    * [Selenium WebDriver Java code example](#Selenium-WebDriver-Java-code-example)
     * [_Step objects_ and _Step objects
       chain_ patterns example](#_Step-objects_-and-_Step-objects-chain_-patterns-example)
 
@@ -420,7 +419,7 @@ class ExampleTest {
             .stepToContext(
                 new RandomString(expectedStringLength))
             .step(
-                new Wait(1000).asConsumerStep())
+                new Wait(1000))
             .stepToContext(
                 new GetStringLength())
             .step(

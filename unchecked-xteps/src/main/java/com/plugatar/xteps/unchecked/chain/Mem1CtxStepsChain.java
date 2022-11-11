@@ -19,10 +19,12 @@ import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.BiConsumerStep;
 import com.plugatar.xteps.unchecked.BiFunctionStep;
 import com.plugatar.xteps.unchecked.ConsumerStep;
 import com.plugatar.xteps.unchecked.FunctionStep;
+import com.plugatar.xteps.unchecked.SupplierStep;
 import com.plugatar.xteps.unchecked.chain.base.ACCtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.base.Base2CtxStepsChain;
@@ -48,6 +50,14 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
      */
     @Override
     <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> withContext(U context);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> withContext(
+        ThrowingSupplier<? extends U, ?> contextSupplier
+    );
 
     /**
      * {@inheritDoc}
@@ -140,6 +150,14 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
      */
     @Override
     <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
         FunctionStep<? super C, ? extends U> step
     );
 
@@ -149,6 +167,15 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
     @Override
     <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
         BiFunctionStep<? super C, ? super P, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        String stepName,
+        ThrowingSupplier<? extends U, ?> step
     );
 
     /**
@@ -167,6 +194,16 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
     <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
         String stepName,
         ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        String stepName,
+        String stepDescription,
+        ThrowingSupplier<? extends U, ?> step
     );
 
     /**
