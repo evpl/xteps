@@ -22,19 +22,19 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
-import com.plugatar.xteps.checked.BiConsumerStep;
-import com.plugatar.xteps.checked.BiFunctionStep;
-import com.plugatar.xteps.checked.ConsumerStep;
-import com.plugatar.xteps.checked.FunctionStep;
-import com.plugatar.xteps.checked.SupplierStep;
-import com.plugatar.xteps.checked.TriConsumerStep;
-import com.plugatar.xteps.checked.TriFunctionStep;
 import com.plugatar.xteps.checked.chain.base.ACCtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.Base1CtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.Base2CtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.Base3CtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.BaseCtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.MemStepsChain;
+import com.plugatar.xteps.checked.stepobject.BiConsumerStep;
+import com.plugatar.xteps.checked.stepobject.BiFunctionStep;
+import com.plugatar.xteps.checked.stepobject.ConsumerStep;
+import com.plugatar.xteps.checked.stepobject.FunctionStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
+import com.plugatar.xteps.checked.stepobject.TriConsumerStep;
+import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
 
 /**
  * Extended memorizing contextual steps chain.

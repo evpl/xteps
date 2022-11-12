@@ -66,8 +66,8 @@ First part of Xteps API is a set of static methods located in the `com.plugatar.
 | `stepTo(String, String, ThrowingSupplier)` | Performs and reports given step with given name and description and returns the step result. |
 | `stepsChain()`                             | Starts a chain of steps (returns no context steps chain).                                    |
 
-Second part is a set of steps objects located in the `com.plugatar.xteps.checked` or `com.plugatar.xteps.unchecked`
-packages depending on the version.
+Second part is a set of steps objects located in the `com.plugatar.xteps.checked.stepobject` or
+`com.plugatar.xteps.unchecked.stepobject` packages depending on the version.
 
 | Step object       | Description                                                                        |
 |-------------------|------------------------------------------------------------------------------------|

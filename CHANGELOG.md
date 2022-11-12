@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2 (planned)
+
+* PR #46 added new step objects constructors with human-readable class name
+
 ## 5.1 (released 11.11.2022)
 
 * PR #45 steps chains javadoc fix

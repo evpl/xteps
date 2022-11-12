@@ -20,8 +20,8 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.RunnableStep;
-import com.plugatar.xteps.checked.SupplierStep;
+import com.plugatar.xteps.checked.stepobject.RunnableStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 /**
  * Base steps chain.

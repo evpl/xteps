@@ -18,11 +18,11 @@ package com.plugatar.xteps.unchecked.chain;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.unchecked.ConsumerStep;
-import com.plugatar.xteps.unchecked.FunctionStep;
-import com.plugatar.xteps.unchecked.SupplierStep;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxStepsChain;
+import com.plugatar.xteps.unchecked.stepobject.ConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 
 /**
  * Contextual steps chain.

@@ -24,13 +24,13 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.autocloseable.AutoCloseableOf;
-import com.plugatar.xteps.checked.ConsumerStep;
-import com.plugatar.xteps.checked.FunctionStep;
-import com.plugatar.xteps.checked.RunnableStep;
-import com.plugatar.xteps.checked.SupplierStep;
 import com.plugatar.xteps.checked.chain.CtxStepsChain;
 import com.plugatar.xteps.checked.chain.Mem1CtxStepsChain;
 import com.plugatar.xteps.checked.chain.MemNoCtxStepsChain;
+import com.plugatar.xteps.checked.stepobject.ConsumerStep;
+import com.plugatar.xteps.checked.stepobject.FunctionStep;
+import com.plugatar.xteps.checked.stepobject.RunnableStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 /**
  * Contextual steps chain implementation.

@@ -3,8 +3,8 @@ package com.plugatar.xteps.unchecked.chain.base;
 import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.BiConsumerStep;
-import com.plugatar.xteps.unchecked.BiFunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.BiConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.BiFunctionStep;
 
 /**
  * Base double context steps chain.

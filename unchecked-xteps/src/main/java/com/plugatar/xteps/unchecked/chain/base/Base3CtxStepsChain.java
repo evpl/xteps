@@ -3,8 +3,8 @@ package com.plugatar.xteps.unchecked.chain.base;
 import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.TriConsumerStep;
-import com.plugatar.xteps.unchecked.TriFunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.TriConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.TriFunctionStep;
 
 /**
  * Base triple context steps chain.
