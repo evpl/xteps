@@ -7,6 +7,7 @@
 Additional changes:
 
 * PR #47 removed unnecessary javadoc placeholder from xteps-allure
+* PR #48 javadoc fixes
 
 ## 5.1 (released 11.11.2022)
 
