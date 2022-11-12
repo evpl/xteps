@@ -3,8 +3,8 @@ package com.plugatar.xteps.unchecked.chain.base;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.ConsumerStep;
-import com.plugatar.xteps.unchecked.FunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.ConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
 
 /**
  * Base single context steps chain.

@@ -16,8 +16,8 @@
 package com.plugatar.xteps.unchecked.chain.base;
 
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.unchecked.SupplierStep;
 import com.plugatar.xteps.unchecked.chain.CtxStepsChain;
+import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 
 /**
  * Base no context steps chain.

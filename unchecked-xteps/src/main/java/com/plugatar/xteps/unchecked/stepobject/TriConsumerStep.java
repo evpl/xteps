@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.unchecked;
+package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingTriConsumer;
+import com.plugatar.xteps.unchecked.UncheckedXteps;
+
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
 
 /**
  * TriConsumer step. This step will be executed and reported when calling the
@@ -33,12 +36,25 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
     /**
      * Ctor.
      *
+     * @param step the step
+     */
+    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
+        this.stepName = humanReadableStepNameOfClass(this.getClass());
+        this.stepDescription = "";
+        this.step = step;
+    }
+
+    /**
+     * Ctor.
+     *
      * @param stepName the step name
      * @param step     the step
      */
     public TriConsumerStep(final String stepName,
                            final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
-        this(stepName, "", step);
+        this.stepName = stepName;
+        this.stepDescription = "";
+        this.step = step;
     }
 
     /**

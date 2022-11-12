@@ -23,11 +23,11 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.RunnableStep;
-import com.plugatar.xteps.checked.SupplierStep;
 import com.plugatar.xteps.checked.chain.CtxStepsChain;
 import com.plugatar.xteps.checked.chain.MemNoCtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.BaseCtxStepsChain;
+import com.plugatar.xteps.checked.stepobject.RunnableStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 /**
  * Memorizing no context steps chain implementation.

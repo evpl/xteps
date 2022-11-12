@@ -21,6 +21,8 @@ import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.chain.NoCtxStepsChain;
 import com.plugatar.xteps.checked.chain.impl.NoCtxStepsChainImpl;
+import com.plugatar.xteps.checked.stepobject.RunnableStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 import java.util.function.Supplier;
 

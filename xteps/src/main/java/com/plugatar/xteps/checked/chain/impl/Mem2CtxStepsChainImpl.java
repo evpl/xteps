@@ -28,17 +28,17 @@ import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.autocloseable.AutoCloseableOf;
-import com.plugatar.xteps.checked.BiConsumerStep;
-import com.plugatar.xteps.checked.BiFunctionStep;
-import com.plugatar.xteps.checked.ConsumerStep;
-import com.plugatar.xteps.checked.FunctionStep;
-import com.plugatar.xteps.checked.RunnableStep;
-import com.plugatar.xteps.checked.SupplierStep;
-import com.plugatar.xteps.checked.TriConsumerStep;
-import com.plugatar.xteps.checked.TriFunctionStep;
 import com.plugatar.xteps.checked.chain.Mem2CtxStepsChain;
 import com.plugatar.xteps.checked.chain.MemNoCtxStepsChain;
 import com.plugatar.xteps.checked.chain.base.BaseCtxStepsChain;
+import com.plugatar.xteps.checked.stepobject.BiConsumerStep;
+import com.plugatar.xteps.checked.stepobject.BiFunctionStep;
+import com.plugatar.xteps.checked.stepobject.ConsumerStep;
+import com.plugatar.xteps.checked.stepobject.FunctionStep;
+import com.plugatar.xteps.checked.stepobject.RunnableStep;
+import com.plugatar.xteps.checked.stepobject.SupplierStep;
+import com.plugatar.xteps.checked.stepobject.TriConsumerStep;
+import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
 
 /**
  * Memorizing contextual steps chain implementation.

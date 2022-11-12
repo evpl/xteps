@@ -28,17 +28,17 @@ import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.autocloseable.AutoCloseableOf;
-import com.plugatar.xteps.unchecked.BiConsumerStep;
-import com.plugatar.xteps.unchecked.BiFunctionStep;
-import com.plugatar.xteps.unchecked.ConsumerStep;
-import com.plugatar.xteps.unchecked.FunctionStep;
-import com.plugatar.xteps.unchecked.RunnableStep;
-import com.plugatar.xteps.unchecked.SupplierStep;
-import com.plugatar.xteps.unchecked.TriConsumerStep;
-import com.plugatar.xteps.unchecked.TriFunctionStep;
 import com.plugatar.xteps.unchecked.chain.Mem2CtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxStepsChain;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxStepsChain;
+import com.plugatar.xteps.unchecked.stepobject.BiConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.BiFunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.ConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
+import com.plugatar.xteps.unchecked.stepobject.RunnableStep;
+import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
+import com.plugatar.xteps.unchecked.stepobject.TriConsumerStep;
+import com.plugatar.xteps.unchecked.stepobject.TriFunctionStep;
 
 import static com.plugatar.xteps.unchecked.chain.impl.StepsChainUtils.sneakyThrow;
 

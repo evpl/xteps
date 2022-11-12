@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.unchecked;
+package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.unchecked.UncheckedXteps;
+
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
 
 /**
  * Supplier step. This step will be executed and reported when calling the {@link #get()} method.
@@ -30,12 +33,25 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
     /**
      * Ctor.
      *
+     * @param step the step
+     */
+    public SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
+        this.stepName = humanReadableStepNameOfClass(this.getClass());
+        this.stepDescription = "";
+        this.step = step;
+    }
+
+    /**
+     * Ctor.
+     *
      * @param stepName the step name
      * @param step     the step
      */
     public SupplierStep(final String stepName,
                         final ThrowingSupplier<? extends R, ?> step) {
-        this(stepName, "", step);
+        this.stepName = stepName;
+        this.stepDescription = "";
+        this.step = step;
     }
 
     /**

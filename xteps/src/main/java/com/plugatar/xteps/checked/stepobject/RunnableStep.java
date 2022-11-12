@@ -13,17 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.unchecked;
+package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingRunnable;
+import com.plugatar.xteps.checked.Xteps;
+
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
 
 /**
  * Runnable step. This step will be executed and reported when calling the {@link #run()} method.
+ *
+ * @param <E> the type of the throwing exception
  */
-public class RunnableStep implements ThrowingRunnable<RuntimeException> {
+public class RunnableStep<E extends Throwable> implements ThrowingRunnable<E> {
     private final String stepName;
     private final String stepDescription;
-    private final ThrowingRunnable<?> step;
+    private final ThrowingRunnable<? extends E> step;
+
+    /**
+     * Ctor.
+     *
+     * @param step the step
+     */
+    public RunnableStep(final ThrowingRunnable<? extends E> step) {
+        this.stepName = humanReadableStepNameOfClass(this.getClass());
+        this.stepDescription = "";
+        this.step = step;
+    }
 
     /**
      * Ctor.
@@ -32,8 +48,10 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param step     the step
      */
     public RunnableStep(final String stepName,
-                        final ThrowingRunnable<?> step) {
-        this(stepName, "", step);
+                        final ThrowingRunnable<? extends E> step) {
+        this.stepName = stepName;
+        this.stepDescription = "";
+        this.step = step;
     }
 
     /**
@@ -45,15 +63,25 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      */
     public RunnableStep(final String stepName,
                         final String stepDescription,
-                        final ThrowingRunnable<?> step) {
+                        final ThrowingRunnable<? extends E> step) {
         this.stepName = stepName;
         this.stepDescription = stepDescription;
         this.step = step;
     }
 
     @Override
-    public final void run() {
-        UncheckedXteps.stepsChain().step(this.stepName, this.stepDescription, this.step);
+    public final void run() throws E {
+        Xteps.stepsChain().step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns this step as unchecked.
+     *
+     * @return unchecked RunnableStep
+     */
+    @SuppressWarnings("unchecked")
+    public final RunnableStep<RuntimeException> asUnchecked() {
+        return (RunnableStep<RuntimeException>) this;
     }
 
     /**
@@ -63,7 +91,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <R> the type of the result
      * @return SupplierStep
      */
-    public final <R> SupplierStep<R> asSupplierStep(final R r) {
+    public final <R> SupplierStep<R, E> asSupplierStep(final R r) {
         return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
             this.step.run();
             return r;
@@ -76,7 +104,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <T> the type of the input argument
      * @return ConsumerStep
      */
-    public final <T> ConsumerStep<T> asConsumerStep() {
+    public final <T> ConsumerStep<T, E> asConsumerStep() {
         return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.run());
     }
 
@@ -87,7 +115,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <U> the type of the second input argument
      * @return BiConsumerStep
      */
-    public final <T, U> BiConsumerStep<T, U> asBiConsumerStep() {
+    public final <T, U> BiConsumerStep<T, U, E> asBiConsumerStep() {
         return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.run());
     }
 
@@ -99,7 +127,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <V> the type of the third input argument
      * @return TriConsumerStep
      */
-    public final <T, U, V> TriConsumerStep<T, U, V> asTriConsumerStep() {
+    public final <T, U, V> TriConsumerStep<T, U, V, E> asTriConsumerStep() {
         return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.run());
     }
 
@@ -111,7 +139,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <R> the type of the result
      * @return FunctionStep
      */
-    public final <T, R> FunctionStep<T, R> asFunctionStep(final R r) {
+    public final <T, R> FunctionStep<T, R, E> asFunctionStep(final R r) {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
             this.step.run();
             return r;
@@ -127,7 +155,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <R> the type of the result
      * @return BiFunctionStep
      */
-    public final <T, U, R> BiFunctionStep<T, U, R> asBiFunctionStep(final R r) {
+    public final <T, U, R> BiFunctionStep<T, U, R, E> asBiFunctionStep(final R r) {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
             this.step.run();
             return r;
@@ -144,7 +172,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      * @param <R> the type of the result
      * @return TriFunctionStep
      */
-    public final <T, U, V, R> TriFunctionStep<T, U, V, R> asTriFunctionStep(final R r) {
+    public final <T, U, V, R> TriFunctionStep<T, U, V, R, E> asTriFunctionStep(final R r) {
         return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {
             this.step.run();
             return r;

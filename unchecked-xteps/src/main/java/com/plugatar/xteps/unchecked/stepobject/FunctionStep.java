@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.unchecked;
+package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.unchecked.UncheckedXteps;
+
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
 
 /**
  * Function step. This step will be executed and reported when calling the {@link #apply(Object)} method.
@@ -31,12 +34,25 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
     /**
      * Ctor.
      *
+     * @param step the step
+     */
+    public FunctionStep(final ThrowingFunction<? super T, ? extends R, ?> step) {
+        this.stepName = humanReadableStepNameOfClass(this.getClass());
+        this.stepDescription = "";
+        this.step = step;
+    }
+
+    /**
+     * Ctor.
+     *
      * @param stepName the step name
      * @param step     the step
      */
     public FunctionStep(final String stepName,
                         final ThrowingFunction<? super T, ? extends R, ?> step) {
-        this(stepName, "", step);
+        this.stepName = stepName;
+        this.stepDescription = "";
+        this.step = step;
     }
 
     /**
