@@ -15,5 +15,8 @@
  */
 /**
  * Xteps ReportPortal base.
+ *
+ * @see <a href="https://github.com/evpl/xteps">GitHub repository</a>
+ * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 package com.plugatar.xteps.base.reportportal;
