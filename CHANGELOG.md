@@ -4,6 +4,10 @@
 
 * PR #46 added new step objects constructors with human-readable class name
 
+Additional changes:
+
+* PR #47 removed unnecessary javadoc placeholder from xteps-allure
+
 ## 5.1 (released 11.11.2022)
 
 * PR #45 steps chains javadoc fix
