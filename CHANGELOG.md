@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.2 (planned)
+## 5.2 (released 13.11.2022)
 
 * PR #53 added javadoc for step objects main method
 * PR #52 rename steps chain fix
