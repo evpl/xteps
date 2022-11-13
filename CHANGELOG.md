@@ -2,6 +2,7 @@
 
 ## 5.2 (planned)
 
+* PR #53 added javadoc for step objects main method
 * PR #52 rename steps chain fix
 * PR #51 step name prefix fix
 * PR #50 renamed steps chain classes for better view in IDE hints

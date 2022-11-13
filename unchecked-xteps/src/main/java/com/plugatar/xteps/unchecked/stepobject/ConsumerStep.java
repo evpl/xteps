@@ -16,6 +16,7 @@
 package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -70,6 +71,13 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the input argument
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     */
     @Override
     public final void accept(final T t) {
         UncheckedXteps.stepsChain().withContext(t)

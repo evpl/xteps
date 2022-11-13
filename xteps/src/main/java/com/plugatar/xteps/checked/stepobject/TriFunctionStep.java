@@ -16,6 +16,7 @@
 package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingTriFunction;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -75,6 +76,17 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @param v the third input argument
+     * @return the result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if this step threw exception
+     */
     @Override
     public final R apply(final T t, final U u, final V v) throws E {
         return Xteps.stepsChain().withContext(v).withContext(u).withContext(t)

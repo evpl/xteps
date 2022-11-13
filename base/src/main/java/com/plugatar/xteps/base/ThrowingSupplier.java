@@ -28,7 +28,7 @@ public interface ThrowingSupplier<R, E extends Throwable> {
     /**
      * Gets the result.
      *
-     * @return result
+     * @return the result
      * @throws E if supplier threw exception
      */
     R get() throws E;

@@ -16,6 +16,7 @@
 package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -71,6 +72,14 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @return the result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if this step threw exception
+     */
     @Override
     public final R get() throws E {
         return Xteps.stepsChain().stepTo(this.stepName, this.stepDescription, this.step);

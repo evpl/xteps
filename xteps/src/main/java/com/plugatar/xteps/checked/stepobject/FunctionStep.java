@@ -16,6 +16,7 @@
 package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingFunction;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -72,6 +73,15 @@ public class FunctionStep<T, R, E extends Throwable> implements ThrowingFunction
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the input argument
+     * @return the result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if this step threw exception
+     */
     @Override
     public final R apply(final T t) throws E {
         return Xteps.stepsChain().withContext(t)

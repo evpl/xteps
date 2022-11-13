@@ -16,6 +16,7 @@
 package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingRunnable;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -70,6 +71,13 @@ public class RunnableStep<E extends Throwable> implements ThrowingRunnable<E> {
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if this step threw exception
+     */
     @Override
     public final void run() throws E {
         Xteps.stepsChain().step(this.stepName, this.stepDescription, this.step);

@@ -16,6 +16,7 @@
 package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiFunction;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -72,6 +73,15 @@ public class BiFunctionStep<T, U, R> implements ThrowingBiFunction<T, U, R, Runt
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @return the result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     */
     @Override
     public final R apply(final T t, final U u) {
         return UncheckedXteps.stepsChain().withContext(u).withContext(t)
