@@ -103,6 +103,39 @@ public final class Xteps {
     }
 
     /**
+     * Performs and reports given step with given prefix in the step name.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * public class CustomStep extends RunnableStep<RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *         });
+     *     }
+     * }
+     *
+     * step("GIVEN", new CustomStep());
+     * }</pre>
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <E>            the {@code step} exception type
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    public static <E extends Throwable> void step(
+        final String stepNamePrefix,
+        final RunnableStep<? extends E> step
+    ) throws E {
+        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepNamePrefix, step);
+    }
+
+    /**
      * Performs and reports given step with given name.
      *
      * <p>Code example:</p>
@@ -200,6 +233,42 @@ public final class Xteps {
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
         return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
+    }
+
+    /**
+     * reports given step with given prefix in the step name and returns the step result.
+     *
+     * <p>Code example:</p>
+     *
+     * <pre>{@code
+     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *             return "result";
+     *         });
+     *     }
+     * }
+     *
+     * String result = stepTo("GIVEN", new CustomStep());
+     * }</pre>
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <R>            the result type
+     * @param <E>            the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    public static <R, E extends Throwable> R stepTo(
+        final String stepNamePrefix,
+        final SupplierStep<? extends R, ? extends E> step
+    ) throws E {
+        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepNamePrefix, step);
     }
 
     /**

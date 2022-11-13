@@ -2,12 +2,13 @@
 
 ## 5.2 (planned)
 
+* PR #49 added functionality for using step objects in BDD style
+* PR #48 javadoc fixes
 * PR #46 added new step objects constructors with human-readable class name
 
 Additional changes:
 
 * PR #47 removed unnecessary javadoc placeholder from xteps-allure
-* PR #48 javadoc fixes
 
 ## 5.1 (released 11.11.2022)
 

@@ -53,6 +53,15 @@ public interface BaseNoCtxStepsChain<S extends BaseNoCtxStepsChain<S>> extends B
      */
     @Override
     <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+        String stepNamePrefix,
+        SupplierStep<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         String stepName,
         ThrowingSupplier<? extends U, ? extends E> step
     ) throws E;

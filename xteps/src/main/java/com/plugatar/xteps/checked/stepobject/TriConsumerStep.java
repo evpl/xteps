@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * TriConsumer step. This step will be executed and reported when calling the
@@ -77,6 +78,18 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     public final void accept(final T t, final U u, final V v) throws E {
         Xteps.stepsChain().withContext(v).withContext(u).withContext(t)
             .step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new TriConsumerStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return TriConsumerStep with given prefix in the step name
+     */
+    public final TriConsumerStep<T, U, V, E> withNamePrefix(final String stepNamePrefix) {
+        return new TriConsumerStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

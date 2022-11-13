@@ -86,6 +86,20 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
+    public final <E extends Throwable> NoCtxStepsChain step(
+        final String stepNamePrefix,
+        final RunnableStep<? extends E> step
+    ) throws E {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).run();
+            return null;
+        });
+        return this;
+    }
+
+    @Override
     public final NoCtxStepsChain step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -135,6 +149,16 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
 
     @Override
     public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
+        final String stepNamePrefix,
+        final SupplierStep<? extends U, ? extends E> step
+    ) throws E {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newCtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+    }
+
+    @Override
+    public final <U, E extends Throwable> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ? extends E> step
     ) throws E {
@@ -159,6 +183,16 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     ) throws E {
         if (step == null) { this.throwNullArgException("step"); }
         return this.execAction(step);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final String stepNamePrefix,
+        final SupplierStep<? extends R, ? extends E> step
+    ) throws E {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(step.withNamePrefix(stepNamePrefix));
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * Runnable step. This step will be executed and reported when calling the {@link #run()} method.
@@ -70,6 +71,18 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
     @Override
     public final void run() {
         UncheckedXteps.stepsChain().step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new RunnableStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return RunnableStep with given prefix in the step name
+     */
+    public final RunnableStep withNamePrefix(final String stepNamePrefix) {
+        return new RunnableStep(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

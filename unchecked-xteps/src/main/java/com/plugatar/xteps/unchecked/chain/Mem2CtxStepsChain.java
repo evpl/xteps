@@ -143,6 +143,33 @@ public interface Mem2CtxStepsChain<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
      */
     @Override
     Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        ConsumerStep<? super C> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        BiConsumerStep<? super C, ? super P1> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        TriConsumerStep<? super C, ? super P1, ? super P2> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem2CtxStepsChain<C, P1, P2, PS> step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -224,6 +251,42 @@ public interface Mem2CtxStepsChain<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
      */
     @Override
     <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        FunctionStep<? super C, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        BiFunctionStep<? super C, ? super P1, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
         TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U> step
     );
 

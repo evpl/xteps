@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * Function step. This step will be executed and reported when calling the {@link #apply(Object)} method.
@@ -74,6 +75,18 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
     public final R apply(final T t) {
         return UncheckedXteps.stepsChain().withContext(t)
             .stepTo(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new FunctionStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return FunctionStep with given prefix in the step name
+     */
+    public final FunctionStep<T, R> withNamePrefix(final String stepNamePrefix) {
+        return new FunctionStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

@@ -143,6 +143,33 @@ public interface Mem2CtxStepsChain<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
      */
     @Override
     <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        ConsumerStep<? super C, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        BiConsumerStep<? super C, ? super P1, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
+        String stepNamePrefix,
+        TriConsumerStep<? super C, ? super P1, ? super P2, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <E extends Throwable> Mem2CtxStepsChain<C, P1, P2, PS> step(
         String stepName,
         ThrowingConsumer<? super C, ? extends E> step
     ) throws E;
@@ -224,6 +251,42 @@ public interface Mem2CtxStepsChain<C, P1, P2, PS extends BaseCtxStepsChain<?, ?>
      */
     @Override
     <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        SupplierStep<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        FunctionStep<? super C, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
+        BiFunctionStep<? super C, ? super P1, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Mem2CtxStepsChain<U, C, P1, Mem2CtxStepsChain<C, P1, P2, PS>> stepToContext(
+        String stepNamePrefix,
         TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
     ) throws E;
 

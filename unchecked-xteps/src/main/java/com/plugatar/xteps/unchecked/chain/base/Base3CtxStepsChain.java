@@ -63,6 +63,21 @@ public interface Base3CtxStepsChain<C, P1, P2> {
     );
 
     /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * this steps chain.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @return this steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    BaseCtxStepsChain<C, ?> step(
+        String stepNamePrefix,
+        TriConsumerStep<? super C, ? super P1, ? super P2> step
+    );
+
+    /**
      * Performs and reports given step with given name and returns this steps chain.
      *
      * @param stepName the step name
@@ -102,6 +117,22 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      *                        or if it's impossible to correctly report the step
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
+        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U> step
+    );
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * a contextual steps chain of the new context.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <U>            the context type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <U> BaseCtxStepsChain<U, ?> stepToContext(
+        String stepNamePrefix,
         TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U> step
     );
 
@@ -149,6 +180,22 @@ public interface Base3CtxStepsChain<C, P1, P2> {
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
+        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends R> step
+    );
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * the step result.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <R>            the result type
+     * @return {@code step} result
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <R> R stepTo(
+        String stepNamePrefix,
         TriFunctionStep<? super C, ? super P1, ? super P2, ? extends R> step
     );
 

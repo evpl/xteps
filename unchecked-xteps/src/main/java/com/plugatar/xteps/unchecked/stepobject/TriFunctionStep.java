@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * TriFunction step. This step will be executed and reported when calling the
@@ -77,6 +78,18 @@ public class TriFunctionStep<T, U, V, R> implements ThrowingTriFunction<T, U, V,
     public final R apply(final T t, final U u, final V v) {
         return UncheckedXteps.stepsChain().withContext(v).withContext(u).withContext(t)
             .stepTo(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new TriFunctionStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return TriFunctionStep with given prefix in the step name
+     */
+    public final TriFunctionStep<T, U, V, R> withNamePrefix(final String stepNamePrefix) {
+        return new TriFunctionStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

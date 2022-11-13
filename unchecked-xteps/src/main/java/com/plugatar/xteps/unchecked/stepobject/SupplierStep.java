@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * Supplier step. This step will be executed and reported when calling the {@link #get()} method.
@@ -72,6 +73,18 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
     @Override
     public final R get() {
         return UncheckedXteps.stepsChain().stepTo(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new SupplierStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return SupplierStep with given prefix in the step name
+     */
+    public final SupplierStep<R> withNamePrefix(final String stepNamePrefix) {
+        return new SupplierStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

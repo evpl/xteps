@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * TriFunction step. This step will be executed and reported when calling the
@@ -74,6 +75,24 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
         this.step = step;
     }
 
+    @Override
+    public final R apply(final T t, final U u, final V v) throws E {
+        return Xteps.stepsChain().withContext(v).withContext(u).withContext(t)
+            .stepTo(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new TriFunctionStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return TriFunctionStep with given prefix in the step name
+     */
+    public final TriFunctionStep<T, U, V, R, E> withNamePrefix(final String stepNamePrefix) {
+        return new TriFunctionStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
+    }
+
     /**
      * Returns this step as unchecked.
      *
@@ -82,12 +101,6 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
     @SuppressWarnings("unchecked")
     public final TriFunctionStep<T, U, V, R, RuntimeException> asUnchecked() {
         return (TriFunctionStep<T, U, V, R, RuntimeException>) this;
-    }
-
-    @Override
-    public final R apply(final T t, final U u, final V v) throws E {
-        return Xteps.stepsChain().withContext(v).withContext(u).withContext(t)
-            .stepTo(this.stepName, this.stepDescription, this.step);
     }
 
     /**
