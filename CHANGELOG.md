@@ -2,6 +2,7 @@
 
 ## 5.2 (planned)
 
+* PR #50 renamed steps chain classes for better view in IDE hints
 * PR #49 added functionality for using step objects in BDD style
 * PR #48 javadoc fixes
 * PR #46 added new step objects constructors with human-readable class name

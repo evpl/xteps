@@ -19,7 +19,7 @@ import com.plugatar.xteps.base.CloseException;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.unchecked.chain.NoCtxStepsChain;
+import com.plugatar.xteps.unchecked.chain.NoCtxSC;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -170,7 +170,7 @@ final class UncheckedXtepsTest {
         @SuppressWarnings("unchecked")
         final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
 
-        final NoCtxStepsChain stepsChain = UncheckedXteps.stepsChain();
+        final NoCtxSC stepsChain = UncheckedXteps.stepsChain();
         assertThat(UncheckedXteps.stepsChain()).isSameAs(stepsChain);
 
         final String stepName = "stepsChainMethod";
