@@ -19,8 +19,8 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.chain.NoCtxStepsChain;
-import com.plugatar.xteps.unchecked.chain.impl.NoCtxStepsChainImpl;
+import com.plugatar.xteps.unchecked.chain.NoCtxSC;
+import com.plugatar.xteps.unchecked.chain.impl.NoCtxSCImpl;
 import com.plugatar.xteps.unchecked.stepobject.RunnableStep;
 import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 
@@ -364,21 +364,21 @@ public final class UncheckedXteps {
      * @return no context steps chain
      * @throws XtepsException if Xteps configuration is incorrect
      */
-    public static NoCtxStepsChain stepsChain() {
+    public static NoCtxSC stepsChain() {
         return CACHED_NO_CTX_STEPS_CHAIN.get();
     }
 
-    private static final Supplier<NoCtxStepsChain> CACHED_NO_CTX_STEPS_CHAIN = new Supplier<NoCtxStepsChain>() {
-        private volatile NoCtxStepsChain instance = null;
+    private static final Supplier<NoCtxSC> CACHED_NO_CTX_STEPS_CHAIN = new Supplier<NoCtxSC>() {
+        private volatile NoCtxSC instance = null;
 
         @Override
-        public NoCtxStepsChain get() {
-            NoCtxStepsChain result;
+        public NoCtxSC get() {
+            NoCtxSC result;
             if ((result = this.instance) == null) {
                 synchronized (this) {
                     if ((result = this.instance) == null) {
                         final XtepsBase config = XtepsBase.cached();
-                        result = new NoCtxStepsChainImpl(
+                        result = new NoCtxSCImpl(
                             config.stepReporter(), config.exceptionHandler(), config.safeACContainerGenerator()
                         );
                         this.instance = result;
