@@ -29,4 +29,11 @@ final class StepObjectsUtils {
     static String humanReadableStepNameOfClass(final Class<?> cls) {
         return cls.getSimpleName().replace('_', ' ');
     }
+
+    static String stepNameWithPrefix(final String stepName,
+                                     final String stepNamePrefix) {
+        return stepName == null || stepNamePrefix == null
+            ? null
+            : stepNamePrefix + " " + stepName;
+    }
 }

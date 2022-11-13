@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * BiConsumer step. This step will be executed and reported when calling the {@link #accept(Object, Object)} method.
@@ -74,6 +75,18 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     public final void accept(final T t, final U u) {
         UncheckedXteps.stepsChain().withContext(u).withContext(t)
             .step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new BiConsumerStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return BiConsumerStep with given prefix in the step name
+     */
+    public final BiConsumerStep<T, U> withNamePrefix(final String stepNamePrefix) {
+        return new BiConsumerStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

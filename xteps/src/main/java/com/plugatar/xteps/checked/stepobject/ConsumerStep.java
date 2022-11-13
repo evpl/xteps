@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * Consumer step. This step will be executed and reported when calling the {@link #accept(Object)} method.
@@ -74,6 +75,18 @@ public class ConsumerStep<T, E extends Throwable> implements ThrowingConsumer<T,
     public final void accept(final T t) throws E {
         Xteps.stepsChain().withContext(t)
             .step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new ConsumerStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return ConsumerStep with given prefix in the step name
+     */
+    public final ConsumerStep<T, E> withNamePrefix(final String stepNamePrefix) {
+        return new ConsumerStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**

@@ -239,6 +239,48 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
     }
 
     @Override
+    public final Mem1CtxStepsChain<C, P, PS> step(
+        final String stepNamePrefix,
+        final RunnableStep step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).run();
+            return null;
+        });
+        return this;
+    }
+
+    @Override
+    public final Mem1CtxStepsChain<C, P, PS> step(
+        final String stepNamePrefix,
+        final ConsumerStep<? super C> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).accept(this.context);
+            return null;
+        });
+        return this;
+    }
+
+    @Override
+    public final Mem1CtxStepsChain<C, P, PS> step(
+        final String stepNamePrefix,
+        final BiConsumerStep<? super C, ? super P> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).accept(this.context, this.previousContext);
+            return null;
+        });
+        return this;
+    }
+
+    @Override
     public final Mem1CtxStepsChain<C, P, PS> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -352,6 +394,38 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
 
     @Override
     public final <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        final String stepNamePrefix,
+        final SupplierStep<? extends U> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newMem2CtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        final String stepNamePrefix,
+        final FunctionStep<? super C, ? extends U> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newMem2CtxStepsChain(this.execAction(
+            () -> step.withNamePrefix(stepNamePrefix).apply(this.context)));
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        final String stepNamePrefix,
+        final BiFunctionStep<? super C, ? super P, ? extends U> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newMem2CtxStepsChain(this.execAction(
+            () -> step.withNamePrefix(stepNamePrefix).apply(this.context, this.previousContext)));
+    }
+
+    @Override
+    public final <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ?> step
     ) {
@@ -433,6 +507,36 @@ public class Mem1CtxStepsChainImpl<C, P, PS extends BaseCtxStepsChain<?, ?>> imp
     ) {
         if (step == null) { this.throwNullArgException("step"); }
         return this.execAction(() -> step.apply(this.context, this.previousContext));
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final String stepNamePrefix,
+        final SupplierStep<? extends R> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(step.withNamePrefix(stepNamePrefix));
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final String stepNamePrefix,
+        final FunctionStep<? super C, ? extends R> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context));
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final String stepNamePrefix,
+        final BiFunctionStep<? super C, ? super P, ? extends R> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context, this.previousContext));
     }
 
     @Override

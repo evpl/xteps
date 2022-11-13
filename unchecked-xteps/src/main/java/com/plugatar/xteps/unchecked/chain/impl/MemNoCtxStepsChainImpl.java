@@ -110,6 +110,20 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     }
 
     @Override
+    public final MemNoCtxStepsChain<P> step(
+        final String stepNamePrefix,
+        final RunnableStep step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).run();
+            return null;
+        });
+        return this;
+    }
+
+    @Override
     public final MemNoCtxStepsChainImpl<P> step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -159,6 +173,16 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
 
     @Override
     public final <U> CtxStepsChain<U> stepToContext(
+        final String stepNamePrefix,
+        final SupplierStep<? extends U> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newCtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+    }
+
+    @Override
+    public final <U> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ?> step
     ) {
@@ -183,6 +207,16 @@ public class MemNoCtxStepsChainImpl<P extends BaseCtxStepsChain<?, ?>> implement
     ) {
         if (step == null) { this.throwNullArgException("step"); }
         return this.execAction(step);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final String stepNamePrefix,
+        final SupplierStep<? extends R> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(step.withNamePrefix(stepNamePrefix));
     }
 
     @Override

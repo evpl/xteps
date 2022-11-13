@@ -76,6 +76,15 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     CtxStepsChain<C> step(
+        String stepNamePrefix,
+        ConsumerStep<? super C> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    CtxStepsChain<C> step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -103,6 +112,24 @@ public interface CtxStepsChain<C> extends
      */
     @Override
     <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        FunctionStep<? super C, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepNamePrefix,
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem1CtxStepsChain<U, C, CtxStepsChain<C>> stepToContext(
+        String stepNamePrefix,
         FunctionStep<? super C, ? extends U> step
     );
 

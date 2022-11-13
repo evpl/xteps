@@ -89,6 +89,20 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
     );
 
     /**
+     * Performs and reports given step with given prefix in the step name and returns this steps chain.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @return this steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        String stepNamePrefix,
+        RunnableStep step
+    );
+
+    /**
      * Performs and reports given step with given name and returns this steps chain.
      *
      * @param stepName the step name
@@ -128,6 +142,22 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      *                        or if it's impossible to correctly report the step
      */
     <U> BaseCtxStepsChain<U, ?> stepToContext(
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * a contextual steps chain of the new context.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <U>            the context type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <U> BaseCtxStepsChain<U, ?> stepToContext(
+        String stepNamePrefix,
         SupplierStep<? extends U> step
     );
 
@@ -175,6 +205,22 @@ public interface BaseStepsChain<S extends BaseStepsChain<S>> {
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
+        SupplierStep<? extends R> step
+    );
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * the step result.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <R>            the result type
+     * @return {@code step} result
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <R> R stepTo(
+        String stepNamePrefix,
         SupplierStep<? extends R> step
     );
 

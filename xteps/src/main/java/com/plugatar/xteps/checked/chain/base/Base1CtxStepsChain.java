@@ -69,6 +69,23 @@ public interface Base1CtxStepsChain<C> {
     ) throws E;
 
     /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * this steps chain.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <E>            the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> BaseCtxStepsChain<C, ?> step(
+        String stepNamePrefix,
+        ConsumerStep<? super C, ? extends E> step
+    ) throws E;
+
+    /**
      * Performs and reports given step with given name and returns this steps chain.
      *
      * @param stepName the step name
@@ -114,6 +131,24 @@ public interface Base1CtxStepsChain<C> {
      * @throws E              if {@code step} threw exception
      */
     <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
+        FunctionStep<? super C, ? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * a contextual steps chain of the new context.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <U>            the context type
+     * @param <E>            the {@code step} exception type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <U, E extends Throwable> BaseCtxStepsChain<U, ?> stepToContext(
+        String stepNamePrefix,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -167,6 +202,24 @@ public interface Base1CtxStepsChain<C> {
      * @throws E              if {@code step} threw exception
      */
     <R, E extends Throwable> R stepTo(
+        FunctionStep<? super C, ? extends R, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given prefix in the step name and returns
+     * the step result.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @param step           the step
+     * @param <R>            the result type
+     * @param <E>            the {@code step} exception type
+     * @return {@code step} result
+     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <R, E extends Throwable> R stepTo(
+        String stepNamePrefix,
         FunctionStep<? super C, ? extends R, ? extends E> step
     ) throws E;
 

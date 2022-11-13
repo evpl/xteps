@@ -112,6 +112,24 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
      */
     @Override
     Mem1CtxStepsChain<C, P, PS> step(
+        String stepNamePrefix,
+        ConsumerStep<? super C> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem1CtxStepsChain<C, P, PS> step(
+        String stepNamePrefix,
+        BiConsumerStep<? super C, ? super P> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem1CtxStepsChain<C, P, PS> step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -166,6 +184,33 @@ public interface Mem1CtxStepsChain<C, P, PS extends BaseCtxStepsChain<?, ?>> ext
      */
     @Override
     <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        BiFunctionStep<? super C, ? super P, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        String stepNamePrefix,
+        SupplierStep<? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        String stepNamePrefix,
+        FunctionStep<? super C, ? extends U> step
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> Mem2CtxStepsChain<U, C, P, Mem1CtxStepsChain<C, P, PS>> stepToContext(
+        String stepNamePrefix,
         BiFunctionStep<? super C, ? super P, ? extends U> step
     );
 

@@ -88,6 +88,20 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     }
 
     @Override
+    public final NoCtxStepsChain step(
+        final String stepNamePrefix,
+        final RunnableStep step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> {
+            step.withNamePrefix(stepNamePrefix).run();
+            return null;
+        });
+        return this;
+    }
+
+    @Override
     public final NoCtxStepsChain step(final String stepName) {
         return this.step(stepName, "");
     }
@@ -137,6 +151,16 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
 
     @Override
     public final <U> CtxStepsChain<U> stepToContext(
+        final String stepNamePrefix,
+        final SupplierStep<? extends U> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.newCtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+    }
+
+    @Override
+    public final <U> CtxStepsChain<U> stepToContext(
         final String stepName,
         final ThrowingSupplier<? extends U, ?> step
     ) {
@@ -161,6 +185,16 @@ public class NoCtxStepsChainImpl implements NoCtxStepsChain {
     ) {
         if (step == null) { this.throwNullArgException("step"); }
         return this.execAction(step);
+    }
+
+    @Override
+    public final <R> R stepTo(
+        final String stepNamePrefix,
+        final SupplierStep<? extends R> step
+    ) {
+        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        return this.execAction(step.withNamePrefix(stepNamePrefix));
     }
 
     @Override

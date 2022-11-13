@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
 
 /**
  * Consumer step. This step will be executed and reported when calling the {@link #accept(Object)} method.
@@ -73,6 +74,18 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     public final void accept(final T t) {
         UncheckedXteps.stepsChain().withContext(t)
             .step(this.stepName, this.stepDescription, this.step);
+    }
+
+    /**
+     * Returns a new ConsumerStep with given prefix in the step name.
+     *
+     * @param stepNamePrefix the step name prefix
+     * @return ConsumerStep with given prefix in the step name
+     */
+    public final ConsumerStep<T> withNamePrefix(final String stepNamePrefix) {
+        return new ConsumerStep<>(
+            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+        );
     }
 
     /**
