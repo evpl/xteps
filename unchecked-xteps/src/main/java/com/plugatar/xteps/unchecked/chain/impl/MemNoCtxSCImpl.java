@@ -317,7 +317,7 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> 
     }
 
     private <U> CtxSC<U> newCtxStepsChain(final U newContext) {
-        return new CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext);
+        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext);
     }
 
     private void throwNullArgException(final String argName) {

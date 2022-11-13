@@ -39,7 +39,7 @@ import static com.plugatar.xteps.unchecked.chain.impl.StepsChainUtils.sneakyThro
  *
  * @param <C> the context type
  */
-public class CtxStepsChainImpl<C> implements CtxSC<C> {
+public class CtxSCImpl<C> implements CtxSC<C> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final SafeACContainer safeACContainer;
@@ -55,10 +55,10 @@ public class CtxStepsChainImpl<C> implements CtxSC<C> {
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
      *                              or {@code safeACContainer} is null
      */
-    public CtxStepsChainImpl(final StepReporter stepReporter,
-                             final ExceptionHandler exceptionHandler,
-                             final SafeACContainer safeACContainer,
-                             final C context) {
+    public CtxSCImpl(final StepReporter stepReporter,
+                     final ExceptionHandler exceptionHandler,
+                     final SafeACContainer safeACContainer,
+                     final C context) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
         if (safeACContainer == null) { throw new NullPointerException("safeACContainer arg is null"); }

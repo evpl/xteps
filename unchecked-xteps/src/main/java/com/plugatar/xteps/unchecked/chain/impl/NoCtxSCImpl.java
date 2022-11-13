@@ -294,7 +294,7 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     private <U> CtxSC<U> newCtxStepsChain(final U newContext) {
-        return new CtxStepsChainImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(),
+        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(),
             newContext);
     }
 
