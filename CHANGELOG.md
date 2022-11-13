@@ -2,6 +2,7 @@
 
 ## 5.2 (planned)
 
+* PR #51 step name prefix fix
 * PR #50 renamed steps chain classes for better view in IDE hints
 * PR #49 added functionality for using step objects in BDD style
 * PR #48 javadoc fixes
