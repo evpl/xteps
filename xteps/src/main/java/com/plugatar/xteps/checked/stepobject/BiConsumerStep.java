@@ -16,6 +16,7 @@
 package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiConsumer;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -72,6 +73,15 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if this step threw exception
+     */
     @Override
     public final void accept(final T t, final U u) throws E {
         Xteps.stepsChain().withContext(u).withContext(t)

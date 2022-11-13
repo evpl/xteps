@@ -16,6 +16,7 @@
 package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -70,6 +71,13 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @return the result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     */
     @Override
     public final R get() {
         return UncheckedXteps.stepsChain().stepTo(this.stepName, this.stepDescription, this.step);

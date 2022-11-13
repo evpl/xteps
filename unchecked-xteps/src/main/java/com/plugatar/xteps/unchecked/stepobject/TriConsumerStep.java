@@ -16,6 +16,7 @@
 package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingTriConsumer;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
@@ -73,6 +74,15 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
         this.step = step;
     }
 
+    /**
+     * Performs and reports this step.
+     *
+     * @param t the first input argument
+     * @param u the second input argument
+     * @param v the third input argument
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if it's impossible to correctly report the step
+     */
     @Override
     public final void accept(final T t, final U u, final V v) {
         UncheckedXteps.stepsChain().withContext(v).withContext(u).withContext(t)
