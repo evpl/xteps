@@ -37,7 +37,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      *
      * @param step the step
      */
-    public SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
+    protected SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

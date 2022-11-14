@@ -35,7 +35,7 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
      *
      * @param step the step
      */
-    public RunnableStep(final ThrowingRunnable<?> step) {
+    protected RunnableStep(final ThrowingRunnable<?> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

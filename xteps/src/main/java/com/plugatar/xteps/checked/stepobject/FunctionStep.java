@@ -39,7 +39,7 @@ public class FunctionStep<T, R, E extends Throwable> implements ThrowingFunction
      *
      * @param step the step
      */
-    public FunctionStep(final ThrowingFunction<? super T, ? extends R, ? extends E> step) {
+    protected FunctionStep(final ThrowingFunction<? super T, ? extends R, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

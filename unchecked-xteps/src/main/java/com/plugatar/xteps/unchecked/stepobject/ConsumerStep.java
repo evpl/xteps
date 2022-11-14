@@ -37,7 +37,7 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
      *
      * @param step the step
      */
-    public ConsumerStep(final ThrowingConsumer<? super T, ?> step) {
+    protected ConsumerStep(final ThrowingConsumer<? super T, ?> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;
