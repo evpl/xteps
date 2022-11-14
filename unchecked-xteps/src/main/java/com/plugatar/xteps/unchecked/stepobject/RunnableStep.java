@@ -70,6 +70,18 @@ public class RunnableStep implements ThrowingRunnable<RuntimeException> {
     }
 
     /**
+     * Returns dummy RunnableStep.
+     *
+     * @param stepName the step name
+     * @return dummy RunnableStep
+     */
+    public static RunnableStep dummy(final String stepName) {
+        return new RunnableStep(
+            stepName, () -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @throws XtepsException if Xteps configuration is incorrect

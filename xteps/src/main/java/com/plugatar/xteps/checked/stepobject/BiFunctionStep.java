@@ -75,6 +75,21 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
     }
 
     /**
+     * Returns dummy BiFunctionStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the first input argument
+     * @param <U>      the type of the second input argument
+     * @param <R>      the type of the result
+     * @return dummy BiFunctionStep
+     */
+    public static <T, U, R> BiFunctionStep<T, U, R, RuntimeException> dummy(final String stepName) {
+        return new BiFunctionStep<>(
+            stepName, (t, u) -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the first input argument

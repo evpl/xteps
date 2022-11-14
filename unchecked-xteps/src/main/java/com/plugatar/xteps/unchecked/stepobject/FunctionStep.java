@@ -73,6 +73,20 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
     }
 
     /**
+     * Returns dummy FunctionStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the input argument
+     * @param <R>      the type of the result
+     * @return dummy FunctionStep
+     */
+    public static <T, R> FunctionStep<T, R> dummy(final String stepName) {
+        return new FunctionStep<>(
+            stepName, t -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the input argument

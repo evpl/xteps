@@ -74,6 +74,20 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
     }
 
     /**
+     * Returns dummy BiConsumerStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the first input argument
+     * @param <U>      the type of the second input argument
+     * @return dummy BiConsumerStep
+     */
+    public static <T, U> BiConsumerStep<T, U, RuntimeException> dummy(final String stepName) {
+        return new BiConsumerStep<>(
+            stepName, (t, u) -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the first input argument
