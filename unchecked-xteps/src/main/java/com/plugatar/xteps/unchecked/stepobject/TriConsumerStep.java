@@ -117,6 +117,51 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
     }
 
     /**
+     * Returns this step as {@code TriConsumerStep<T, V, U>}.
+     *
+     * @return {@code TriConsumerStep<T, V, U>}
+     */
+    public final TriConsumerStep<T, V, U> asTVU() {
+        return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, v, u) -> this.step.accept(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriConsumerStep<U, T, V>}.
+     *
+     * @return {@code TriConsumerStep<U, T, V>}
+     */
+    public final TriConsumerStep<U, T, V> asUTV() {
+        return new TriConsumerStep<>(this.stepName, this.stepDescription, (u, t, v) -> this.step.accept(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriConsumerStep<U, V, T>}.
+     *
+     * @return {@code TriConsumerStep<U, V, T>}
+     */
+    public final TriConsumerStep<U, V, T> asUVT() {
+        return new TriConsumerStep<>(this.stepName, this.stepDescription, (u, v, t) -> this.step.accept(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriConsumerStep<V, T, U>}.
+     *
+     * @return {@code TriConsumerStep<V, T, U>}
+     */
+    public final TriConsumerStep<V, T, U> asVTU() {
+        return new TriConsumerStep<>(this.stepName, this.stepDescription, (v, t, u) -> this.step.accept(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriConsumerStep<V, U, T>}.
+     *
+     * @return {@code TriConsumerStep<V, U, T>}
+     */
+    public final TriConsumerStep<V, U, T> asVUT() {
+        return new TriConsumerStep<>(this.stepName, this.stepDescription, (v, u, t) -> this.step.accept(t, u, v));
+    }
+
+    /**
      * Returns this step as a RunnableStep.
      *
      * @param t the first input argument

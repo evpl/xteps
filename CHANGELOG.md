@@ -2,6 +2,7 @@
 
 ## 5.2 (planned)
 
+* PR #55 added type change methods for Bi and Tri steps objects
 * PR #54 added dummy() method for step objects
 
 ## 5.2 (released 13.11.2022)

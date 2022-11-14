@@ -132,6 +132,51 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
     }
 
     /**
+     * Returns this step as {@code TriFunctionStep<T, V, U, R, E>}.
+     *
+     * @return {@code TriFunctionStep<T, V, U, R, E>}
+     */
+    public final TriFunctionStep<T, V, U, R, E> asTVU() {
+        return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, v, u) -> this.step.apply(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriFunctionStep<U, T, V, R, E>}.
+     *
+     * @return {@code TriFunctionStep<U, T, V, R, E>}
+     */
+    public final TriFunctionStep<U, T, V, R, E> asUTV() {
+        return new TriFunctionStep<>(this.stepName, this.stepDescription, (u, t, v) -> this.step.apply(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriFunctionStep<U, V, T, R, E>}.
+     *
+     * @return {@code TriFunctionStep<U, V, T, R, E>}
+     */
+    public final TriFunctionStep<U, V, T, R, E> asUVT() {
+        return new TriFunctionStep<>(this.stepName, this.stepDescription, (u, v, t) -> this.step.apply(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriFunctionStep<V, T, U, R, E>}.
+     *
+     * @return {@code TriFunctionStep<V, T, U, R, E>}
+     */
+    public final TriFunctionStep<V, T, U, R, E> asVTU() {
+        return new TriFunctionStep<>(this.stepName, this.stepDescription, (v, t, u) -> this.step.apply(t, u, v));
+    }
+
+    /**
+     * Returns this step as {@code TriFunctionStep<V, U, T, R, E>}.
+     *
+     * @return {@code TriFunctionStep<V, U, T, R, E>}
+     */
+    public final TriFunctionStep<V, U, T, R, E> asVUT() {
+        return new TriFunctionStep<>(this.stepName, this.stepDescription, (v, u, t) -> this.step.apply(t, u, v));
+    }
+
+    /**
      * Returns this step as a RunnableStep.
      *
      * @param t the first input argument

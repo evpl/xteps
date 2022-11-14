@@ -128,6 +128,15 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
     }
 
     /**
+     * Returns this step as {@code BiFunctionStep<U, T, R, E>}.
+     *
+     * @return {@code BiFunctionStep<U, T, R, E>}
+     */
+    public final BiFunctionStep<U, T, R, E> asUT() {
+        return new BiFunctionStep<>(this.stepName, this.stepDescription, (u, t) -> this.step.apply(t, u));
+    }
+
+    /**
      * Returns this step as a RunnableStep.
      *
      * @param t the first input argument

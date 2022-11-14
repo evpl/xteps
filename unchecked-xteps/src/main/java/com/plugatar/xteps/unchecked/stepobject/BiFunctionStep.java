@@ -116,6 +116,15 @@ public class BiFunctionStep<T, U, R> implements ThrowingBiFunction<T, U, R, Runt
     }
 
     /**
+     * Returns this step as {@code BiFunctionStep<U, T, R>}.
+     *
+     * @return {@code BiFunctionStep<U, T, R>}
+     */
+    public final BiFunctionStep<U, T, R> asUT() {
+        return new BiFunctionStep<>(this.stepName, this.stepDescription, (u, t) -> this.step.apply(t, u));
+    }
+
+    /**
      * Returns this step as a RunnableStep.
      *
      * @param t the first input argument

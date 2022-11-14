@@ -125,6 +125,15 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
     }
 
     /**
+     * Returns this step as {@code BiConsumerStep<U, T, E>}.
+     *
+     * @return {@code BiConsumerStep<U, T, E>}
+     */
+    public final BiConsumerStep<U, T, E> asUT() {
+        return new BiConsumerStep<>(this.stepName, this.stepDescription, (u, t) -> this.step.accept(t, u));
+    }
+
+    /**
      * Returns this step as a RunnableStep.
      *
      * @param t the first input argument
