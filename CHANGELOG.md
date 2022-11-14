@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.2 (planned)
+
+* PR #54 added dummy() method for step objects
+
 ## 5.2 (released 13.11.2022)
 
 * PR #53 added javadoc for step objects main method

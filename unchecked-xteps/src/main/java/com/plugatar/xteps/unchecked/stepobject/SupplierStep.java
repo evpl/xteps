@@ -72,6 +72,19 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
     }
 
     /**
+     * Returns dummy SupplierStep.
+     *
+     * @param stepName the step name
+     * @param <R>      the type of the result
+     * @return dummy SupplierStep
+     */
+    public static <R> SupplierStep<R> dummy(final String stepName) {
+        return new SupplierStep<>(
+            stepName, () -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @return the result

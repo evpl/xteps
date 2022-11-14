@@ -77,6 +77,22 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
     }
 
     /**
+     * Returns dummy TriFunctionStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the first input argument
+     * @param <U>      the type of the second input argument
+     * @param <V>      the type of the third input argument
+     * @param <R>      the type of the result
+     * @return dummy TriFunctionStep
+     */
+    public static <T, U, V, R> TriFunctionStep<T, U, V, R, RuntimeException> dummy(final String stepName) {
+        return new TriFunctionStep<>(
+            stepName, (t, u, v) -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the first input argument

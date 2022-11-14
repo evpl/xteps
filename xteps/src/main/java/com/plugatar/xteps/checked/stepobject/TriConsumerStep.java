@@ -76,6 +76,21 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
+     * Returns dummy TriConsumerStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the first input argument
+     * @param <U>      the type of the second input argument
+     * @param <V>      the type of the third input argument
+     * @return dummy TriConsumerStep
+     */
+    public static <T, U, V> TriConsumerStep<T, U, V, RuntimeException> dummy(final String stepName) {
+        return new TriConsumerStep<>(
+            stepName, (t, u, v) -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the first input argument

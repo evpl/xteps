@@ -73,6 +73,19 @@ public class ConsumerStep<T, E extends Throwable> implements ThrowingConsumer<T,
     }
 
     /**
+     * Returns dummy ConsumerStep.
+     *
+     * @param stepName the step name
+     * @param <T>      the type of the input argument
+     * @return dummy ConsumerStep
+     */
+    public static <T> ConsumerStep<T, RuntimeException> dummy(final String stepName) {
+        return new ConsumerStep<>(
+            stepName, t -> { throw new XtepsException("Step not implemented"); }
+        );
+    }
+
+    /**
      * Performs and reports this step.
      *
      * @param t the input argument
