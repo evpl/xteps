@@ -41,7 +41,7 @@ public class TriFunctionStep<T, U, V, R> implements ThrowingTriFunction<T, U, V,
      *
      * @param step the step
      */
-    public TriFunctionStep(final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ?> step) {
+    protected TriFunctionStep(final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ?> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

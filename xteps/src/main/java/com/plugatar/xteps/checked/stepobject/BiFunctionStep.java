@@ -40,7 +40,7 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
      *
      * @param step the step
      */
-    public BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends E> step) {
+    protected BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

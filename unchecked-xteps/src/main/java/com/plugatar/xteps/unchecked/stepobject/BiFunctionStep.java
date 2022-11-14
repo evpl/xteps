@@ -39,7 +39,7 @@ public class BiFunctionStep<T, U, R> implements ThrowingBiFunction<T, U, R, Runt
      *
      * @param step the step
      */
-    public BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> step) {
+    protected BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

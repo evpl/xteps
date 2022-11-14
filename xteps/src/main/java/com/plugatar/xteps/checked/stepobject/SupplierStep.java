@@ -38,7 +38,7 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
      *
      * @param step the step
      */
-    public SupplierStep(final ThrowingSupplier<? extends R, ? extends E> step) {
+    protected SupplierStep(final ThrowingSupplier<? extends R, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

@@ -38,7 +38,7 @@ public class ConsumerStep<T, E extends Throwable> implements ThrowingConsumer<T,
      *
      * @param step the step
      */
-    public ConsumerStep(final ThrowingConsumer<? super T, ? extends E> step) {
+    protected ConsumerStep(final ThrowingConsumer<? super T, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

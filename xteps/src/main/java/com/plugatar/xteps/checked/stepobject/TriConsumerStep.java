@@ -41,7 +41,7 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
      *
      * @param step the step
      */
-    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ? extends E> step) {
+    protected TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

@@ -39,7 +39,7 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
      *
      * @param step the step
      */
-    public BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ? extends E> step) {
+    protected BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;

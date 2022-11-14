@@ -37,7 +37,7 @@ public class RunnableStep<E extends Throwable> implements ThrowingRunnable<E> {
      *
      * @param step the step
      */
-    public RunnableStep(final ThrowingRunnable<? extends E> step) {
+    protected RunnableStep(final ThrowingRunnable<? extends E> step) {
         this.stepName = humanReadableStepNameOfClass(this.getClass());
         this.stepDescription = "";
         this.step = step;
