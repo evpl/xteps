@@ -16,7 +16,7 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
@@ -29,35 +29,43 @@ import com.plugatar.xteps.checked.stepobject.RunnableStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 /**
- * No context steps chain implementation. Entry point for other steps chains.
+ * No context steps chain implementation.
  */
 public class NoCtxSCImpl implements NoCtxSC {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
-    private final ThrowingSupplier<? extends SafeACContainer, ? extends RuntimeException> safeACContainerGenerator;
+    private final HookContainer hookContainer;
 
     /**
      * Ctor.
      *
-     * @param stepReporter             the step reporter
-     * @param exceptionHandler         the exception handler
-     * @param safeACContainerGenerator the new chain safe AutoCloseable container generator
+     * @param stepReporter     the step reporter
+     * @param exceptionHandler the exception handler
+     * @param hookContainer    the hook container
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
-     *                              or {@code safeACContainerGenerator} is null
+     *                              or {@code hookContainer} is null
      */
-    public NoCtxSCImpl(
-        final StepReporter stepReporter,
-        final ExceptionHandler exceptionHandler,
-        final ThrowingSupplier<? extends SafeACContainer, ? extends RuntimeException> safeACContainerGenerator
-    ) {
+    public NoCtxSCImpl(final StepReporter stepReporter,
+                       final ExceptionHandler exceptionHandler,
+                       final HookContainer hookContainer) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
-        if (safeACContainerGenerator == null) {
-            throw new NullPointerException("safeACContainerGenerator arg is null");
-        }
+        if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
-        this.safeACContainerGenerator = safeACContainerGenerator;
+        this.hookContainer = hookContainer;
+    }
+
+    @Override
+    public final NoCtxSC callHooks() {
+        return this;
+    }
+
+    @Override
+    public final NoCtxSC hook(final ThrowingRunnable<?> hook) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        this.hookContainer.add(hook);
+        return this;
     }
 
     @Override
@@ -276,7 +284,8 @@ public class NoCtxSCImpl implements NoCtxSC {
         final String stepDescription,
         final ThrowingSupplier<R, E> step
     ) throws E {
-        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, new Object[]{}, step);
+        return this.stepReporter.report(this.hookContainer, this.exceptionHandler, stepName, stepDescription,
+            new Object[]{}, step);
     }
 
     private <R, E extends Throwable> R execAction(
@@ -291,8 +300,7 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     private <U> CtxSC<U> newCtxStepsChain(final U newContext) {
-        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainerGenerator.get(),
-            newContext);
+        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext);
     }
 
     private void throwNullArgException(final String argName) {

@@ -16,14 +16,13 @@
 package com.plugatar.xteps.unchecked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.base.autocloseable.AutoCloseableOf;
 import com.plugatar.xteps.unchecked.chain.CtxSC;
 import com.plugatar.xteps.unchecked.chain.Mem2CtxSC;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxSC;
@@ -42,7 +41,7 @@ import static com.plugatar.xteps.unchecked.chain.impl.StepsChainUtils.sneakyThro
 public class CtxSCImpl<C> implements CtxSC<C> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
-    private final SafeACContainer safeACContainer;
+    private final HookContainer hookContainer;
     private final C context;
 
     /**
@@ -50,22 +49,47 @@ public class CtxSCImpl<C> implements CtxSC<C> {
      *
      * @param stepReporter     the step reporter
      * @param exceptionHandler the exception handler
-     * @param safeACContainer  the safe AutoCloseable container
+     * @param hookContainer    the hook container
      * @param context          the context
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
-     *                              or {@code safeACContainer} is null
+     *                              or {@code hookContainer} is null
      */
     public CtxSCImpl(final StepReporter stepReporter,
                      final ExceptionHandler exceptionHandler,
-                     final SafeACContainer safeACContainer,
+                     final HookContainer hookContainer,
                      final C context) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
-        if (safeACContainer == null) { throw new NullPointerException("safeACContainer arg is null"); }
+        if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
-        this.safeACContainer = safeACContainer;
+        this.hookContainer = hookContainer;
         this.context = context;
+    }
+
+    @Override
+    public final CtxSC<C> callHooks() {
+        try {
+            this.hookContainer.callHooks();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> hook(final ThrowingRunnable<?> hook) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        this.hookContainer.add(hook);
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> hook(final ThrowingConsumer<C, ?> hook) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        this.hookContainer.add(() -> hook.accept(this.context));
+        return this;
     }
 
     @Override
@@ -75,38 +99,7 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final MemNoCtxSC<CtxSC<C>> withoutContext() {
-        return new MemNoCtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, this);
-    }
-
-    @Override
-    public final CtxSC<C> contextIsCloseable() {
-        if (this.context instanceof AutoCloseable) {
-            this.safeACContainer.add((AutoCloseable) this.context);
-            return this;
-        } else {
-            final XtepsException baseEx = new XtepsException("Current context is not an AutoCloseable instance");
-            this.safeACContainer.close(baseEx);
-            this.exceptionHandler.handle(baseEx);
-            throw baseEx;
-        }
-    }
-
-    @Override
-    public final CtxSC<C> contextIsCloseable(final ThrowingConsumer<? super C, ?> close) {
-        if (close == null) { this.throwNullArgException("close"); }
-        this.safeACContainer.add(new AutoCloseableOf(() -> close.accept(this.context)));
-        return this;
-    }
-
-    @Override
-    public final CtxSC<C> closeCloseableContexts() {
-        try {
-            this.safeACContainer.close();
-        } catch (final Throwable ex) {
-            this.exceptionHandler.handle(ex);
-            throw ex;
-        }
-        return this;
+        return new MemNoCtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.hookContainer, this);
     }
 
     @Override
@@ -481,7 +474,7 @@ public class CtxSCImpl<C> implements CtxSC<C> {
         final String stepDescription,
         final ThrowingSupplier<R, ?> step
     ) {
-        return this.stepReporter.report(this.safeACContainer, this.exceptionHandler, stepName, stepDescription,
+        return this.stepReporter.report(this.hookContainer, this.exceptionHandler, stepName, stepDescription,
             new Object[]{this.context}, ThrowingSupplier.unchecked(step));
     }
 
@@ -491,20 +484,20 @@ public class CtxSCImpl<C> implements CtxSC<C> {
         try {
             return action.get();
         } catch (final Throwable ex) {
-            this.safeACContainer.close(ex);
+            this.hookContainer.callHooks(ex);
             this.exceptionHandler.handle(ex);
             throw sneakyThrow(ex);
         }
     }
 
     private <U> Mem2CtxSC<U, C, CtxSC<C>> newMem1CtxStepsChain(final U newContext) {
-        return new Mem2CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext,
+        return new Mem2CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext,
             this.context, this);
     }
 
     private void throwNullArgException(final String argName) {
         final XtepsException baseEx = new XtepsException(argName + " arg is null");
-        this.safeACContainer.close(baseEx);
+        this.hookContainer.callHooks(baseEx);
         this.exceptionHandler.handle(baseEx);
         throw baseEx;
     }

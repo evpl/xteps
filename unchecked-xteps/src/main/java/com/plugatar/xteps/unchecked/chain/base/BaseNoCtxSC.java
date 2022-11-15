@@ -22,7 +22,7 @@ import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 /**
  * Base no context steps chain.
  *
- * @param <S> the type of the steps chain implementing {@code BaseNoCtxStepsChain}
+ * @param <S> the type of the steps chain implementing {@code BaseNoCtxSC}
  */
 public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
 

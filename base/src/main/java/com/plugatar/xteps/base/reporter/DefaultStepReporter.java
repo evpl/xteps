@@ -16,7 +16,7 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingSupplier;
@@ -29,7 +29,6 @@ import java.util.UUID;
  */
 public class DefaultStepReporter implements StepReporter {
     private final StepListener[] listeners;
-    private final SafeACContainer fakeSafeACContainer;
 
     /**
      * Ctor.
@@ -48,33 +47,19 @@ public class DefaultStepReporter implements StepReporter {
             }
         }
         this.listeners = listeners;
-        this.fakeSafeACContainer = new FakeSafeACContainer();
-    }
-
-    @Override
-    public <R, E extends Throwable> R report(
-        final ExceptionHandler exceptionHandler,
-        final String stepName,
-        final String stepDescription,
-        final Object[] contexts,
-        final ThrowingSupplier<? extends R, ? extends E> step
-    ) throws E {
-        return this.report(
-            this.fakeSafeACContainer, exceptionHandler, stepName, stepDescription, contexts, step
-        );
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public final <R, E extends Throwable> R report(
-        final SafeACContainer safeACContainer,
+        final HookContainer hookContainer,
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
         final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        if (safeACContainer == null) { throwNullArgException("safeACContainer"); }
+        if (hookContainer == null) { throwNullArgException("hookContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
@@ -121,11 +106,11 @@ public class DefaultStepReporter implements StepReporter {
             if (stepException != null) {
                 listenerException.addSuppressed(stepException);
             }
-            safeACContainer.close(listenerException);
+            hookContainer.callHooks(listenerException);
             exceptionHandler.handle(listenerException);
             throw listenerException;
         } else if (stepException != null) {
-            safeACContainer.close(stepException);
+            hookContainer.callHooks(stepException);
             exceptionHandler.handle(stepException);
             throw stepException;
         } else {
@@ -139,23 +124,5 @@ public class DefaultStepReporter implements StepReporter {
 
     private static void throwNullArgException(final String argName) {
         throw new XtepsException(argName + " arg is null");
-    }
-
-    private static final class FakeSafeACContainer implements SafeACContainer {
-
-        private FakeSafeACContainer() {
-        }
-
-        @Override
-        public void add(final AutoCloseable autoCloseable) {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public void close(final Throwable baseException) {
-        }
     }
 }

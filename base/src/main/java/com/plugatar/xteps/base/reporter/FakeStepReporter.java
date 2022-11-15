@@ -16,7 +16,7 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
@@ -33,36 +33,15 @@ public class FakeStepReporter implements StepReporter {
     }
 
     @Override
-    public <R, E extends Throwable> R report(
-        final ExceptionHandler exceptionHandler,
-        final String stepName,
-        final String stepDescription,
-        final Object[] contexts,
-        final ThrowingSupplier<? extends R, ? extends E> step
-    ) throws E {
-        if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (contexts == null) { throwNullArgException("contexts"); }
-        if (step == null) { throwNullArgException("step"); }
-        try {
-            return step.get();
-        } catch (final Throwable stepEx) {
-            exceptionHandler.handle(stepEx);
-            throw stepEx;
-        }
-    }
-
-    @Override
     public final <R, E extends Throwable> R report(
-        final SafeACContainer safeACContainer,
+        final HookContainer hookContainer,
         final ExceptionHandler exceptionHandler,
         final String stepName,
         final String stepDescription,
         final Object[] contexts,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        if (safeACContainer == null) { throwNullArgException("safeACContainer"); }
+        if (hookContainer == null) { throwNullArgException("hookContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (stepName == null) { throwNullArgException("stepName"); }
         if (stepDescription == null) { throwNullArgException("stepDescription"); }
@@ -71,7 +50,7 @@ public class FakeStepReporter implements StepReporter {
         try {
             return step.get();
         } catch (final Throwable stepEx) {
-            safeACContainer.close(stepEx);
+            hookContainer.callHooks(stepEx);
             exceptionHandler.handle(stepEx);
             throw stepEx;
         }

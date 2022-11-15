@@ -16,7 +16,7 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
@@ -37,7 +37,7 @@ import com.plugatar.xteps.checked.stepobject.SupplierStep;
 public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
-    private final SafeACContainer safeACContainer;
+    private final HookContainer hookContainer;
     private final P previousContextStepsChain;
 
     /**
@@ -45,41 +45,48 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> 
      *
      * @param stepReporter              the step reporter
      * @param exceptionHandler          the exception handler
-     * @param safeACContainer           the safe AutoCloseable container
+     * @param hookContainer             the hook container
      * @param previousContextStepsChain the previous context steps chain
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
-     *                              or {@code safeACContainer} or {@code previousContextStepsChain} is null
+     *                              or {@code hookContainer} or {@code previousContextStepsChain} is null
      */
     public MemNoCtxSCImpl(final StepReporter stepReporter,
                           final ExceptionHandler exceptionHandler,
-                          final SafeACContainer safeACContainer,
+                          final HookContainer hookContainer,
                           final P previousContextStepsChain) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
-        if (safeACContainer == null) { throw new NullPointerException("safeACContainer arg is null"); }
+        if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
         if (previousContextStepsChain == null) {
             throw new NullPointerException("previousContextStepsChain arg is null");
         }
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
-        this.safeACContainer = safeACContainer;
+        this.hookContainer = hookContainer;
         this.previousContextStepsChain = previousContextStepsChain;
     }
 
     @Override
-    public final P previousContextStepsChain() {
-        return this.previousContextStepsChain;
-    }
-
-    @Override
-    public final MemNoCtxSC<P> closeCloseableContexts() {
+    public final MemNoCtxSC<P> callHooks() {
         try {
-            this.safeACContainer.close();
+            this.hookContainer.callHooks();
         } catch (final Throwable ex) {
             this.exceptionHandler.handle(ex);
             throw ex;
         }
         return this;
+    }
+
+    @Override
+    public final MemNoCtxSC<P> hook(final ThrowingRunnable<?> hook) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        this.hookContainer.add(hook);
+        return this;
+    }
+
+    @Override
+    public final P previousContextStepsChain() {
+        return this.previousContextStepsChain;
     }
 
     @Override
@@ -298,7 +305,8 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> 
         final String stepDescription,
         final ThrowingSupplier<R, E> step
     ) throws E {
-        return this.stepReporter.report(this.exceptionHandler, stepName, stepDescription, new Object[]{}, step);
+        return this.stepReporter.report(this.hookContainer, this.exceptionHandler, stepName, stepDescription,
+            new Object[]{}, step);
     }
 
     private <R, E extends Throwable> R execAction(
@@ -307,19 +315,19 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> 
         try {
             return action.get();
         } catch (final Throwable ex) {
-            this.safeACContainer.close(ex);
+            this.hookContainer.callHooks(ex);
             this.exceptionHandler.handle(ex);
             throw ex;
         }
     }
 
     private <U> CtxSC<U> newCtxStepsChain(final U newContext) {
-        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.safeACContainer, newContext);
+        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext);
     }
 
     private void throwNullArgException(final String argName) {
         final XtepsException baseEx = new XtepsException(argName + " arg is null");
-        this.safeACContainer.close(baseEx);
+        this.hookContainer.callHooks(baseEx);
         this.exceptionHandler.handle(baseEx);
         throw baseEx;
     }

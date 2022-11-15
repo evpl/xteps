@@ -15,19 +15,15 @@
  */
 package com.plugatar.xteps.unchecked.chain.base;
 
-import com.plugatar.xteps.base.ThrowingConsumer;
-import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxSC;
 
 /**
  * Base contextual steps chain.
  *
  * @param <C> the context type
- * @param <S> the type of the steps chain implementing {@code BaseCtxStepsChain}
+ * @param <S> the type of the steps chain implementing {@code BaseCtxSC}
  */
-public interface BaseCtxSC<C, S extends BaseCtxSC<C, S>> extends
-    BaseSC<S>,
-    ACCtxSC<S> {
+public interface BaseCtxSC<C, S extends BaseCtxSC<C, S>> extends BaseSC<S> {
 
     /**
      * Returns the context.
@@ -42,25 +38,4 @@ public interface BaseCtxSC<C, S extends BaseCtxSC<C, S>> extends
      * @return no context steps chain
      */
     MemNoCtxSC<S> withoutContext();
-
-    /**
-     * Append the current context to the cleanup queue. This context will be closed in case
-     * of any exception in steps chain or in case of {@link #closeCloseableContexts()}
-     * method invocation.
-     *
-     * @return this steps chain
-     * @throws XtepsException if the current context is not an {@link AutoCloseable} instance
-     */
-    S contextIsCloseable();
-
-    /**
-     * Append the current context with given close action to the cleanup queue. This context will be
-     * closed in case of any exception in steps chain or in case of {@link #closeCloseableContexts()}
-     * method invocation.
-     *
-     * @param close the close action
-     * @return this steps chain
-     * @throws XtepsException if {@code close} is null
-     */
-    S contextIsCloseable(ThrowingConsumer<? super C, ?> close);
 }

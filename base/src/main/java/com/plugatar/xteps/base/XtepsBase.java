@@ -15,7 +15,7 @@
  */
 package com.plugatar.xteps.base;
 
-import com.plugatar.xteps.base.container.DefaultSafeACContainer;
+import com.plugatar.xteps.base.container.DefaultHookContainer;
 import com.plugatar.xteps.base.handler.FakeExceptionHandler;
 import com.plugatar.xteps.base.handler.ThreadLocalMemorizingCleanStackTraceExceptionHandler;
 import com.plugatar.xteps.base.reporter.DefaultStepReporter;
@@ -53,11 +53,11 @@ public interface XtepsBase {
     ExceptionHandler exceptionHandler();
 
     /**
-     * Returns SafeACContainer generator.
+     * Returns HookContainer generator.
      *
-     * @return SafeACContainer generator
+     * @return HookContainer generator
      */
-    ThrowingSupplier<SafeACContainer, RuntimeException> safeACContainerGenerator();
+    ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator();
 
     /**
      * Returns cached XtepsBase instance.
@@ -123,8 +123,8 @@ public interface XtepsBase {
                 }
 
                 @Override
-                public ThrowingSupplier<SafeACContainer, RuntimeException> safeACContainerGenerator() {
-                    return DefaultSafeACContainer::new;
+                public ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator() {
+                    return DefaultHookContainer::new;
                 }
             };
         }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * {@link com.plugatar.xteps.base.SafeACContainer} implementations.
+ * {@link com.plugatar.xteps.base.HookContainer} implementations.
  */
 package com.plugatar.xteps.base.container;

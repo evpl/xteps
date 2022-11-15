@@ -15,10 +15,11 @@
  */
 package com.plugatar.xteps.unchecked;
 
-import com.plugatar.xteps.base.CloseException;
 import com.plugatar.xteps.base.StepListener;
+import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.chain.NoCtxSC;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -171,7 +172,7 @@ final class UncheckedXtepsTest {
         final ThrowingRunnable<RuntimeException> action = mock(ThrowingRunnable.class);
 
         final NoCtxSC stepsChain = UncheckedXteps.stepsChain();
-        assertThat(UncheckedXteps.stepsChain()).isSameAs(stepsChain);
+        assertThat(UncheckedXteps.stepsChain()).isNotSameAs(stepsChain);
 
         final String stepName = "stepsChainMethod";
         stepsChain.step(stepName, action);
@@ -208,16 +209,15 @@ final class UncheckedXtepsTest {
     void chainWithAutoCloseableContextsIfActionFailed() {
         final RuntimeException baseException = new RuntimeException("base ex");
         final RuntimeException exception1 = new RuntimeException("ex 1");
-        final AutoCloseable autoCloseable1 = throwingAutoCloseable(exception1);
+        final ThrowingRunnable<?> hook1 = () -> { throw exception1; };
         final RuntimeException exception2 = new RuntimeException("ex 2");
-        final AutoCloseable autoCloseable2 = throwingAutoCloseable(exception2);
+        final ThrowingConsumer<Object, ?> hook2 = c -> { throw exception2; };
 
         assertThatCode(() ->
             UncheckedXteps.stepsChain()
-                .withContext(autoCloseable1)
-                .contextIsCloseable()
-                .withContext(autoCloseable2)
-                .contextIsCloseable()
+                .hook(hook1)
+                .withContext(new Object())
+                .hook(hook2)
                 .supplyContext(ctx -> { throw baseException; })
         ).isSameAs(baseException)
             .hasSuppressedException(exception1)
@@ -227,29 +227,19 @@ final class UncheckedXtepsTest {
     @Test
     void chainWithAutoCloseableContextsIfCloseMethodInvoked() {
         final RuntimeException exception1 = new RuntimeException("ex 1");
-        final AutoCloseable autoCloseable1 = throwingAutoCloseable(exception1);
+        final ThrowingRunnable<?> hook1 = () -> { throw exception1; };
         final RuntimeException exception2 = new RuntimeException("ex 2");
-        final AutoCloseable autoCloseable2 = throwingAutoCloseable(exception2);
+        final ThrowingConsumer<Object, ?> hook2 = c -> { throw exception2; };
 
         assertThatCode(() ->
             UncheckedXteps.stepsChain()
-                .withContext(autoCloseable1)
-                .contextIsCloseable()
-                .withContext(autoCloseable2)
-                .contextIsCloseable()
-                .closeCloseableContexts()
-        ).isInstanceOf(CloseException.class)
+                .hook(hook1)
+                .withContext(new Object())
+                .hook(hook2)
+                .callHooks()
+        ).isInstanceOf(XtepsException.class)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);
-    }
-
-    private static AutoCloseable throwingAutoCloseable(final Exception exception) {
-        return new AutoCloseable() {
-            @Override
-            public void close() throws Exception {
-                throw exception;
-            }
-        };
     }
 
     private static Pattern uuidPattern() {

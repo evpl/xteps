@@ -31,6 +31,24 @@ import com.plugatar.xteps.checked.stepobject.SupplierStep;
 public interface BaseSC<S extends BaseSC<S>> {
 
     /**
+     * Calls all hooks in this steps chain. Exceptions will be added to the base
+     * exception as suppressed exceptions.
+     *
+     * @throws XtepsException if one or more hooks threw exceptions
+     */
+    S callHooks();
+
+    /**
+     * Adds given hook to this steps chain. This hook will be calls in case of any
+     * exception in steps chain or in case of {@link #callHooks()} method call.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    S hook(ThrowingRunnable<?> hook);
+
+    /**
      * Returns a contextual steps chain of the new context.
      *
      * @param context the new context

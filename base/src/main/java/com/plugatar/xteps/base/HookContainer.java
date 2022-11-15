@@ -16,32 +16,32 @@
 package com.plugatar.xteps.base;
 
 /**
- * Safe AutoCloseable container.
+ * Hook container.
  */
-public interface SafeACContainer extends AutoCloseable {
+public interface HookContainer {
 
     /**
-     * Adds AutoCloseable to this container.
+     * Adds given hook to this container.
      *
-     * @param autoCloseable the AutoCloseable
-     * @throws XtepsException if {@code autoCloseable} is null
+     * @param hook the hook
+     * @throws XtepsException if {@code hook} is null
      */
-    void add(AutoCloseable autoCloseable);
+    void add(ThrowingRunnable<?> hook);
 
     /**
-     * Closes all AutoCloseables in this container. Exceptions will be added
-     * to the base exception as suppressed exceptions.
+     * Calls all hooks in this container. Exceptions will be added to the
+     * base exception as suppressed exceptions.
      *
-     * @throws CloseException if one or more AutoCloseables cannot be closed
+     * @throws XtepsException if one or more hooks threw exceptions
      */
-    @Override
-    void close();
+    void callHooks();
 
     /**
-     * Closes all AutoCloseables in this container. Exceptions will be added
-     * to the given base exception as suppressed exceptions.
+     * Calls all hooks in this container. Exceptions will be added to the
+     * given base exception as suppressed exceptions.
      *
      * @param baseException the base exception
+     * @throws XtepsException if {@code baseException} is null
      */
-    void close(Throwable baseException);
+    void callHooks(Throwable baseException);
 }

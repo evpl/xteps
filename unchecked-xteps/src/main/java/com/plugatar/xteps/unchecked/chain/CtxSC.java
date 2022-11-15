@@ -37,6 +37,12 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
+    CtxSC<C> hook(ThrowingConsumer<C, ?> hook);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     <U> Mem2CtxSC<U, C, CtxSC<C>> withContext(U context);
 
     /**

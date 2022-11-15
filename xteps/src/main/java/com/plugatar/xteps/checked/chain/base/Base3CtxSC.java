@@ -16,6 +16,16 @@ import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
 public interface Base3CtxSC<C, P1, P2> {
 
     /**
+     * Adds given hook to this steps chain. This hook will be calls in case of any
+     * exception in steps chain or in case of {@link BaseSC#callHooks()} method call.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    BaseCtxSC<C, ?> hook(ThrowingTriConsumer<C, P1, P2, ?> hook);
+
+    /**
      * Returns a context steps chain of the new context.
      *
      * @param contextFunction the context function

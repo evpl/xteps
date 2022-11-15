@@ -2,6 +2,7 @@
 
 ## 5.2 (planned)
 
+* PR #57 added hook and callHooks methods for steps chains
 * PR #55 added type change methods for Bi and Tri steps objects
 * PR #54 added dummy() method for step objects
 

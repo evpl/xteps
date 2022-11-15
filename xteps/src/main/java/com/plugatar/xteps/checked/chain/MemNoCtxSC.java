@@ -15,7 +15,6 @@
  */
 package com.plugatar.xteps.checked.chain;
 
-import com.plugatar.xteps.checked.chain.base.ACCtxSC;
 import com.plugatar.xteps.checked.chain.base.BaseCtxSC;
 import com.plugatar.xteps.checked.chain.base.BaseNoCtxSC;
 import com.plugatar.xteps.checked.chain.base.MemSC;
@@ -27,6 +26,5 @@ import com.plugatar.xteps.checked.chain.base.MemSC;
  */
 public interface MemNoCtxSC<PS extends BaseCtxSC<?, ?>> extends
     BaseNoCtxSC<MemNoCtxSC<PS>>,
-    MemSC<PS>,
-    ACCtxSC<MemNoCtxSC<PS>> {
+    MemSC<PS> {
 }

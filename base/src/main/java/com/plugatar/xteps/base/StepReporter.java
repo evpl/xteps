@@ -24,7 +24,8 @@ public interface StepReporter {
      * Reports given step and returns step result.
      *
      * @param exceptionHandler the step name
-     * @param stepName         the safe AutoCloseable container
+     * @param hookContainer    the exception handler
+     * @param stepName         the hook container
      * @param stepDescription  the step description
      * @param contexts         the contexts array
      * @param step             the origin supplier
@@ -36,32 +37,7 @@ public interface StepReporter {
      * @throws E              if {@code step} threw exception
      */
     <R, E extends Throwable> R report(
-        ExceptionHandler exceptionHandler,
-        String stepName,
-        String stepDescription,
-        Object[] contexts,
-        ThrowingSupplier<? extends R, ? extends E> step
-    ) throws E;
-
-
-    /**
-     * Reports given step and returns step result.
-     *
-     * @param exceptionHandler the step name
-     * @param safeACContainer  the exception handler
-     * @param stepName         the safe AutoCloseable container
-     * @param stepDescription  the step description
-     * @param contexts         the contexts array
-     * @param step             the origin supplier
-     * @param <R>              the type of the {@code step} result
-     * @param <E>              the {@code step} exception type
-     * @return the {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code contexts}
-     *                        or {@code step} is null
-     * @throws E              if {@code step} threw exception
-     */
-    <R, E extends Throwable> R report(
-        SafeACContainer safeACContainer,
+        HookContainer hookContainer,
         ExceptionHandler exceptionHandler,
         String stepName,
         String stepDescription,
