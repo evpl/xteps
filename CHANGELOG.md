@@ -3,6 +3,7 @@
 ## 5.2 (planned)
 
 * PR #57 added hook and callHooks methods for steps chains
+* PR #56 Bump mockito-core from 4.8.1 to 4.9.0
 * PR #55 added type change methods for Bi and Tri steps objects
 * PR #54 added dummy() method for step objects
 
