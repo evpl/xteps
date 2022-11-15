@@ -15,46 +15,46 @@
  */
 package com.plugatar.xteps.base.container;
 
-import com.plugatar.xteps.base.CloseException;
-import com.plugatar.xteps.base.SafeACContainer;
+import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.XtepsException;
 
 import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * Default SafeACContainer.
+ * Default HookContainer.
  */
-public class DefaultSafeACContainer implements SafeACContainer {
-    private final Deque<AutoCloseable> acDeque;
-    private final Object closeLock;
+public class DefaultHookContainer implements HookContainer {
+    private final Deque<ThrowingRunnable<?>> deque;
+    private final Object lock;
 
     /**
      * Ctor.
      */
-    public DefaultSafeACContainer() {
-        this.acDeque = new ConcurrentLinkedDeque<>();
-        this.closeLock = new Object();
+    public DefaultHookContainer() {
+        this.deque = new ConcurrentLinkedDeque<>();
+        this.lock = new Object();
     }
 
     @Override
-    public final void add(final AutoCloseable autoCloseable) {
-        if (autoCloseable == null) { this.throwNullArgException("autoCloseable"); }
-        this.acDeque.addLast(autoCloseable);
+    public final void add(final ThrowingRunnable<?> hook) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        this.deque.addLast(hook);
     }
 
     @Override
-    public final void close() {
-        synchronized (this.closeLock) {
-            if (!this.acDeque.isEmpty()) {
-                CloseException baseEx = null;
-                for (AutoCloseable ac = this.acDeque.pollLast(); ac != null; ac = this.acDeque.pollLast()) {
+    public final void callHooks() {
+        synchronized (this.lock) {
+            if (!this.deque.isEmpty()) {
+                XtepsException baseEx = null;
+                for (ThrowingRunnable<?> hook = this.deque.pollLast(); hook != null; hook = this.deque.pollLast()) {
                     try {
-                        ac.close();
+                        hook.run();
                     } catch (final Throwable ex) {
                         if (baseEx == null) {
-                            baseEx = new CloseException(
-                                "One or more AutoCloseables cannot be closed (see suppressed exceptions)"
+                            baseEx = new XtepsException(
+                                "One or more hooks threw exceptions (see suppressed exceptions)"
                             );
                         }
                         baseEx.addSuppressed(ex);
@@ -68,13 +68,13 @@ public class DefaultSafeACContainer implements SafeACContainer {
     }
 
     @Override
-    public final void close(final Throwable baseException) {
+    public final void callHooks(final Throwable baseException) {
         if (baseException == null) { this.throwNullArgException("baseException"); }
-        synchronized (this.closeLock) {
-            if (!this.acDeque.isEmpty()) {
-                for (AutoCloseable ac = this.acDeque.pollLast(); ac != null; ac = this.acDeque.pollLast()) {
+        synchronized (this.lock) {
+            if (!this.deque.isEmpty()) {
+                for (ThrowingRunnable<?> hook = this.deque.pollLast(); hook != null; hook = this.deque.pollLast()) {
                     try {
-                        ac.close();
+                        hook.run();
                     } catch (final Throwable ex) {
                         baseException.addSuppressed(ex);
                     }
@@ -84,8 +84,6 @@ public class DefaultSafeACContainer implements SafeACContainer {
     }
 
     private void throwNullArgException(final String argName) {
-        final XtepsException baseEx = new XtepsException(argName + " arg is null");
-        this.close(baseEx);
-        throw baseEx;
+        throw new XtepsException(argName + " arg is null");
     }
 }

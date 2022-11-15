@@ -20,7 +20,6 @@ import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.unchecked.chain.base.ACCtxSC;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxSC;
 import com.plugatar.xteps.unchecked.chain.base.Base2CtxSC;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxSC;
@@ -42,8 +41,19 @@ public interface Mem2CtxSC<C, P, PS extends BaseCtxSC<?, ?>> extends
     BaseCtxSC<C, Mem2CtxSC<C, P, PS>>,
     Base1CtxSC<C>,
     Base2CtxSC<C, P>,
-    MemSC<PS>,
-    ACCtxSC<Mem2CtxSC<C, P, PS>> {
+    MemSC<PS> {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem2CtxSC<C, P, PS> hook(ThrowingConsumer<C, ?> hook);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Mem2CtxSC<C, P, PS> hook(ThrowingBiConsumer<C, P, ?> hook);
 
     /**
      * {@inheritDoc}

@@ -19,6 +19,7 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.container.FakeHookContainer;
 import com.plugatar.xteps.checked.chain.NoCtxSC;
 import com.plugatar.xteps.checked.chain.impl.NoCtxSCImpl;
 import com.plugatar.xteps.checked.stepobject.RunnableStep;
@@ -48,7 +49,7 @@ public final class Xteps {
      *                        or if it's impossible to correctly report the step
      */
     public static void step(final String stepName) {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName);
     }
 
     /**
@@ -68,7 +69,7 @@ public final class Xteps {
      */
     public static void step(final String stepName,
                             final String stepDescription) {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName, stepDescription);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription);
     }
 
     /**
@@ -99,7 +100,7 @@ public final class Xteps {
     public static <E extends Throwable> void step(
         final RunnableStep<? extends E> step
     ) throws E {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(step);
     }
 
     /**
@@ -132,7 +133,7 @@ public final class Xteps {
         final String stepNamePrefix,
         final RunnableStep<? extends E> step
     ) throws E {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepNamePrefix, step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepNamePrefix, step);
     }
 
     /**
@@ -164,7 +165,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName, step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, step);
     }
 
     /**
@@ -198,7 +199,7 @@ public final class Xteps {
         final String stepDescription,
         final ThrowingRunnable<? extends E> step
     ) throws E {
-        CACHED_NO_CTX_STEPS_CHAIN.get().step(stepName, stepDescription, step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription, step);
     }
 
     /**
@@ -232,7 +233,7 @@ public final class Xteps {
     public static <R, E extends Throwable> R stepTo(
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(step);
     }
 
     /**
@@ -268,7 +269,7 @@ public final class Xteps {
         final String stepNamePrefix,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepNamePrefix, step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepNamePrefix, step);
     }
 
     /**
@@ -304,7 +305,7 @@ public final class Xteps {
         final String stepName,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepName, step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, step);
     }
 
     /**
@@ -342,7 +343,7 @@ public final class Xteps {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ? extends E> step
     ) throws E {
-        return CACHED_NO_CTX_STEPS_CHAIN.get().stepTo(stepName, stepDescription, step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, stepDescription, step);
     }
 
     /**
@@ -381,22 +382,20 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static NoCtxSC stepsChain() {
-        return CACHED_NO_CTX_STEPS_CHAIN.get();
+        return CHECKED_XTEPS_BASE.get().newNoCtxCS();
     }
 
-    private static final Supplier<NoCtxSC> CACHED_NO_CTX_STEPS_CHAIN = new Supplier<NoCtxSC>() {
-        private volatile NoCtxSC instance = null;
+    private static final Supplier<CheckedXtepsBase> CHECKED_XTEPS_BASE = new Supplier<CheckedXtepsBase>() {
+        private volatile CheckedXtepsBase instance = null;
 
         @Override
-        public NoCtxSC get() {
-            NoCtxSC result;
+        public CheckedXtepsBase get() {
+            CheckedXtepsBase result;
             if ((result = this.instance) == null) {
                 synchronized (this) {
                     if ((result = this.instance) == null) {
-                        final XtepsBase config = XtepsBase.cached();
-                        result = new NoCtxSCImpl(
-                            config.stepReporter(), config.exceptionHandler(), config.safeACContainerGenerator()
-                        );
+                        final XtepsBase xtepsBase = XtepsBase.cached();
+                        result = new CheckedXtepsBase(xtepsBase);
                         this.instance = result;
                     }
                     return result;
@@ -410,5 +409,29 @@ public final class Xteps {
      * Utility class ctor.
      */
     private Xteps() {
+    }
+
+    private static final class CheckedXtepsBase {
+        private final XtepsBase xtepsBase;
+        private final NoCtxSC simpleNoCtxSC;
+
+        private CheckedXtepsBase(final XtepsBase xtepsBase) {
+            this.xtepsBase = xtepsBase;
+            this.simpleNoCtxSC = new NoCtxSCImpl(
+                xtepsBase.stepReporter(), xtepsBase.exceptionHandler(), new FakeHookContainer()
+            );
+        }
+
+        private NoCtxSC simpleNoCtxSC() {
+            return this.simpleNoCtxSC;
+        }
+
+        private NoCtxSC newNoCtxCS() {
+            return new NoCtxSCImpl(
+                this.xtepsBase.stepReporter(),
+                this.xtepsBase.exceptionHandler(),
+                this.xtepsBase.hookContainerGenerator().get()
+            );
+        }
     }
 }
