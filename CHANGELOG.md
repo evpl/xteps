@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.3 (planned)
+## 5.3 (released 16.11.2022)
 
 * PR #59 provided Allure and ReportPortal dependencies
 * PR #58 added index replacements to Allure and ReportPortal listeners
