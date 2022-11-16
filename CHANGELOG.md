@@ -2,6 +2,7 @@
 
 ## 5.3 (planned)
 
+* PR #59 provided Allure and ReportPortal dependencies
 * PR #58 added index replacements to Allure and ReportPortal listeners
 * PR #57 added hook and callHooks methods for steps chains
 * PR #55 added type change methods for Bi and Tri steps objects
