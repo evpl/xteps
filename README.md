@@ -15,26 +15,23 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a library that provides a convenient way to report test steps. Xteps allows you to write code in
-[_Step objects_ and _Step objects chain_ patterns](https://github.com/evpl/step-objects-pattern) style. Integrations
-with Allure and ReportPortal are ready, but you can write your own listener for another reporting tool or just
-create an issue.
+Xteps is a library that provides a convenient way to report test steps. Integrations with Allure and ReportPortal are
+ready, but you can write your own listener for another reporting tool or just create an issue.
 
 ## Table of Contents
 
 * [How to use](#How-to-use)
 * [API](#API)
+    * [Static methods](#Static-methods)
+    * [Steps chain](#Steps-chain)
+    * [Step objects](#Step-objects)
+* [Parameters](#Parameters)
 * [Features](#Features)
-    * [Safe AutoCloseable context](#Safe-AutoCloseable-context)
+    * [Steps chain hooks](#Steps-chain-hooks)
     * [Clean stack trace](#Clean-stack-trace)
     * [Checked exceptions](#Checked-exceptions)
     * [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
-* [How to provide parameters](#How-to-provide-parameters)
-* [Xteps Java 8 unreported exception bug](#Xteps-Java-8-unreported-exception-bug)
-* [Code examples](#Code-examples)
-    * [Simple example](#Simple-example)
-    * [_Step objects_ and _Step objects
-      chain_ patterns example](#_Step-objects_-and-_Step-objects-chain_-patterns-example)
+* [Java 8 unreported exception bug](#Java-8-unreported-exception-bug)
 
 ## How to use
 
@@ -51,80 +48,342 @@ Requires Java 8+ version. Just add suitable dependency.
 
 ## API
 
-First part of Xteps API is a set of static methods located in the `com.plugatar.xteps.checked.Xteps` or
-`com.plugatar.xteps.unchecked.UncheckedXteps` classes depending on the version.
+### Static methods
 
-| Method                                     | Description                                                                                  |
-|--------------------------------------------|----------------------------------------------------------------------------------------------|
-| `step(String)`                             | Performs and reports empty step with given name.                                             |
-| `step(String, String)`                     | Performs and reports empty step with given name and description.                             |
-| `step(RunnableStep)`                       | Performs and reports given step.                                                             |
-| `step(String, ThrowingRunnable)`           | Performs and reports given step with given name.                                             |
-| `step(String, String, ThrowingRunnable)`   | Performs and reports given step with given name and description.                             |
-| `stepTo(SupplierStep)`                     | Performs and reports given step and returns the step result.                                 |
-| `stepTo(String, ThrowingSupplier)`         | Performs and reports given step with given name and returns the step result.                 |
-| `stepTo(String, String, ThrowingSupplier)` | Performs and reports given step with given name and description and returns the step result. |
-| `stepsChain()`                             | Starts a chain of steps (returns no context steps chain).                                    |
-
-Second part is a set of steps objects located in the `com.plugatar.xteps.checked.stepobject` or
-`com.plugatar.xteps.unchecked.stepobject` packages depending on the version.
-
-| Step object       | Description                                                                        |
-|-------------------|------------------------------------------------------------------------------------|
-| `RunnableStep`    | This step will be executed and reported when calling the `run()` method.           |
-| `SupplierStep`    | This step will be executed and reported when calling the `get()` method.           |
-| `ConsumerStep`    | This step will be executed and reported when calling the `accept(T)` method.       |
-| `BiConsumerStep`  | This step will be executed and reported when calling the `accept(T, U)` method.    |
-| `TriConsumerStep` | This step will be executed and reported when calling the `accept(T, U, V)` method. |
-| `FunctionStep`    | This step will be executed and reported when calling the `apply(T)` method.        |
-| `BiFunctionStep`  | This step will be executed and reported when calling the `apply(T, U)` method.     |
-| `TriFunctionStep` | This step will be executed and reported when calling the `apply(T, U, V)` method.  |
-
-See [code examples](#Code-examples).
-
-## Features
-
-### Safe AutoCloseable context
-
-Don't worry about closing resources, just use steps chain. Context will be closed in case of any exception in
-steps chain or in case of `closeAutoCloseableContexts()` method invocation.
+First part of Xteps API is a set of static `step` and `stepTo` methods located in the
+`com.plugatar.xteps.checked.Xteps` / `com.plugatar.xteps.unchecked.UncheckedXteps` class.
 
 ```java
-class AutoCloseableImpl implements AutoCloseable {
-
-    @Override
-    public void close() {
-        System.out.println("AutoCloseableImpl is closed");
-    }
-}
-
-class NotAutoCloseableImpl {
-
-    public void quit() {
-        System.out.println("NotAutoCloseableImpl is closed");
-    }
-}
-
 class ExampleTest {
 
     @Test
-    void test() {
-        stepsChain().withContext(new AutoCloseableImpl())
-            .contextIsCloseable()
-            .step("Step 1", ctx -> {
-                //...
-            })
-            .stepToContext("Step 2", ctx -> {
-                //...
-                return new NotAutoCloseableImpl();
-            })
-            .contextIsCloseable(context -> context.quit())
-            .step("Step 3", ctx -> {
-                //...
-            })
-            .closeCloseableContexts();
+    void staticMethodsExample() {
+        WebDriver driver = stepTo("Create WebDriver", () -> {
+            /* ... */
+            return new ChromeDriver();
+        });
+        step("Open page", () ->
+            driver.navigate().to("https://.../login")
+        );
+        step("Type login", () ->
+            driver.findElement(By.id("login_field")).sendKeys("user123")
+        );
+        step("Type password", () ->
+            driver.findElement(By.id("password_field")).sendKeys("1234567890")
+        );
+        step("Click on login button", () ->
+            driver.findElements(By.id("login_button"))
+        );
+        final Connection dbConnection = stepTo("Get database connection", () -> {
+            /* ... */
+            return getDatabaseConnection();
+        });
+        step("Check user full name label", () -> {
+            final By usernameLabelLocator = By.id("full_name_label");
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
+            final String databaseFullName = dbConnection.createStatement()
+                .executeQuery("select full_name from users where username = user123")
+                .getString("full_name");
+            final String uiFullName = driver.findElement(usernameLabelLocator).getText();
+            assertEquals(uiFullName, databaseFullName);
+        });
     }
 }
+```
+
+### Steps chain
+
+Second part is a static `stepsChain` method located in the `com.plugatar.xteps.checked.Xteps` /
+`com.plugatar.xteps.unchecked.UncheckedXteps` class.
+
+```java
+class ExampleTest {
+
+    @Test
+    void stepsChainMethodExample() {
+        stepsChain()
+            .stepToContext("Create WebDriver", () -> {
+                /* ... */
+                return new ChromeDriver();
+            })
+            .hook(WebDriver::quit)
+            .step("Open page", driver ->
+                driver.navigate().to("https://.../login")
+            )
+            .step("Type login", driver ->
+                driver.findElement(By.id("login_field")).sendKeys("user123")
+            )
+            .step("Type password", driver ->
+                driver.findElement(By.id("password_field")).sendKeys("1234567890")
+            )
+            .step("Click on login button", driver ->
+                driver.findElements(By.id("login_button"))
+            )
+            .stepToContext("Get database connection", () -> {
+                /* ... */
+                return getDatabaseConnection();
+            })
+            .hook(Connection::close)
+            .step("Check user full name label", (dbConnection, driver) -> {
+                final By usernameLabelLocator = By.id("full_name_label");
+                new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
+                final String databaseFullName = dbConnection.createStatement()
+                    .executeQuery("select full_name from users where username = user123")
+                    .getString("full_name");
+                final String uiFullName = driver.findElement(usernameLabelLocator).getText();
+                assertEquals(uiFullName, databaseFullName);
+            })
+            .callHooks();
+    }
+}
+```
+
+### Step objects
+
+Third part is a set of steps objects located in the `com.plugatar.xteps.checked.stepobject` /
+`com.plugatar.xteps.unchecked.stepobject` package.
+
+```java
+class CreateWebDriver extends SupplierStep<WebDriver> {
+
+    public CreateWebDriver() {
+        super("Create WebDriver", () -> {
+            /* ... */
+            return new ChromeDriver();
+        });
+    }
+}
+
+class OpenPage extends ConsumerStep<WebDriver> {
+
+    public OpenPage(String url) {
+        super("Open page: " + url, driver ->
+            driver.navigate().to(url)
+        );
+    }
+}
+
+class TypeLogin extends ConsumerStep<WebDriver> {
+
+    public TypeLogin(String login) {
+        super("Type login: " + login, driver ->
+            driver.findElement(By.id("login_field")).sendKeys(login)
+        );
+    }
+}
+
+class TypePassword extends ConsumerStep<WebDriver> {
+
+    public TypePassword(String password) {
+        super("Type password: " + password, driver ->
+            driver.findElement(By.id("password_field")).sendKeys(password)
+        );
+    }
+}
+
+class ClickOnLoginButton extends ConsumerStep<WebDriver> {
+
+    public ClickOnLoginButton() {
+        super("Click on login button", driver ->
+            driver.findElements(By.id("login_button"))
+        );
+    }
+}
+
+class DatabaseConnection extends SupplierStep<Connection> {
+
+    public DatabaseConnection() {
+        super("Get database connection", () -> {
+            /* ... */
+            return getDatabaseConnection();
+        });
+    }
+}
+
+class CheckUserFullName extends BiConsumerStep<Connection, WebDriver> {
+
+    public CheckUserFullName(String username) {
+        super("Check user full name", (dbConnection, driver) -> {
+            final By usernameLabelLocator = By.id("full_name_label");
+            visibilityOfElementLocated(usernameLabelLocator).apply(driver);
+            final String databaseFullName = dbConnection.createStatement()
+                .executeQuery("select full_name from users where username = " + username)
+                .getString("full_name");
+            final String uiFullName = driver.findElement(usernameLabelLocator).getText();
+            assertEquals(uiFullName, databaseFullName);
+        });
+    }
+}
+
+public class ExampleTest {
+
+    @Test
+    void stepObjectsExample() {
+        stepsChain()
+            .stepToContext(new CreateWebDriver())
+            .hook(WebDriver::quit)
+            .step(new OpenPage("https://.../login"))
+            .step(new TypeLogin("user123"))
+            .step(new TypePassword("1234567890"))
+            .step(new ClickOnLoginButton())
+            .stepToContext(new DatabaseConnection())
+            .hook(Connection::close)
+            .step(new CheckUserFullName("user123"))
+            .callHooks();
+    }
+}
+```
+
+Complex step example.
+
+```java
+class LoginAs extends ConsumerStep<WebDriver> {
+
+    public LoginAs(String username, String password) {
+        super("Login as " + username + " / " + password, driver ->
+            stepsChain().withContext(driver)
+                .step(new OpenPage("https://.../login"))
+                .step(new TypeLogin(username))
+                .step(new TypePassword(password))
+                .step(new ClickOnLoginButton())
+        );
+    }
+}
+
+public class ExampleTest {
+
+    @Test
+    void stepObjectsExample() {
+        stepsChain()
+            .stepToContext(new CreateWebDriver())
+            .hook(WebDriver::quit)
+            .step(new LoginAs("user123", "1234567890"))
+            .stepToContext(new DatabaseConnection())
+            .hook(Connection::close)
+            .step(new CheckUserFullName("user123"))
+            .callHooks();
+    }
+}
+```
+
+BDD style example.
+
+```java
+class OpenPage extends ConsumerStep<WebDriver> {
+
+    public OpenPage(String url) {
+        super("I open page " + url, driver ->
+            driver.navigate().to(url)
+        );
+    }
+}
+
+class TypeLogin extends ConsumerStep<WebDriver> {
+
+    public TypeLogin(String login) {
+        super("I type login " + login, driver ->
+            driver.findElement(By.id("login_field")).sendKeys(login)
+        );
+    }
+}
+
+
+class TypePassword extends ConsumerStep<WebDriver> {
+
+    public TypePassword(String password) {
+        super("I type password " + password, driver ->
+            driver.findElement(By.id("password_field")).sendKeys(password)
+        );
+    }
+}
+
+class ClickOnLoginButton extends ConsumerStep<WebDriver> {
+
+    public ClickOnLoginButton() {
+        super("I click on login button", driver ->
+            driver.findElements(By.id("login_button"))
+        );
+    }
+}
+
+class UserFullNameIs extends ConsumerStep<WebDriver> {
+
+    public UserFullNameIs(String fullName) {
+        super("User full name is " + fullName, driver -> {
+            final By usernameLabelLocator = By.id("full_name_label");
+            visibilityOfElementLocated(usernameLabelLocator).apply(driver);
+            final String uiFullName = driver.findElement(usernameLabelLocator).getText();
+            assertEquals(uiFullName, fullName);
+        });
+    }
+}
+
+public class ExampleTest {
+
+    @Test
+    void bddStyleExample() {
+        stepsChain()
+            .withContext(() -> {
+                /* ... */
+                return new ChromeDriver();
+            })
+            .hook(WebDriver::quit)
+            .step("When", new OpenPage("https://.../login"))
+            .step("And", new TypeLogin("user123"))
+            .step("And", new TypePassword("1234567890"))
+            .step("And", new ClickOnLoginButton())
+            .step("Then", new UserFullNameIs("Expected Name"))
+            .callHooks();
+    }
+}
+```
+
+## Parameters
+
+There are two ways to load parameters. Be aware that higher source override lower one - properties from file can be
+overridden by system properties.
+
+| Priority | Source                               |
+|----------|--------------------------------------|
+| 1        | System properties                    |
+| 2        | Properties file (`xteps.properties`) |
+
+### Properties list
+
+| Name                  | Type    | Default value | Description                                                                                                                                                                                                   |
+|-----------------------|---------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| xteps.enabled         | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                                 |
+| xteps.spi             | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.checked.core.StepListener` implementations. Implementations should have zero-argument public constructor.   |
+| xteps.listeners       | String  |               | List of `com.plugatar.xteps.checked.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| xteps.cleanStackTrace | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                           |
+
+### Examples
+
+xteps.properties file example:
+
+```properties
+xteps.enabled=true
+xteps.spi=true
+xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
+xteps.cleanStackTrace=true
+```
+
+## Features
+
+### Steps chain hooks
+
+You can use hooks in a steps chain. Hooks will be closed in case of any exception in steps chain or in case of
+`callHooks()` method invocation.
+
+Don't worry about closing resources. Just use hooks to release resources.
+
+```java
+stepsChain().withContext(new AutoCloseableImpl())
+    .hook(AutoCloseable::close)
+    .step("Step", ctx -> {
+        //...
+    })
+    .callHooks();
 ```
 
 ### Clean stack trace
@@ -176,8 +435,7 @@ void test() throws MalformedURLException {
 ```
 
 You can choose a mechanism to cheat checked exceptions if you want to hide them. Xteps give you the built-in static
-methods by `com.plugatar.xteps.base.ThrowingConsumer`, `com.plugatar.xteps.base.ThrowingFunction`,
-`com.plugatar.xteps.base.ThrowingRunnable`, `com.plugatar.xteps.base.ThrowingSupplier` classes.
+methods by `com.plugatar.xteps.base` functional interfaces.
 
 ```java
 @Test
@@ -191,7 +449,7 @@ void test() {
 }
 ```
 
-Unchecked Xteps just hide any exceptions.
+Unchecked Xteps just hides any exceptions.
 
 ```java
 @Test
@@ -215,44 +473,25 @@ You can use step name or step description replacements by the way provided by Al
 stepsChain()
     .withContext("value")
     .withContext(111)
-    .step("Step with first context = {context} and previous context = {context2}", ((integer, string) -> {
+    .step("Step with context = {context} and previous context = {context2}", ((integer, string) -> {
         //...
     }));
 ```
 
-This step will be reported with name "Step with first context = 111 and previous context = value".
+or
 
-## How to provide parameters
-
-There are two ways to load parameters. Be aware that higher source override lower one - properties from file can be
-overridden by system properties.
-
-| Priority | Source                               |
-|----------|--------------------------------------|
-| 1        | System properties                    |
-| 2        | Properties file (`xteps.properties`) |
-
-### Properties list
-
-| Name                  | Type    | Default value | Description                                                                                                                                                                                                   |
-|-----------------------|---------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps.enabled         | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                                 |
-| xteps.spi             | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.checked.core.StepListener` implementations. Implementations should have zero-argument public constructor.   |
-| xteps.listeners       | String  |               | List of `com.plugatar.xteps.checked.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
-| xteps.cleanStackTrace | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                           |
-
-### Examples
-
-xteps.properties file example:
-
-```properties
-xteps.enabled=true
-xteps.spi=true
-xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
-xteps.cleanStackTrace=true
+```java
+stepsChain()
+    .withContext("value")
+    .withContext(111)
+    .step("Step with context = {0} and previous context = {1}", ((integer, string) -> {
+        //...
+    }));
 ```
 
-## Xteps Java 8 unreported exception bug
+This step will be reported with name "Step with context = 111 and previous context = value".
+
+## Java 8 unreported exception bug
 
 You may run into a problem if you use Java 8. The issue is caused by generic exceptions (Unchecked Xteps doesn't have
 this issue).
@@ -264,10 +503,10 @@ stepsChain()
     );
 ```
 
-This code can fail to build with this
-exception `java: unreported exception java.lang.Throwable; must be caught or declared to be thrown`.
+This code can fail to build with this exception `java: unreported exception java.lang.Throwable; must be caught or
+declared to be thrown`.
 
-You can switch to Java 9+ or use functional interfaces static methods to hide any throwables.
+You can switch to Java 9+ or use functional interfaces static methods to hide any exceptions.
 
 ```java
 stepsChain()
@@ -275,159 +514,3 @@ stepsChain()
         .step("Nested step", () -> {})
     ));
 ```
-
-## Code examples
-
-### Simple example
-
-```java
-@Test
-void simpleMethodsExample() {
-    step("Step 1");
-    step("Step 2", "Description", () -> {
-        //...
-    });
-    step("Step 3", () -> {
-        step("Nested step 1", () -> {
-            //...
-        });
-        step("Nested step 2", "Description");
-    });
-    final String stepResult = stepTo("Step 4", () -> {    // = "step result"
-        step("Nested step 1", () -> {
-            //...
-        });
-        return stepTo("Nested step 2", () -> {
-            //...
-            return "step result";
-        });
-    });
-}
-
-@Test
-void stepsChainWithoutContextExample() {
-    final String stepResult = stepsChain()    // = "step result"
-        .step("Step 1")
-        .step("Step 2", "Description", () -> {
-            //...
-        })
-        .nestedSteps("Step 3", chain -> chain
-            .step("Nested step 1", () -> {
-                //...
-            })
-            .step("Nested step 2", "Description")
-        )
-        .nestedStepsTo("Step 4", chain -> chain
-            .step("Nested step 1", () -> {
-                //...
-            })
-            .stepTo("Nested step 2", () -> {
-                //...
-                return "step result";
-            })
-        );
-}
-
-@Test
-void stepsChainWithContextExample() {
-    final String stepResult = stepsChain()    // = "step result"
-        .step("Step 1")
-        .stepToContext("Step 2", "Description", () -> {
-            //...
-            return "step";
-        })
-        .nestedStepsTo("Step 3", chain -> chain
-            .step("Nested step 1", ctx -> {
-                //...
-            })
-            .stepToContext("Nested step 2", "Description", ctx -> {
-                //...
-                return " ";
-            })
-        )
-        .withContext("result")
-        .nestedStepsTo("Step 4", chain -> chain
-            .step("Nested step 1", ctx -> {
-                //...
-            })
-            .stepTo("Nested step 2", (ctx, previousCtx1, previousCtx2) -> {
-                //...
-                return previousCtx2 + previousCtx1 + ctx;
-            })
-        );
-}
-```
-
-Allure report looks like this for every test.
-
-![simple_java_code_example](https://user-images.githubusercontent.com/54626653/198648739-15ba8a27-4025-4902-8174-49baed3a69d2.png)
-
-### _Step objects_ and _Step objects chain_ patterns example
-
-```java
-class RandomString extends SupplierStep<String, RuntimeException> {
-
-    public RandomString(int length) {
-        super("Generate random string with length = " + length, () -> {
-            byte[] array = new byte[length];
-            new Random().nextBytes(array);
-            return new String(array, StandardCharsets.UTF_8);
-        });
-    }
-}
-
-class Wait extends RunnableStep<InterruptedException> {
-
-    public Wait(int millis) {
-        super("Wait for " + millis + " millis", () -> Thread.sleep(millis));
-    }
-}
-
-class GetStringLength extends FunctionStep<String, Integer, RuntimeException> {
-
-    public GetStringLength() {
-        super("Get string length", "Full string: {context}", String::length);
-    }
-}
-
-class AssertEquals<T> extends ConsumerStep<T, RuntimeException> {
-
-    public AssertEquals(T expected) {
-        super("Assert equals", "actual = {context}, expected = " + expected, actual -> {
-            if (!Objects.equals(actual, expected)) {
-                throw new AssertionError("actual = " + actual + ", expected = " + expected);
-            }
-        });
-    }
-}
-
-class ExampleTest {
-
-    @Test
-    void noChainTest() throws InterruptedException {
-        int expectedStringLength = 10;
-        String randomString = new RandomString(expectedStringLength).get();
-        new Wait(1000).run();
-        int actualStringLength = new GetStringLength().apply(randomString);
-        new AssertEquals<>(expectedStringLength).accept(actualStringLength);
-    }
-
-    @Test
-    void chainTest() throws InterruptedException {
-        int expectedStringLength = 10;
-        stepsChain()
-            .stepToContext(
-                new RandomString(expectedStringLength))
-            .step(
-                new Wait(1000))
-            .stepToContext(
-                new GetStringLength())
-            .step(
-                new AssertEquals<>(expectedStringLength));
-    }
-}
-```
-
-Allure report looks like this for both tests.
-
-![step_objects_example](https://user-images.githubusercontent.com/54626653/200616714-bdaf84f6-91e2-4e19-8e0e-10b7bd6124ad.png)
