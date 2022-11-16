@@ -1,11 +1,15 @@
 # Changelog
 
-## 5.2 (planned)
+## 5.3 (planned)
 
+* PR #58 added index replacements to Allure and ReportPortal listeners
 * PR #57 added hook and callHooks methods for steps chains
-* PR #56 Bump mockito-core from 4.8.1 to 4.9.0
 * PR #55 added type change methods for Bi and Tri steps objects
-* PR #54 added dummy() method for step objects
+* PR #54 added dummy method for step objects
+
+Additional changes:
+
+* PR #56 Bump mockito-core from 4.8.1 to 4.9.0
 
 ## 5.2 (released 13.11.2022)
 
