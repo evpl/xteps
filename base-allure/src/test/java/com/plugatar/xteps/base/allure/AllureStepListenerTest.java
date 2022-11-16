@@ -81,11 +81,11 @@ final class AllureStepListenerTest {
     }
 
     @Test
-    void stepStartedMethodWithReplacements() {
+    void stepStartedMethodWithContextReplacements() {
         final AllureStepListener listener = new AllureStepListener();
         final String uuid = UUID.randomUUID().toString();
-        final String stepName = "step name, first context = {context}, second context = {context2}";
-        final String stepDescription = "step description, first context = {context}, second context = {context2}";
+        final String stepName = "step name, first context = {context}, second context = {1}";
+        final String stepDescription = "step description, first context = {0}, second context = {context2}";
 
         listener.stepStarted(uuid, stepName, stepDescription, new Object[]{"context value 1", "context value 2"});
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();

@@ -138,9 +138,11 @@ public class AllureStepListener implements StepListener {
 
     private Map<String, Object> contextsMap(final Object[] contexts) {
         if (contexts.length != 0) {
-            final Map<String, Object> map = new HashMap<>(contexts.length, 1.0f);
+            final Map<String, Object> map = new HashMap<>(contexts.length * 2, 1.0f);
             map.put(this.contextParamName, contexts[0]);
+            map.put("0", contexts[0]);
             for (int idx = 1; idx < contexts.length; ++idx) {
+                map.put(String.valueOf(idx), contexts[idx]);
                 map.put(this.contextParamName + (idx + 1), contexts[idx]);
             }
             return map;
