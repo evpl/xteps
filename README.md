@@ -205,7 +205,7 @@ class CheckUserFullName extends BiConsumerStep<Connection, WebDriver> {
     public CheckUserFullName(String username) {
         super("Check user full name", (dbConnection, driver) -> {
             final By usernameLabelLocator = By.id("full_name_label");
-            visibilityOfElementLocated(usernameLabelLocator).apply(driver);
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
             final String databaseFullName = dbConnection.createStatement()
                 .executeQuery("select full_name from users where username = " + username)
                 .getString("full_name");
@@ -311,7 +311,7 @@ class UserFullNameIs extends ConsumerStep<WebDriver> {
     public UserFullNameIs(String fullName) {
         super("User full name is " + fullName, driver -> {
             final By usernameLabelLocator = By.id("full_name_label");
-            visibilityOfElementLocated(usernameLabelLocator).apply(driver);
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
             final String uiFullName = driver.findElement(usernameLabelLocator).getText();
             assertEquals(uiFullName, fullName);
         });
