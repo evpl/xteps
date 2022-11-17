@@ -248,6 +248,25 @@ class LoginAs extends ConsumerStep<WebDriver> {
 }
 ```
 
+You can use stubs before actually implementing the steps.
+
+```java
+@Test
+void stepObjectsExample() {
+    stepsChain()
+        .stepToContext(SupplierStep.<WebDriver>dummy("Create WebDriver"))
+        .hook(WebDriver::quit)
+        .step(RunnableStep.dummy("Open page https://.../login"))
+        .step(RunnableStep.dummy("Type login user123"))
+        .step(RunnableStep.dummy("Type password 1234567890"))
+        .step(RunnableStep.dummy("Click on login button"))
+        .stepToContext(SupplierStep.<Connection>dummy("Get database connection"))
+        .hook(Connection::close)
+        .step(RunnableStep.dummy("Check user full name"))
+        .callHooks();
+}
+```
+
 BDD style example.
 
 ```java
