@@ -15,8 +15,8 @@
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a library that provides a convenient way to report test steps. Integrations with Allure and ReportPortal are
-ready, but you can write your own listener for another reporting tool or just create an issue.
+Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure and ReportPortal are
+ready, but you can write your own listener for another reporting system or just create an issue.
 
 ## Table of Contents
 
@@ -35,23 +35,20 @@ ready, but you can write your own listener for another reporting tool or just cr
 
 ## How to use
 
-Requires Java 8+ version. Just add suitable dependency.
+Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 
-* If you use Kotlin or use Java but want to hide checked exceptions
-    * with Allure - `unchecked-xteps-allure`
-    * with ReportPortal - `unchecked-xteps-reportportal`
-    * with custom reporting tool - `unchecked-xteps`
-* If you use Java and want to work with checked exceptions (and maybe sometimes hide them)
-    * with Allure - `xteps-allure`
-    * with ReportPortal - `xteps-reportportal`
-    * with custom reporting tool - `xteps`
+|                         | Java (with checked exceptions) | Java (without checked exceptions) / Kotlin JVM |
+|-------------------------|--------------------------------|------------------------------------------------|
+| Allure                  | `xteps-allure`                 | `unchecked-xteps-allure`                       |
+| ReportPortal            | `xteps-reportportal`           | `unchecked-xteps-reportportal`                 |
+| Custom reporting system | `xteps`                        | `unchecked-xteps`                              |
 
 ## API
 
 ### Static methods
 
-First part of Xteps API is a set of static `step` and `stepTo` methods located in the
-`com.plugatar.xteps.checked.Xteps` / `com.plugatar.xteps.unchecked.UncheckedXteps` class.
+First part of Xteps API is a set of static `step` and `stepTo` methods located in the `com.plugatar.xteps.checked.Xteps`
+/ `com.plugatar.xteps.unchecked.UncheckedXteps` class.
 
 ```java
 class ExampleTest {
@@ -234,7 +231,7 @@ public class ExampleTest {
 }
 ```
 
-Complex step example.
+Steps can be combined.
 
 ```java
 class LoginAs extends ConsumerStep<WebDriver> {
@@ -247,21 +244,6 @@ class LoginAs extends ConsumerStep<WebDriver> {
                 .step(new TypePassword(password))
                 .step(new ClickOnLoginButton())
         );
-    }
-}
-
-public class ExampleTest {
-
-    @Test
-    void stepObjectsExample() {
-        stepsChain()
-            .stepToContext(new CreateWebDriver())
-            .hook(WebDriver::quit)
-            .step(new LoginAs("user123", "1234567890"))
-            .stepToContext(new DatabaseConnection())
-            .hook(Connection::close)
-            .step(new CheckUserFullName("user123"))
-            .callHooks();
     }
 }
 ```
@@ -278,45 +260,9 @@ class OpenPage extends ConsumerStep<WebDriver> {
     }
 }
 
-class TypeLogin extends ConsumerStep<WebDriver> {
-
-    public TypeLogin(String login) {
-        super("I type login " + login, driver ->
-            driver.findElement(By.id("login_field")).sendKeys(login)
-        );
-    }
-}
-
-
-class TypePassword extends ConsumerStep<WebDriver> {
-
-    public TypePassword(String password) {
-        super("I type password " + password, driver ->
-            driver.findElement(By.id("password_field")).sendKeys(password)
-        );
-    }
-}
-
-class ClickOnLoginButton extends ConsumerStep<WebDriver> {
-
-    public ClickOnLoginButton() {
-        super("I click on login button", driver ->
-            driver.findElements(By.id("login_button"))
-        );
-    }
-}
-
-class UserFullNameIs extends ConsumerStep<WebDriver> {
-
-    public UserFullNameIs(String fullName) {
-        super("User full name is " + fullName, driver -> {
-            final By usernameLabelLocator = By.id("full_name_label");
-            new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
-            final String uiFullName = driver.findElement(usernameLabelLocator).getText();
-            assertEquals(uiFullName, fullName);
-        });
-    }
-}
+/*
+...
+ */
 
 public class ExampleTest {
 
@@ -350,12 +296,12 @@ overridden by system properties.
 
 ### Properties list
 
-| Name                  | Type    | Default value | Description                                                                                                                                                                                                   |
-|-----------------------|---------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps.enabled         | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                                 |
-| xteps.spi             | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.checked.core.StepListener` implementations. Implementations should have zero-argument public constructor.   |
-| xteps.listeners       | String  |               | List of `com.plugatar.xteps.checked.core.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
-| xteps.cleanStackTrace | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                           |
+| Name                  | Type    | Default value | Description                                                                                                                                                                                           |
+|-----------------------|---------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| xteps.enabled         | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
+| xteps.spi             | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
+| xteps.listeners       | String  |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| xteps.cleanStackTrace | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
 
 ### Examples
 
@@ -373,9 +319,7 @@ xteps.cleanStackTrace=true
 ### Steps chain hooks
 
 You can use hooks in a steps chain. Hooks will be closed in case of any exception in steps chain or in case of
-`callHooks()` method invocation.
-
-Don't worry about closing resources. Just use hooks to release resources.
+`callHooks()` method invocation. You can use hooks to release resources.
 
 ```java
 stepsChain().withContext(new AutoCloseableImpl())
@@ -406,7 +350,7 @@ final class ExampleTest {
 }
 ```
 
-Stacktrace will look like this
+Stacktrace will look like this.
 
 ```
 java.lang.RuntimeException: Nested step exception
@@ -473,23 +417,15 @@ You can use step name or step description replacements by the way provided by Al
 stepsChain()
     .withContext("value")
     .withContext(111)
-    .step("Step with context = {context} and previous context = {context2}", ((integer, string) -> {
+    .step("Step with context = {context} and previous context = {context2}", (integer, string) -> {
         //...
-    }));
+    })
+    .step("Step with context = {0} and previous context = {1}", (integer, string) -> {
+        //...
+    });
 ```
 
-or
-
-```java
-stepsChain()
-    .withContext("value")
-    .withContext(111)
-    .step("Step with context = {0} and previous context = {1}", ((integer, string) -> {
-        //...
-    }));
-```
-
-This step will be reported with name "Step with context = 111 and previous context = value".
+This steps will be reported with name "Step with context = 111 and previous context = value".
 
 ## Java 8 unreported exception bug
 
@@ -503,7 +439,7 @@ stepsChain()
     );
 ```
 
-This code can fail to build with this exception `java: unreported exception java.lang.Throwable; must be caught or
+This code can fail build with this exception `java: unreported exception java.lang.Throwable; must be caught or
 declared to be thrown`.
 
 You can switch to Java 9+ or use functional interfaces static methods to hide any exceptions.
