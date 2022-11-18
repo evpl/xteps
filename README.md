@@ -59,18 +59,20 @@ class ExampleTest {
             /* ... */
             return new ChromeDriver();
         });
-        step("Open page", () ->
-            driver.navigate().to("https://.../login")
-        );
-        step("Type login", () ->
-            driver.findElement(By.id("login_field")).sendKeys("user123")
-        );
-        step("Type password", () ->
-            driver.findElement(By.id("password_field")).sendKeys("1234567890")
-        );
-        step("Click on login button", () ->
-            driver.findElements(By.id("login_button"))
-        );
+        step("Login", () -> {
+            step("Open page", () ->
+                driver.navigate().to("https://.../login")
+            );
+            step("Type login", () ->
+                driver.findElement(By.id("login_field")).sendKeys("user123")
+            );
+            step("Type password", () ->
+                driver.findElement(By.id("password_field")).sendKeys("1234567890")
+            );
+            step("Click on login button", () ->
+                driver.findElements(By.id("login_button"))
+            );
+        });
         final Connection dbConnection = stepTo("Get database connection", () -> {
             /* ... */
             return getDatabaseConnection();
@@ -104,22 +106,20 @@ class ExampleTest {
                 return new ChromeDriver();
             })
             .hook(WebDriver::quit)
-            .step("Open page", driver ->
-                driver.navigate().to("https://.../login")
+            .nestedSteps("Login", chain -> chain
+                .step("Open page", driver ->
+                    driver.navigate().to("https://.../login")
+                )
+                .step("Type login", driver ->
+                    driver.findElement(By.id("login_field")).sendKeys("user123")
+                )
+                .step("Type password", driver ->
+                    driver.findElement(By.id("password_field")).sendKeys("1234567890")
+                )
+                .step("Click on login button", driver ->
+                    driver.findElements(By.id("login_button"))
+                )
             )
-            .step("Type login", driver ->
-                driver.findElement(By.id("login_field")).sendKeys("user123")
-            )
-            .step("Type password", driver ->
-                driver.findElement(By.id("password_field")).sendKeys("1234567890")
-            )
-            .step("Click on login button", driver ->
-                driver.findElements(By.id("login_button"))
-            )
-            .stepToContext("Get database connection", () -> {
-                /* ... */
-                return getDatabaseConnection();
-            })
             .hook(Connection::close)
             .step("Check user full name label", (dbConnection, driver) -> {
                 final By usernameLabelLocator = By.id("full_name_label");
