@@ -34,6 +34,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      * Calls all hooks in this steps chain. Exceptions will be added to the base
      * exception as suppressed exceptions.
      *
+     * @return this steps chain
      * @throws XtepsException if one or more hooks threw exceptions
      */
     S callHooks();
