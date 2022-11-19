@@ -16,8 +16,8 @@
 package com.plugatar.xteps.base;
 
 import com.plugatar.xteps.base.container.DefaultHookContainer;
+import com.plugatar.xteps.base.handler.DefaultExceptionHandler;
 import com.plugatar.xteps.base.handler.FakeExceptionHandler;
-import com.plugatar.xteps.base.handler.ThreadLocalMemorizingCleanStackTraceExceptionHandler;
 import com.plugatar.xteps.base.reporter.DefaultStepReporter;
 import com.plugatar.xteps.base.reporter.FakeStepReporter;
 
@@ -109,7 +109,7 @@ public interface XtepsBase {
                 stepReporter = new FakeStepReporter();
             }
             final ExceptionHandler exceptionHandler = booleanProperty(properties, "xteps.cleanStackTrace", true)
-                ? new ThreadLocalMemorizingCleanStackTraceExceptionHandler()
+                ? new DefaultExceptionHandler()
                 : new FakeExceptionHandler();
             return new XtepsBase() {
                 @Override

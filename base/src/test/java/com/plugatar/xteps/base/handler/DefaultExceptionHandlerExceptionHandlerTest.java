@@ -26,13 +26,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Tests for {@link ThreadLocalMemorizingCleanStackTraceExceptionHandler}.
+ * Tests for {@link DefaultExceptionHandler}.
  */
-final class ThreadLocalMemorizingCleanStackTraceExceptionHandlerTest {
+final class DefaultExceptionHandlerExceptionHandlerTest {
 
     @Test
     void handleMethodThrowsExceptionForNullArg() {
-        final ExceptionHandler handler = new ThreadLocalMemorizingCleanStackTraceExceptionHandler();
+        final ExceptionHandler handler = new DefaultExceptionHandler();
 
         assertThatCode(() -> handler.handle((Throwable) null))
             .isInstanceOf(XtepsException.class);
@@ -40,7 +40,7 @@ final class ThreadLocalMemorizingCleanStackTraceExceptionHandlerTest {
 
     @Test
     void handleMethod() {
-        final ExceptionHandler handler = new ThreadLocalMemorizingCleanStackTraceExceptionHandler();
+        final ExceptionHandler handler = new DefaultExceptionHandler();
         final Throwable baseException = new Throwable("base exception");
         final Throwable causeException = new Throwable("cause exception");
         final Throwable suppressedException = new Throwable("suppressed exception");
