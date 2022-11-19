@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.4 (planning)
+## 5.4 (released 19.11.2022)
 
 * PR #61 added Qase integration
 * PR #60 DefaultException handler memorize only last exception

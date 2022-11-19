@@ -27,16 +27,16 @@
     <modules>
         <module>base</module>
         <module>base-allure</module>
-        <module>base-reportportal</module>
         <module>base-qase</module>
+        <module>base-reportportal</module>
         <module>unchecked-xteps</module>
         <module>unchecked-xteps-allure</module>
-        <module>unchecked-xteps-reportportal</module>
         <module>unchecked-xteps-qase</module>
+        <module>unchecked-xteps-reportportal</module>
         <module>xteps</module>
         <module>xteps-allure</module>
-        <module>xteps-reportportal</module>
         <module>xteps-qase</module>
+        <module>xteps-reportportal</module>
     </modules>
 
     <name>Parent</name>

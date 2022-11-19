@@ -10,13 +10,15 @@
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | xteps                        | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)                                               | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps)                                               |
 | xteps-allure                 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)                                 | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)                                 |
+| xteps-qase                   | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase)                                     | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-qase/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                                     |
 | xteps-reportportal           | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal)                     | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal)                     |
 | unchecked-xteps              | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps)                           | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                           |
 | unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
+| unchecked-xteps-qase         | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase)                 | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-qase/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                 |
 | unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
 
-Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure and ReportPortal are
-ready, but you can write your own listener for another reporting system or just create an issue.
+Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure, Qase and ReportPortal
+are ready, but you can write your own listener for another reporting system or just create an issue.
 
 ## Table of Contents
 
@@ -30,7 +32,7 @@ ready, but you can write your own listener for another reporting system or just 
     * [Steps chain hooks](#Steps-chain-hooks)
     * [Clean stack trace](#Clean-stack-trace)
     * [Checked exceptions](#Checked-exceptions)
-    * [Allure and ReportPortal integration](#Allure-and-ReportPortal-integration)
+    * [Integrations](#Integrations)
 * [Java 8 unreported exception bug](#Java-8-unreported-exception-bug)
 
 ## How to use
@@ -40,6 +42,7 @@ Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 |                         | Java (with checked exceptions) | Java (without checked exceptions) / Kotlin JVM |
 |-------------------------|--------------------------------|------------------------------------------------|
 | Allure                  | `xteps-allure`                 | `unchecked-xteps-allure`                       |
+| Qase                    | `xteps-qase`                   | `unchecked-xteps-qase`                         |
 | ReportPortal            | `xteps-reportportal`           | `unchecked-xteps-reportportal`                 |
 | Custom reporting system | `xteps`                        | `unchecked-xteps`                              |
 
@@ -426,11 +429,11 @@ void test() {
 }
 ```
 
-### Allure and ReportPortal integration
+### Integrations
 
-Set up your project with Allure / ReportPortal and then just add suitable Xteps dependency.
+Set up your project with Allure / Qase / ReportPortal and then just add suitable Xteps dependency.
 
-You can use step name or step description replacements by the way provided by Allure / ReportPortal.
+You can use step name or step description replacements by the way provided by Allure / Qase / ReportPortal.
 
 ```java
 stepsChain()
@@ -445,6 +448,9 @@ stepsChain()
 ```
 
 This steps will be reported with name "Step with context = 111 and previous context = value".
+
+You can also use utility methods for Allure and Qase - `AllureStepUtils` and `QaseStepUtils`. It allows you to change
+the step name and other step attributes at runtime.
 
 ## Java 8 unreported exception bug
 
