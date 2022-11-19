@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4 (planning)
+
+* PR #60 DefaultException handler memorize only last exception
+
 ## 5.3 (released 16.11.2022)
 
 * PR #59 provided Allure and ReportPortal dependencies
