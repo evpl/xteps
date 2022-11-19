@@ -43,6 +43,7 @@ final class AllureStepListenerTest {
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         allureLifecycle.updateStep(uuid, stepResult::set);
         assertThat(stepResult.get().getName()).isEqualTo("step");
+        assertThat(stepResult.get().getDescription()).isEqualTo(stepDescription);
         assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
 
         allureLifecycle.stopStep(uuid);
@@ -58,6 +59,7 @@ final class AllureStepListenerTest {
         final AtomicReference<StepResult> stepResult = new AtomicReference<>();
         Allure.getLifecycle().updateStep(uuid, stepResult::set);
         assertThat(stepResult.get().getName()).isEqualTo(stepName);
+        assertThat(stepResult.get().getDescription()).isNull();
         assertThat(stepResult.get().getStage()).isEqualTo(Stage.RUNNING);
 
         Allure.getLifecycle().stopStep(uuid);

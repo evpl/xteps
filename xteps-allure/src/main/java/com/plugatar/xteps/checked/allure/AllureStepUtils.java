@@ -20,6 +20,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Parameter;
+import io.qameta.allure.model.StepResult;
 import io.qameta.allure.util.ResultsUtils;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -178,5 +179,20 @@ public final class AllureStepUtils {
         final Parameter parameter = new Parameter();
         updateConsumer.accept(parameter);
         Allure.getLifecycle().updateStep(stepResult -> stepResult.getParameters().add(parameter));
+    }
+
+    /**
+     * Updates the current step.
+     *
+     * @param updateConsumer the update consumer
+     * @param <E>            the {@code updateConsumer} exception type
+     * @throws XtepsException if {@code updateConsumer} is null
+     * @throws E              if {@code updateConsumer} threw exception
+     */
+    public static <E extends Throwable> void updateStep(
+        final ThrowingConsumer<StepResult, ? extends E> updateConsumer
+    ) throws E {
+        if (updateConsumer == null) { throw new XtepsException("updateConsumer arg is null"); }
+        Allure.getLifecycle().updateStep(stepResult -> ThrowingConsumer.unchecked(updateConsumer).accept(stepResult));
     }
 }
