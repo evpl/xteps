@@ -21,6 +21,9 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+/**
+ * Tests for {@link ReportPortalStepListener}.
+ */
 final class ReportPortalStepListenerTest {
 
     @Test

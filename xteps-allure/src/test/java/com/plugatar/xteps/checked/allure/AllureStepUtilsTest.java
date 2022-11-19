@@ -47,6 +47,7 @@ final class AllureStepUtilsTest {
         final AtomicReference<StepResult> stepResultRef = new AtomicReference<>();
         allureLifecycle.updateStep(stepUUID, stepResultRef::set);
         assertThat(stepResultRef.get().getName()).isEqualTo("new step name");
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -57,6 +58,7 @@ final class AllureStepUtilsTest {
 
         assertThatCode(() -> AllureStepUtils.stepName((ThrowingFunction<String, String, ?>) null))
             .isInstanceOf(XtepsException.class);
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -70,6 +72,7 @@ final class AllureStepUtilsTest {
         final AtomicReference<StepResult> stepResultRef = new AtomicReference<>();
         allureLifecycle.updateStep(stepUUID, stepResultRef::set);
         assertThat(stepResultRef.get().getName()).isEqualTo("new step name");
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -83,6 +86,7 @@ final class AllureStepUtilsTest {
         final AtomicReference<StepResult> stepResultRef = new AtomicReference<>();
         allureLifecycle.updateStep(stepUUID, stepResultRef::set);
         assertThat(stepResultRef.get().getDescription()).isEqualTo("new step description");
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -93,6 +97,7 @@ final class AllureStepUtilsTest {
 
         assertThatCode(() -> AllureStepUtils.stepDescription((ThrowingFunction<String, String, ?>) null))
             .isInstanceOf(XtepsException.class);
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -101,11 +106,12 @@ final class AllureStepUtilsTest {
         final String stepUUID = UUID.randomUUID().toString();
         allureLifecycle.startStep(stepUUID, new StepResult().setDescription("step description"));
 
-        final String methodResult = AllureStepUtils.stepDescription(name -> "new " + name);
+        final String methodResult = AllureStepUtils.stepDescription(description -> "new " + description);
         assertThat(methodResult).isEqualTo("new step description");
         final AtomicReference<StepResult> stepResultRef = new AtomicReference<>();
         allureLifecycle.updateStep(stepUUID, stepResultRef::set);
         assertThat(stepResultRef.get().getDescription()).isEqualTo("new step description");
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -126,6 +132,7 @@ final class AllureStepUtilsTest {
         assertThat(actualParameter.getValue()).isEqualTo("param value");
         assertThat(actualParameter.getExcluded()).isNull();
         assertThat(actualParameter.getMode()).isNull();
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -146,6 +153,7 @@ final class AllureStepUtilsTest {
         assertThat(actualParameter.getValue()).isEqualTo("param value");
         assertThat(actualParameter.getExcluded()).isTrue();
         assertThat(actualParameter.getMode()).isNull();
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -166,6 +174,7 @@ final class AllureStepUtilsTest {
         assertThat(actualParameter.getValue()).isEqualTo("param value");
         assertThat(actualParameter.getExcluded()).isNull();
         assertThat(actualParameter.getMode()).isEqualTo(Parameter.Mode.HIDDEN);
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -187,6 +196,7 @@ final class AllureStepUtilsTest {
         assertThat(actualParameter.getValue()).isEqualTo("param value");
         assertThat(actualParameter.getExcluded()).isTrue();
         assertThat(actualParameter.getMode()).isEqualTo(Parameter.Mode.HIDDEN);
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -197,6 +207,7 @@ final class AllureStepUtilsTest {
 
         assertThatCode(() -> AllureStepUtils.stepParameter((ThrowingConsumer<Parameter, ?>) null))
             .isInstanceOf(XtepsException.class);
+        allureLifecycle.stopStep(stepUUID);
     }
 
     @Test
@@ -217,5 +228,22 @@ final class AllureStepUtilsTest {
         assertThat(actualParameter.getValue()).isEqualTo("param value");
         assertThat(actualParameter.getExcluded()).isTrue();
         assertThat(actualParameter.getMode()).isEqualTo(Parameter.Mode.HIDDEN);
+        allureLifecycle.stopStep(stepUUID);
+    }
+
+    @Test
+    void updateStepMethod() {
+        final AllureLifecycle allureLifecycle = Allure.getLifecycle();
+        final String stepUUID = UUID.randomUUID().toString();
+        allureLifecycle.startStep(stepUUID, new StepResult());
+        final String stepName = "step name";
+        final String stepDescription = "step description";
+
+        AllureStepUtils.updateStep(stepResult -> stepResult.setName(stepName).setDescription(stepDescription));
+        final AtomicReference<StepResult> stepResultRef = new AtomicReference<>();
+        allureLifecycle.updateStep(stepUUID, stepResultRef::set);
+        assertThat(stepResultRef.get().getName()).isEqualTo(stepName);
+        assertThat(stepResultRef.get().getDescription()).isEqualTo(stepDescription);
+        allureLifecycle.stopStep(stepUUID);
     }
 }

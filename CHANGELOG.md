@@ -2,6 +2,7 @@
 
 ## 5.4 (planning)
 
+* PR #61 added Qase integration
 * PR #60 DefaultException handler memorize only last exception
 
 ## 5.3 (released 16.11.2022)
