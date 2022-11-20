@@ -30,7 +30,7 @@ import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
  * @param <C> the context type
  */
 public interface CtxSC<C> extends
-    BaseCtxSC<C, CtxSC<C>>,
+    BaseCtxSC<CtxSC<C>>,
     Base1CtxSC<C> {
 
     /**

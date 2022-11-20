@@ -20,17 +20,9 @@ import com.plugatar.xteps.checked.chain.MemNoCtxSC;
 /**
  * Base contextual steps chain.
  *
- * @param <C> the context type
  * @param <S> the type of the steps chain implementing {@code BaseCtxSC}
  */
-public interface BaseCtxSC<C, S extends BaseCtxSC<C, S>> extends BaseSC<S> {
-
-    /**
-     * Returns the context.
-     *
-     * @return the context
-     */
-    C context();
+public interface BaseCtxSC<S extends BaseCtxSC<S>> extends BaseSC<S> {
 
     /**
      * Returns a no context steps chain.

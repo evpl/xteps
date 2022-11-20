@@ -34,7 +34,7 @@ import com.plugatar.xteps.checked.stepobject.SupplierStep;
  *
  * @param <P> the previous context steps chain type
  */
-public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> {
+public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final HookContainer hookContainer;

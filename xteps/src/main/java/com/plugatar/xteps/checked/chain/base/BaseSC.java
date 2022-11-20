@@ -56,7 +56,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      * @param <U>     the new context type
      * @return contextual steps chain
      */
-    <U> BaseCtxSC<U, ?> withContext(U context);
+    <U> BaseCtxSC<?> withContext(U context);
 
     /**
      * Returns a context steps chain of the new context.
@@ -68,7 +68,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      * @throws XtepsException if {@code contextSupplier} is null
      * @throws E              if {@code contextSupplier} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> withContext(
+    <U, E extends Throwable> BaseCtxSC<?> withContext(
         ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E;
 
@@ -172,7 +172,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -189,7 +189,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepNamePrefix,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
@@ -207,7 +207,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepName,
         ThrowingSupplier<? extends U, ? extends E> step
     ) throws E;
@@ -226,7 +226,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingSupplier<? extends U, ? extends E> step

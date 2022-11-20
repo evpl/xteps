@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 Evgenii Plugatar
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.plugatar.xteps.unchecked.chain.base;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
@@ -21,7 +36,14 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<C, ?> hook(ThrowingConsumer<C, ?> hook);
+    BaseCtxSC<?> hook(ThrowingConsumer<C, ?> hook);
+
+    /**
+     * Returns the context.
+     *
+     * @return the context
+     */
+    C context();
 
     /**
      * Returns a context steps chain of the new context.
@@ -31,7 +53,7 @@ public interface Base1CtxSC<C> {
      * @return contextual steps chain
      * @throws XtepsException if {@code contextFunction} is null
      */
-    <U> BaseCtxSC<U, ?> withContext(
+    <U> BaseCtxSC<?> withContext(
         ThrowingFunction<? super C, ? extends U, ?> contextFunction
     );
 
@@ -42,7 +64,7 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
      */
-    BaseCtxSC<C, ?> supplyContext(
+    BaseCtxSC<?> supplyContext(
         ThrowingConsumer<? super C, ?> consumer
     );
 
@@ -66,7 +88,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         ConsumerStep<? super C> step
     );
 
@@ -80,7 +102,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepNamePrefix,
         ConsumerStep<? super C> step
     );
@@ -94,7 +116,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -109,7 +131,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepName,
         String stepDescription,
         ThrowingConsumer<? super C, ?> step
@@ -124,7 +146,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         FunctionStep<? super C, ? extends U> step
     );
 
@@ -139,7 +161,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepNamePrefix,
         FunctionStep<? super C, ? extends U> step
     );
@@ -155,7 +177,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepName,
         ThrowingFunction<? super C, ? extends U, ?> step
     );
@@ -172,7 +194,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingFunction<? super C, ? extends U, ?> step

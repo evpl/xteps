@@ -2,6 +2,7 @@
 
 ## 5.5 (planned)
 
+* PR #64 added methods for getting contexts
 * PR #63 step listeners refactoring
 
 ## 5.4 (released 19.11.2022)

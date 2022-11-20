@@ -36,7 +36,7 @@ import static com.plugatar.xteps.unchecked.chain.impl.StepsChainUtils.sneakyThro
  *
  * @param <P> the previous context steps chain type
  */
-public class MemNoCtxSCImpl<P extends BaseCtxSC<?, ?>> implements MemNoCtxSC<P> {
+public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final HookContainer hookContainer;

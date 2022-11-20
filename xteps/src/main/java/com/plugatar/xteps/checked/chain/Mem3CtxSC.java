@@ -39,46 +39,46 @@ import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
  * Extended memorizing contextual steps chain.
  *
  * @param <C>  the context type
- * @param <P1> the first previous context type
- * @param <P2> the second previous context type
+ * @param <C2> the second context type
+ * @param <C3> the third context type
  * @param <PS> the previous context steps chain type
  */
-public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
-    BaseCtxSC<C, Mem3CtxSC<C, P1, P2, PS>>,
+public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
+    BaseCtxSC<Mem3CtxSC<C, C2, C3, PS>>,
     Base1CtxSC<C>,
-    Base2CtxSC<C, P1>,
-    Base3CtxSC<C, P1, P2>,
+    Base2CtxSC<C, C2>,
+    Base3CtxSC<C, C2, C3>,
     MemSC<PS> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    Mem3CtxSC<C, P1, P2, PS> hook(ThrowingConsumer<C, ?> hook);
+    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingConsumer<C, ?> hook);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    Mem3CtxSC<C, P1, P2, PS> hook(ThrowingBiConsumer<C, P1, ?> hook);
+    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingBiConsumer<C, C2, ?> hook);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    Mem3CtxSC<C, P1, P2, PS> hook(ThrowingTriConsumer<C, P1, P2, ?> hook);
+    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> withContext(U context);
+    <U> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(U context);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> withContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(
         ThrowingSupplier<? extends U, ? extends E> contextSupplier
     ) throws E;
 
@@ -86,7 +86,7 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> withContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(
         ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
     ) throws E;
 
@@ -94,23 +94,23 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> withContext(
-        ThrowingBiFunction<? super C, ? super P1, ? extends U, ? extends E> contextFunction
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ? extends E> contextFunction
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> withContext(
-        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> contextFunction
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(
+        ThrowingTriFunction<? super C, ? super C2, ? super C3, ? extends U, ? extends E> contextFunction
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> supplyContext(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
         ThrowingConsumer<? super C, ? extends E> consumer
     ) throws E;
 
@@ -118,23 +118,23 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> supplyContext(
-        ThrowingBiConsumer<? super C, ? super P1, ? extends E> consumer
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
+        ThrowingBiConsumer<? super C, ? super C2, ? extends E> consumer
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> supplyContext(
-        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> consumer
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
+        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> consumer
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
 
@@ -142,23 +142,23 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
-        BiConsumerStep<? super C, ? super P1, ? extends E> step
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
+        BiConsumerStep<? super C, ? super C2, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
-        TriConsumerStep<? super C, ? super P1, ? super P2, ? extends E> step
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
+        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepNamePrefix,
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
@@ -167,25 +167,25 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepNamePrefix,
-        BiConsumerStep<? super C, ? super P1, ? extends E> step
+        BiConsumerStep<? super C, ? super C2, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepNamePrefix,
-        TriConsumerStep<? super C, ? super P1, ? super P2, ? extends E> step
+        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
         ThrowingConsumer<? super C, ? extends E> step
     ) throws E;
@@ -194,25 +194,25 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
-        ThrowingBiConsumer<? super C, ? super P1, ? extends E> step
+        ThrowingBiConsumer<? super C, ? super C2, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
-        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> step
+        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
         String stepDescription,
         ThrowingConsumer<? super C, ? extends E> step
@@ -222,27 +222,27 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
         String stepDescription,
-        ThrowingBiConsumer<? super C, ? super P1, ? extends E> step
+        ThrowingBiConsumer<? super C, ? super C2, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <E extends Throwable> Mem3CtxSC<C, P1, P2, PS> step(
+    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
         String stepName,
         String stepDescription,
-        ThrowingTriConsumer<? super C, ? super P1, ? super P2, ? extends E> step
+        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -250,7 +250,7 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -258,23 +258,23 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
-        BiFunctionStep<? super C, ? super P1, ? extends U, ? extends E> step
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
+        BiFunctionStep<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
-        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
+        TriFunctionStep<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepNamePrefix,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
@@ -283,7 +283,7 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepNamePrefix,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
@@ -292,25 +292,25 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepNamePrefix,
-        BiFunctionStep<? super C, ? super P1, ? extends U, ? extends E> step
+        BiFunctionStep<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepNamePrefix,
-        TriFunctionStep<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+        TriFunctionStep<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         ThrowingSupplier<? extends U, ? extends E> step
     ) throws E;
@@ -319,7 +319,7 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E;
@@ -328,25 +328,25 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
-        ThrowingBiFunction<? super C, ? super P1, ? extends U, ? extends E> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
-        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+        ThrowingTriFunction<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingSupplier<? extends U, ? extends E> step
@@ -356,7 +356,7 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingFunction<? super C, ? extends U, ? extends E> step
@@ -366,19 +366,19 @@ public interface Mem3CtxSC<C, P1, P2, PS extends BaseCtxSC<?, ?>> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         String stepDescription,
-        ThrowingBiFunction<? super C, ? super P1, ? extends U, ? extends E> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem3CtxSC<U, C, P1, Mem3CtxSC<C, P1, P2, PS>> stepToContext(
+    <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
         String stepName,
         String stepDescription,
-        ThrowingTriFunction<? super C, ? super P1, ? super P2, ? extends U, ? extends E> step
+        ThrowingTriFunction<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E;
 }
