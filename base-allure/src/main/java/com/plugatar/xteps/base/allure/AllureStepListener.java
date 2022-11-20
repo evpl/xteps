@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {@link StepListener} implementation reporting to Allure.
+ * {@link StepListener} implementation for Allure.
  */
 public class AllureStepListener implements StepListener {
     private final String emptyStepNameReplacement;
@@ -52,6 +52,7 @@ public class AllureStepListener implements StepListener {
     public AllureStepListener(final String emptyStepNameReplacement,
                               final String contextParamName,
                               final String stepDescriptionAttachmentName) {
+        final Class<Allure> dependencyCheck = Allure.class;
         if (emptyStepNameReplacement == null) {
             throw new NullPointerException("emptyStepNameReplacement arg is null");
         }

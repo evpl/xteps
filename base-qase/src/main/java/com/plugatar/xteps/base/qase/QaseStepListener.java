@@ -24,10 +24,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * {@link StepListener} implementation reporting to Qase.
+ * {@link StepListener} implementation for Qase.
  */
 public class QaseStepListener implements StepListener {
     private final String emptyStepNameReplacement;
@@ -39,7 +38,7 @@ public class QaseStepListener implements StepListener {
      * Zero-argument public ctor.
      */
     public QaseStepListener() {
-        this("step", "context");
+        this("step", "context", '{', '}');
     }
 
     /**
@@ -49,7 +48,10 @@ public class QaseStepListener implements StepListener {
      * @param contextParamName         the context param name
      */
     public QaseStepListener(final String emptyStepNameReplacement,
-                            final String contextParamName) {
+                            final String contextParamName,
+                            final char leftReplacementBorder,
+                            final char rightReplacementBorder) {
+        final Class<StepStorage> dependencyCheck = StepStorage.class;
         if (emptyStepNameReplacement == null) {
             throw new NullPointerException("emptyStepNameReplacement arg is null");
         }
@@ -64,8 +66,8 @@ public class QaseStepListener implements StepListener {
         }
         this.emptyStepNameReplacement = emptyStepNameReplacement;
         this.contextParamName = contextParamName;
-        this.leftReplacementBorder = '{';
-        this.rightReplacementBorder = '}';
+        this.leftReplacementBorder = leftReplacementBorder;
+        this.rightReplacementBorder = rightReplacementBorder;
     }
 
     @Override
@@ -125,11 +127,11 @@ public class QaseStepListener implements StepListener {
     private Map<String, Object> contextsMap(final Object[] contexts) {
         if (contexts.length != 0) {
             final Map<String, Object> map = new HashMap<>(contexts.length * 2, 1.0f);
-            map.put(this.contextParamName, contexts[0]);
-            map.put("0", contexts[0]);
+            map.put(this.wrappedParamName(this.contextParamName), contexts[0]);
+            map.put(this.wrappedParamName("0"), contexts[0]);
             for (int idx = 1; idx < contexts.length; ++idx) {
-                map.put(String.valueOf(idx), contexts[idx]);
-                map.put(this.contextParamName + (idx + 1), contexts[idx]);
+                map.put(this.wrappedParamName(String.valueOf(idx)), contexts[idx]);
+                map.put(this.wrappedParamName(this.contextParamName + (idx + 1)), contexts[idx]);
             }
             return map;
         }
@@ -140,42 +142,40 @@ public class QaseStepListener implements StepListener {
                                      final Map<String, Object> replacements) {
         String processedTemplate = template;
         for (final Map.Entry<String, Object> entry : replacements.entrySet()) {
-            final String wrappedParamName = this.wrapParamName(entry.getKey());
-            if (template.contains(wrappedParamName)) {
-                processedTemplate = processedTemplate.replaceAll(
-                    "\\" + wrappedParamName, objToString(entry.getValue())
-                );
-            }
+            processedTemplate = processedTemplate.replace(entry.getKey(), objToString(entry.getValue()));
         }
         return processedTemplate;
     }
 
-    private String wrapParamName(final String paramName) {
+    private String wrappedParamName(final String paramName) {
         return this.leftReplacementBorder + paramName + this.rightReplacementBorder;
     }
 
-    private static String objToString(Object args) {
-        if (args.getClass().isArray()) {
-            if (args instanceof int[]) {
-                return Arrays.toString((int[]) args);
-            } else if (args instanceof long[]) {
-                return Arrays.toString((long[]) args);
-            } else if (args instanceof double[]) {
-                return Arrays.toString((double[]) args);
-            } else if (args instanceof float[]) {
-                return Arrays.toString((float[]) args);
-            } else if (args instanceof boolean[]) {
-                return Arrays.toString((boolean[]) args);
-            } else if (args instanceof short[]) {
-                return Arrays.toString((short[]) args);
-            } else if (args instanceof char[]) {
-                return Arrays.toString((char[]) args);
-            } else if (args instanceof byte[]) {
-                return Arrays.toString((byte[]) args);
+    private static String objToString(final Object obj) {
+        if (obj == null) {
+            return "null";
+        }
+        if (obj.getClass().isArray()) {
+            if (obj instanceof int[]) {
+                return Arrays.toString((int[]) obj);
+            } else if (obj instanceof long[]) {
+                return Arrays.toString((long[]) obj);
+            } else if (obj instanceof double[]) {
+                return Arrays.toString((double[]) obj);
+            } else if (obj instanceof float[]) {
+                return Arrays.toString((float[]) obj);
+            } else if (obj instanceof boolean[]) {
+                return Arrays.toString((boolean[]) obj);
+            } else if (obj instanceof short[]) {
+                return Arrays.toString((short[]) obj);
+            } else if (obj instanceof char[]) {
+                return Arrays.toString((char[]) obj);
+            } else if (obj instanceof byte[]) {
+                return Arrays.toString((byte[]) obj);
             } else {
-                return Arrays.stream(((Object[]) args)).map(String::valueOf).collect(Collectors.joining(", "));
+                return Arrays.toString((Object[]) obj);
             }
         }
-        return String.valueOf(args);
+        return String.valueOf(obj);
     }
 }

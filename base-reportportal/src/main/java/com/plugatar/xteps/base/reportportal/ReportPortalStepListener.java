@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {@link StepListener} implementation reporting to Report Portal.
+ * {@link StepListener} implementation for ReportPortal.
  */
 public class ReportPortalStepListener implements StepListener {
     private final String emptyStepNameReplacement;
@@ -50,6 +50,7 @@ public class ReportPortalStepListener implements StepListener {
     public ReportPortalStepListener(final String emptyStepNameReplacement,
                                     final String contextParamName,
                                     final TemplateConfiguration templateConfiguration) {
+        final Class<Launch> dependencyCheck = Launch.class;
         if (emptyStepNameReplacement == null) {
             throw new NullPointerException("emptyStepNameReplacement arg is null");
         }
