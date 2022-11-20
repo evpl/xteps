@@ -14,5 +14,6 @@ Briefly describe the issue you are experiencing (or the feature you want to see 
 If necessary, describe the problem you have been experiencing in more detail.
 
 **Environment**
- - Xteps version
- - Java version
+
+- Xteps version
+- Java version

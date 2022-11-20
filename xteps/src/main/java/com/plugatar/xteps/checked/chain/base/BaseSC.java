@@ -112,18 +112,18 @@ public interface BaseSC<S extends BaseSC<S>> {
     ) throws E;
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns this steps chain.
+     * Performs and reports given step with given keyword in the step name and returns this steps chain.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <E>            the {@code step} exception type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <E>     the {@code step} exception type
      * @return this steps chain
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     <E extends Throwable> S step(
-        String stepNamePrefix,
+        String keyword,
         RunnableStep<? extends E> step
     ) throws E;
 
@@ -177,20 +177,20 @@ public interface BaseSC<S extends BaseSC<S>> {
     ) throws E;
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns
+     * Performs and reports given step with given keyword in the step name and returns
      * a contextual steps chain of the new context.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <U>            the context type
-     * @param <E>            the {@code step} exception type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <U>     the context type
+     * @param <E>     the {@code step} exception type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     <U, E extends Throwable> BaseCtxSC<?> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -248,20 +248,20 @@ public interface BaseSC<S extends BaseSC<S>> {
     ) throws E;
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns
+     * Performs and reports given step with given keyword in the step name and returns
      * the step result.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <R>            the result type
-     * @param <E>            the {@code step} exception type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <R>     the result type
+     * @param <E>     the {@code step} exception type
      * @return {@code step} result
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     <R, E extends Throwable> R stepTo(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends R, ? extends E> step
     ) throws E;
 

@@ -82,7 +82,7 @@ public interface CtxSC<C> extends
      */
     @Override
     CtxSC<C> step(
-        String stepNamePrefix,
+        String keyword,
         ConsumerStep<? super C> step
     );
 
@@ -126,7 +126,7 @@ public interface CtxSC<C> extends
      */
     @Override
     <U> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U> step
     );
 
@@ -135,7 +135,7 @@ public interface CtxSC<C> extends
      */
     @Override
     <U> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends U> step
     );
 

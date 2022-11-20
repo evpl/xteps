@@ -82,7 +82,7 @@ public interface CtxSC<C> extends
      */
     @Override
     <E extends Throwable> CtxSC<C> step(
-        String stepNamePrefix,
+        String keyword,
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
 
@@ -126,7 +126,7 @@ public interface CtxSC<C> extends
      */
     @Override
     <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -135,7 +135,7 @@ public interface CtxSC<C> extends
      */
     @Override
     <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 

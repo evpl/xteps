@@ -104,7 +104,7 @@ public final class Xteps {
     }
 
     /**
-     * Performs and reports given step with given prefix in the step name.
+     * Performs and reports given step with given keyword in the step name.
      *
      * <p>Code example:</p>
      *
@@ -121,19 +121,19 @@ public final class Xteps {
      * step("GIVEN", new CustomStep());
      * }</pre>
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <E>            the {@code step} exception type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <E>     the {@code step} exception type
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     public static <E extends Throwable> void step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep<? extends E> step
     ) throws E {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepNamePrefix, step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(keyword, step);
     }
 
     /**
@@ -237,7 +237,7 @@ public final class Xteps {
     }
 
     /**
-     * reports given step with given prefix in the step name and returns the step result.
+     * Reports given step with given keyword in the step name and returns the step result.
      *
      * <p>Code example:</p>
      *
@@ -255,21 +255,21 @@ public final class Xteps {
      * String result = stepTo("GIVEN", new CustomStep());
      * }</pre>
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <R>            the result type
-     * @param <E>            the {@code step} exception type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <R>     the result type
+     * @param <E>     the {@code step} exception type
      * @return {@code step} result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
     public static <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepNamePrefix, step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(keyword, step);
     }
 
     /**

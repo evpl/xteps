@@ -53,7 +53,7 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      */
     @Override
     <U> CtxSC<U> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U> step
     );
 

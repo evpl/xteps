@@ -118,13 +118,13 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
 
     @Override
     public final MemNoCtxSC<P> step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep step
     ) {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).run();
+            step.withKeyword(keyword).run();
             return null;
         });
         return this;
@@ -180,12 +180,12 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
 
     @Override
     public final <U> CtxSC<U> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends U> step
     ) {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.newCtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+        return this.newCtxStepsChain(this.execAction(step.withKeyword(keyword)));
     }
 
     @Override
@@ -218,12 +218,12 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
 
     @Override
     public final <R> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R> step
     ) {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(step.withNamePrefix(stepNamePrefix));
+        return this.execAction(step.withKeyword(keyword));
     }
 
     @Override

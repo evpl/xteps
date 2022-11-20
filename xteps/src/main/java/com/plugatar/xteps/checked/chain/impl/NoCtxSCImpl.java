@@ -95,13 +95,13 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final <E extends Throwable> NoCtxSC step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep<? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).run();
+            step.withKeyword(keyword).run();
             return null;
         });
         return this;
@@ -157,12 +157,12 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final <U, E extends Throwable> CtxSC<U> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.newCtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+        return this.newCtxStepsChain(this.execAction(step.withKeyword(keyword)));
     }
 
     @Override
@@ -195,12 +195,12 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(step.withNamePrefix(stepNamePrefix));
+        return this.execAction(step.withKeyword(keyword));
     }
 
     @Override

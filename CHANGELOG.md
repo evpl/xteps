@@ -2,6 +2,7 @@
 
 ## 5.5 (planned)
 
+* PR #65 renamed stepNamePrefix arguments to keyword
 * PR #64 added methods for getting contexts
 * PR #63 step listeners refactoring
 

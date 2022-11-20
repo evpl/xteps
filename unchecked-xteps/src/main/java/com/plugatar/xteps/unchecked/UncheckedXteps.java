@@ -102,7 +102,7 @@ public final class UncheckedXteps {
     }
 
     /**
-     * Performs and reports given step with given prefix in the step name.
+     * Performs and reports given step with given keyword in the step name.
      *
      * <p>Code example:</p>
      *
@@ -119,17 +119,17 @@ public final class UncheckedXteps {
      * step("GIVEN", new CustomStep());
      * }</pre>
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
+     * @param keyword the keyword
+     * @param step    the step
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
     public static void step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep step
     ) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepNamePrefix, step);
+        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(keyword, step);
     }
 
     /**
@@ -227,7 +227,7 @@ public final class UncheckedXteps {
     }
 
     /**
-     * reports given step with given prefix in the step name and returns the step result.
+     * Reports given step with given keyword in the step name and returns the step result.
      *
      * <p>Code example:</p>
      *
@@ -245,19 +245,19 @@ public final class UncheckedXteps {
      * String result = stepTo("GIVEN", new CustomStep());
      * }</pre>
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <R>            the result type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <R>     the result type
      * @return {@code step} result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepNamePrefix} or {@code step} is null
+     *                        or if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
     public static <R> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R> step
     ) {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepNamePrefix, step);
+        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(keyword, step);
     }
 
     /**
