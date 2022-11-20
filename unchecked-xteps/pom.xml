@@ -60,11 +60,13 @@
     </scm>
 
     <dependencies>
+        <!-- self dependencies -->
         <dependency>
             <groupId>com.plugatar.xteps</groupId>
             <artifactId>base</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

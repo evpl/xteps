@@ -60,6 +60,7 @@
     </scm>
 
     <dependencies>
+        <!-- self dependencies -->
         <dependency>
             <groupId>com.plugatar.xteps</groupId>
             <artifactId>xteps</artifactId>
@@ -70,11 +71,13 @@
             <artifactId>base-reportportal</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- integration dependencies -->
         <dependency>
             <groupId>com.epam.reportportal</groupId>
             <artifactId>client-java</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

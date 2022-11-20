@@ -92,12 +92,12 @@
             </dependency>
             <dependency>
                 <groupId>com.plugatar.xteps</groupId>
-                <artifactId>base-reportportal</artifactId>
+                <artifactId>base-qase</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.plugatar.xteps</groupId>
-                <artifactId>base-qase</artifactId>
+                <artifactId>base-reportportal</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -117,14 +117,14 @@
                 <version>2.20.1</version>
             </dependency>
             <dependency>
-                <groupId>com.epam.reportportal</groupId>
-                <artifactId>client-java</artifactId>
-                <version>5.1.12</version>
-            </dependency>
-            <dependency>
                 <groupId>io.qase</groupId>
                 <artifactId>qase-api</artifactId>
                 <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.epam.reportportal</groupId>
+                <artifactId>client-java</artifactId>
+                <version>5.1.12</version>
             </dependency>
             <!-- test dependencies -->
             <dependency>

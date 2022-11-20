@@ -60,16 +60,19 @@
     </scm>
 
     <dependencies>
+        <!-- self dependencies -->
         <dependency>
             <groupId>com.plugatar.xteps</groupId>
             <artifactId>base</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- integration dependencies -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-java-commons</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>

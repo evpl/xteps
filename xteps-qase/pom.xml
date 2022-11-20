@@ -60,6 +60,7 @@
     </scm>
 
     <dependencies>
+        <!-- self dependencies -->
         <dependency>
             <groupId>com.plugatar.xteps</groupId>
             <artifactId>xteps</artifactId>
@@ -70,11 +71,13 @@
             <artifactId>base-qase</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- integration dependencies -->
         <dependency>
             <groupId>io.qase</groupId>
             <artifactId>qase-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
