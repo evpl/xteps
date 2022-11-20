@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 Evgenii Plugatar
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.plugatar.xteps.unchecked.chain.base;
 
 import com.plugatar.xteps.base.ThrowingBiConsumer;
@@ -9,10 +24,10 @@ import com.plugatar.xteps.unchecked.stepobject.BiFunctionStep;
 /**
  * Base double context steps chain.
  *
- * @param <C> the context type
- * @param <P> the previous context type
+ * @param <C>  the context type
+ * @param <C2> the second context type
  */
-public interface Base2CtxSC<C, P> {
+public interface Base2CtxSC<C, C2> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -22,7 +37,14 @@ public interface Base2CtxSC<C, P> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<C, ?> hook(ThrowingBiConsumer<C, P, ?> hook);
+    BaseCtxSC<?> hook(ThrowingBiConsumer<C, C2, ?> hook);
+
+    /**
+     * Returns the second context.
+     *
+     * @return the second context
+     */
+    C2 context2();
 
     /**
      * Returns a context steps chain of the new context.
@@ -32,8 +54,8 @@ public interface Base2CtxSC<C, P> {
      * @return contextual steps chain
      * @throws XtepsException if {@code contextFunction} is null
      */
-    <U> BaseCtxSC<U, ?> withContext(
-        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> contextFunction
+    <U> BaseCtxSC<?> withContext(
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> contextFunction
     );
 
     /**
@@ -43,8 +65,8 @@ public interface Base2CtxSC<C, P> {
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
      */
-    BaseCtxSC<C, ?> supplyContext(
-        ThrowingBiConsumer<? super C, ? super P, ?> consumer
+    BaseCtxSC<?> supplyContext(
+        ThrowingBiConsumer<? super C, ? super C2, ?> consumer
     );
 
     /**
@@ -56,7 +78,7 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code function} is null
      */
     <R> R applyContext(
-        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> function
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> function
     );
 
     /**
@@ -67,8 +89,8 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
-        BiConsumerStep<? super C, ? super P> step
+    BaseCtxSC<?> step(
+        BiConsumerStep<? super C, ? super C2> step
     );
 
     /**
@@ -81,9 +103,9 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepNamePrefix,
-        BiConsumerStep<? super C, ? super P> step
+        BiConsumerStep<? super C, ? super C2> step
     );
 
     /**
@@ -95,9 +117,9 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepName,
-        ThrowingBiConsumer<? super C, ? super P, ?> step
+        ThrowingBiConsumer<? super C, ? super C2, ?> step
     );
 
     /**
@@ -110,10 +132,10 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<C, ?> step(
+    BaseCtxSC<?> step(
         String stepName,
         String stepDescription,
-        ThrowingBiConsumer<? super C, ? super P, ?> step
+        ThrowingBiConsumer<? super C, ? super C2, ?> step
     );
 
     /**
@@ -125,8 +147,8 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
-        BiFunctionStep<? super C, ? super P, ? extends U> step
+    <U> BaseCtxSC<?> stepToContext(
+        BiFunctionStep<? super C, ? super C2, ? extends U> step
     );
 
     /**
@@ -140,9 +162,9 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepNamePrefix,
-        BiFunctionStep<? super C, ? super P, ? extends U> step
+        BiFunctionStep<? super C, ? super C2, ? extends U> step
     );
 
     /**
@@ -156,9 +178,9 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepName,
-        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> step
     );
 
     /**
@@ -173,10 +195,10 @@ public interface Base2CtxSC<C, P> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<U, ?> stepToContext(
+    <U> BaseCtxSC<?> stepToContext(
         String stepName,
         String stepDescription,
-        ThrowingBiFunction<? super C, ? super P, ? extends U, ?> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> step
     );
 
     /**
@@ -189,7 +211,7 @@ public interface Base2CtxSC<C, P> {
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
-        BiFunctionStep<? super C, ? super P, ? extends R> step
+        BiFunctionStep<? super C, ? super C2, ? extends R> step
     );
 
     /**
@@ -205,7 +227,7 @@ public interface Base2CtxSC<C, P> {
      */
     <R> R stepTo(
         String stepNamePrefix,
-        BiFunctionStep<? super C, ? super P, ? extends R> step
+        BiFunctionStep<? super C, ? super C2, ? extends R> step
     );
 
     /**
@@ -220,7 +242,7 @@ public interface Base2CtxSC<C, P> {
      */
     <R> R stepTo(
         String stepName,
-        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> step
     );
 
     /**
@@ -237,6 +259,6 @@ public interface Base2CtxSC<C, P> {
     <R> R stepTo(
         String stepName,
         String stepDescription,
-        ThrowingBiFunction<? super C, ? super P, ? extends R, ?> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> step
     );
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2022 Evgenii Plugatar
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.plugatar.xteps.checked.chain.base;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
@@ -21,7 +36,14 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<C, ?> hook(ThrowingConsumer<C, ?> hook);
+    BaseCtxSC<?> hook(ThrowingConsumer<C, ?> hook);
+
+    /**
+     * Returns the context.
+     *
+     * @return the context
+     */
+    C context();
 
     /**
      * Returns a context steps chain of the new context.
@@ -33,7 +55,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code contextFunction} is null
      * @throws E              if {@code contextFunction} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> withContext(
+    <U, E extends Throwable> BaseCtxSC<?> withContext(
         ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
     ) throws E;
 
@@ -46,7 +68,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code consumer} is null
      * @throws E              if {@code consumer} threw exception
      */
-    <E extends Throwable> BaseCtxSC<C, ?> supplyContext(
+    <E extends Throwable> BaseCtxSC<?> supplyContext(
         ThrowingConsumer<? super C, ? extends E> consumer
     ) throws E;
 
@@ -74,7 +96,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<C, ?> step(
+    <E extends Throwable> BaseCtxSC<?> step(
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
 
@@ -90,7 +112,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<C, ?> step(
+    <E extends Throwable> BaseCtxSC<?> step(
         String stepNamePrefix,
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
@@ -106,7 +128,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<C, ?> step(
+    <E extends Throwable> BaseCtxSC<?> step(
         String stepName,
         ThrowingConsumer<? super C, ? extends E> step
     ) throws E;
@@ -123,7 +145,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<C, ?> step(
+    <E extends Throwable> BaseCtxSC<?> step(
         String stepName,
         String stepDescription,
         ThrowingConsumer<? super C, ? extends E> step
@@ -140,7 +162,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -157,7 +179,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepNamePrefix,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
@@ -175,7 +197,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepName,
         ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E;
@@ -194,7 +216,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<U, ?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
         String stepName,
         String stepDescription,
         ThrowingFunction<? super C, ? extends U, ? extends E> step

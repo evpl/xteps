@@ -20,7 +20,7 @@ package com.plugatar.xteps.unchecked.chain.base;
  *
  * @param <PS> the previous context steps chain type
  */
-public interface MemSC<PS extends BaseCtxSC<?, ?>> {
+public interface MemSC<PS extends BaseCtxSC<?>> {
 
     /**
      * Returns the previous context steps chain.
