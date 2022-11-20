@@ -2,20 +2,10 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
+[![Version](https://img.shields.io/badge/Version-5.4-blue?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
-[![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps)](https://en.wikipedia.org/wiki/Source_lines_of_code)
-
-|                              | Maven Central                                                                                                                                                                                                                    | Javadoc                                                                                                                                                                     |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps                        | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)                                               | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps)                                               |
-| xteps-allure                 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)                                 | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)                                 |
-| xteps-qase                   | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase)                                     | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-qase/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                                     |
-| xteps-reportportal           | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal)                     | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal)                     |
-| unchecked-xteps              | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps)                           | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                           |
-| unchecked-xteps-allure       | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             | [![Javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-allure/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
-| unchecked-xteps-qase         | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase)                 | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-qase/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                 |
-| unchecked-xteps-reportportal | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) | [![javadoc](https://javadoc.io/badge2/com.plugatar.xteps/unchecked-xteps-reportportal/javadoc.svg)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
+![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
 
 Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure, Qase and ReportPortal
 are ready, but you can write your own listener for another reporting system or just create an issue.
@@ -39,12 +29,14 @@ are ready, but you can write your own listener for another reporting system or j
 
 Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 
-|                         | Java (with checked exceptions) | Java (without checked exceptions) / Kotlin JVM |
-|-------------------------|--------------------------------|------------------------------------------------|
-| Allure                  | `xteps-allure`                 | `unchecked-xteps-allure`                       |
-| Qase                    | `xteps-qase`                   | `unchecked-xteps-qase`                         |
-| ReportPortal            | `xteps-reportportal`           | `unchecked-xteps-reportportal`                 |
-| Custom reporting system | `xteps`                        | `unchecked-xteps`                              |
+|                         | Java (with checked exceptions)                                                                                                                                                         | Java (without checked exceptions) / Kotlin JVM                                                                                                                                                              |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Allure                  | [![Maven Central](https://img.shields.io/badge/-xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)             | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             |
+| Qase                    | [![Maven Central](https://img.shields.io/badge/-xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase)                 | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase)                 |
+| ReportPortal            | [![Maven Central](https://img.shields.io/badge/-xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal) | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) |
+| Custom reporting system | [![Maven Central](https://img.shields.io/badge/-xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)                            | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps)                            |
+
+Read more about [integrations](#Integrations).
 
 ## API
 
