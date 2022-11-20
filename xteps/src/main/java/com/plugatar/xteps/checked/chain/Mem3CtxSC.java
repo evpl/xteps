@@ -159,7 +159,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepNamePrefix,
+        String keyword,
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
 
@@ -168,7 +168,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepNamePrefix,
+        String keyword,
         BiConsumerStep<? super C, ? super C2, ? extends E> step
     ) throws E;
 
@@ -177,7 +177,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepNamePrefix,
+        String keyword,
         TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
@@ -275,7 +275,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -284,7 +284,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -293,7 +293,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         BiFunctionStep<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E;
 
@@ -302,7 +302,7 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         TriFunctionStep<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E;
 

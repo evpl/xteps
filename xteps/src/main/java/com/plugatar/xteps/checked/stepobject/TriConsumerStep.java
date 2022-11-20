@@ -20,7 +20,7 @@ import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
  * TriConsumer step. This step will be executed and reported when calling the
@@ -107,14 +107,14 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns a new TriConsumerStep with given prefix in the step name.
+     * Returns a new TriConsumerStep with given keyword in the step name.
      *
-     * @param stepNamePrefix the step name prefix
-     * @return TriConsumerStep with given prefix in the step name
+     * @param keyword the keyword
+     * @return TriConsumerStep with given keyword in the step name
      */
-    public final TriConsumerStep<T, U, V, E> withNamePrefix(final String stepNamePrefix) {
+    public final TriConsumerStep<T, U, V, E> withKeyword(final String keyword) {
         return new TriConsumerStep<>(
-            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
         );
     }
 

@@ -304,13 +304,13 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep<? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).run();
+            step.withKeyword(keyword).run();
             return null;
         });
         return this;
@@ -318,13 +318,13 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        final String stepNamePrefix,
+        final String keyword,
         final ConsumerStep<? super C, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).accept(this.context);
+            step.withKeyword(keyword).accept(this.context);
             return null;
         });
         return this;
@@ -332,13 +332,13 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        final String stepNamePrefix,
+        final String keyword,
         final BiConsumerStep<? super C, ? super C2, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).accept(this.context, this.context2);
+            step.withKeyword(keyword).accept(this.context, this.context2);
             return null;
         });
         return this;
@@ -346,13 +346,13 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        final String stepNamePrefix,
+        final String keyword,
         final TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).accept(this.context, this.context2, this.context3);
+            step.withKeyword(keyword).accept(this.context, this.context2, this.context3);
             return null;
         });
         return this;
@@ -505,45 +505,45 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.newMem2CtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+        return this.newMem2CtxStepsChain(this.execAction(step.withKeyword(keyword)));
     }
 
     @Override
     public final <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.newMem2CtxStepsChain(this.execAction(
-            () -> step.withNamePrefix(stepNamePrefix).apply(this.context)));
+            () -> step.withKeyword(keyword).apply(this.context)));
     }
 
     @Override
     public final <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final BiFunctionStep<? super C, ? super C2, ? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.newMem2CtxStepsChain(this.execAction(
-            () -> step.withNamePrefix(stepNamePrefix).apply(this.context, this.context2)));
+            () -> step.withKeyword(keyword).apply(this.context, this.context2)));
     }
 
     @Override
     public final <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final TriFunctionStep<? super C, ? super C2, ? super C3, ? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.newMem2CtxStepsChain(this.execAction(
-            () -> step.withNamePrefix(stepNamePrefix)
+            () -> step.withKeyword(keyword)
                 .apply(this.context, this.context2, this.context3)));
     }
 
@@ -663,43 +663,43 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(step.withNamePrefix(stepNamePrefix));
+        return this.execAction(step.withKeyword(keyword));
     }
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final FunctionStep<? super C, ? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context));
+        return this.execAction(() -> step.withKeyword(keyword).apply(this.context));
     }
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final BiFunctionStep<? super C, ? super C2, ? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context, this.context2));
+        return this.execAction(() -> step.withKeyword(keyword).apply(this.context, this.context2));
     }
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final TriFunctionStep<? super C, ? super C2, ? super C3, ? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         return this.execAction(() ->
-            step.withNamePrefix(stepNamePrefix).apply(this.context, this.context2, this.context3));
+            step.withKeyword(keyword).apply(this.context, this.context2, this.context3));
     }
 
     @Override

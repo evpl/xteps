@@ -122,7 +122,7 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
      */
     @Override
     Mem2CtxSC<C, C2, PS> step(
-        String stepNamePrefix,
+        String keyword,
         ConsumerStep<? super C> step
     );
 
@@ -131,7 +131,7 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
      */
     @Override
     Mem2CtxSC<C, C2, PS> step(
-        String stepNamePrefix,
+        String keyword,
         BiConsumerStep<? super C, ? super C2> step
     );
 
@@ -202,7 +202,7 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U> Mem3CtxSC<U, C, C2, Mem2CtxSC<C, C2, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         SupplierStep<? extends U> step
     );
 
@@ -211,7 +211,7 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U> Mem3CtxSC<U, C, C2, Mem2CtxSC<C, C2, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends U> step
     );
 
@@ -220,7 +220,7 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
      */
     @Override
     <U> Mem3CtxSC<U, C, C2, Mem2CtxSC<C, C2, PS>> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         BiFunctionStep<? super C, ? super C2, ? extends U> step
     );
 

@@ -167,13 +167,13 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final <E extends Throwable> CtxSC<C> step(
-        final String stepNamePrefix,
+        final String keyword,
         final RunnableStep<? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).run();
+            step.withKeyword(keyword).run();
             return null;
         });
         return this;
@@ -181,13 +181,13 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final <E extends Throwable> CtxSC<C> step(
-        final String stepNamePrefix,
+        final String keyword,
         final ConsumerStep<? super C, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
         this.execAction(() -> {
-            step.withNamePrefix(stepNamePrefix).accept(this.context);
+            step.withKeyword(keyword).accept(this.context);
             return null;
         });
         return this;
@@ -275,22 +275,22 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return newMem1CtxStepsChain(this.execAction(step.withNamePrefix(stepNamePrefix)));
+        return newMem1CtxStepsChain(this.execAction(step.withKeyword(keyword)));
     }
 
     @Override
     public final <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        final String stepNamePrefix,
+        final String keyword,
         final FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return newMem1CtxStepsChain(this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context)));
+        return newMem1CtxStepsChain(this.execAction(() -> step.withKeyword(keyword).apply(this.context)));
     }
 
     @Override
@@ -353,22 +353,22 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(step.withNamePrefix(stepNamePrefix));
+        return this.execAction(step.withKeyword(keyword));
     }
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepNamePrefix,
+        final String keyword,
         final FunctionStep<? super C, ? extends R, ? extends E> step
     ) throws E {
-        if (stepNamePrefix == null) { this.throwNullArgException("stepNamePrefix"); }
+        if (keyword == null) { this.throwNullArgException("keyword"); }
         if (step == null) { this.throwNullArgException("step"); }
-        return this.execAction(() -> step.withNamePrefix(stepNamePrefix).apply(this.context));
+        return this.execAction(() -> step.withKeyword(keyword).apply(this.context));
     }
 
     @Override

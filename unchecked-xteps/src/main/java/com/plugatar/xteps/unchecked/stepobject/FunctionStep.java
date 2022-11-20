@@ -20,7 +20,7 @@ import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.UncheckedXteps;
 
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithPrefix;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
  * Function step. This step will be executed and reported when calling the {@link #apply(Object)} method.
@@ -101,14 +101,14 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
     }
 
     /**
-     * Returns a new FunctionStep with given prefix in the step name.
+     * Returns a new FunctionStep with given keyword in the step name.
      *
-     * @param stepNamePrefix the step name prefix
-     * @return FunctionStep with given prefix in the step name
+     * @param keyword the keyword
+     * @return FunctionStep with given keyword in the step name
      */
-    public final FunctionStep<T, R> withNamePrefix(final String stepNamePrefix) {
+    public final FunctionStep<T, R> withKeyword(final String keyword) {
         return new FunctionStep<>(
-            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
         );
     }
 

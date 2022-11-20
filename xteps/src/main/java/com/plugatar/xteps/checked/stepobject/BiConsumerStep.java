@@ -20,7 +20,7 @@ import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
  * BiConsumer step. This step will be executed and reported when calling the {@link #accept(Object, Object)} method.
@@ -103,14 +103,14 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
     }
 
     /**
-     * Returns a new BiConsumerStep with given prefix in the step name.
+     * Returns a new BiConsumerStep with given keyword in the step name.
      *
-     * @param stepNamePrefix the step name prefix
-     * @return BiConsumerStep with given prefix in the step name
+     * @param keyword the keyword
+     * @return BiConsumerStep with given keyword in the step name
      */
-    public final BiConsumerStep<T, U, E> withNamePrefix(final String stepNamePrefix) {
+    public final BiConsumerStep<T, U, E> withKeyword(final String keyword) {
         return new BiConsumerStep<>(
-            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
         );
     }
 

@@ -93,17 +93,17 @@ public interface Base1CtxSC<C> {
     );
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns
+     * Performs and reports given step with given keyword in the step name and returns
      * this steps chain.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
+     * @param keyword the keyword
+     * @param step    the step
      * @return this steps chain
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
     BaseCtxSC<?> step(
-        String stepNamePrefix,
+        String keyword,
         ConsumerStep<? super C> step
     );
 
@@ -151,18 +151,18 @@ public interface Base1CtxSC<C> {
     );
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns
+     * Performs and reports given step with given keyword in the step name and returns
      * a contextual steps chain of the new context.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <U>            the context type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <U>     the context type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
     <U> BaseCtxSC<?> stepToContext(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends U> step
     );
 
@@ -214,18 +214,18 @@ public interface Base1CtxSC<C> {
     );
 
     /**
-     * Performs and reports given step with given prefix in the step name and returns
+     * Performs and reports given step with given keyword in the step name and returns
      * the step result.
      *
-     * @param stepNamePrefix the step name prefix
-     * @param step           the step
-     * @param <R>            the result type
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <R>     the result type
      * @return {@code step} result
-     * @throws XtepsException if {@code stepNamePrefix} or {@code step} is null
+     * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
-        String stepNamePrefix,
+        String keyword,
         FunctionStep<? super C, ? extends R> step
     );
 

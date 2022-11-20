@@ -20,7 +20,7 @@ import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.checked.Xteps;
 
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithPrefix;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
  * BiFunction step. This step will be executed and reported when calling the {@link #apply(Object, Object)} method.
@@ -106,14 +106,14 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
     }
 
     /**
-     * Returns a new BiFunctionStep with given prefix in the step name.
+     * Returns a new BiFunctionStep with given keyword in the step name.
      *
-     * @param stepNamePrefix the step name prefix
-     * @return BiFunctionStep with given prefix in the step name
+     * @param keyword the keyword
+     * @return BiFunctionStep with given keyword in the step name
      */
-    public final BiFunctionStep<T, U, R, E> withNamePrefix(final String stepNamePrefix) {
+    public final BiFunctionStep<T, U, R, E> withKeyword(final String keyword) {
         return new BiFunctionStep<>(
-            stepNameWithPrefix(stepNamePrefix, this.stepName), this.stepDescription, this.step
+            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
         );
     }
 

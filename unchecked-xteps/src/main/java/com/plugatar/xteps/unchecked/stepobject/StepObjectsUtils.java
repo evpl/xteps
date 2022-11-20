@@ -30,10 +30,10 @@ final class StepObjectsUtils {
         return cls.getSimpleName().replace('_', ' ');
     }
 
-    static String stepNameWithPrefix(final String stepNamePrefix,
-                                     final String stepName) {
-        return stepNamePrefix == null || stepName == null
+    static String stepNameWithKeyword(final String keyword,
+                                      final String stepName) {
+        return keyword == null || stepName == null
             ? null
-            : stepNamePrefix + " " + stepName;
+            : keyword + " " + stepName;
     }
 }
