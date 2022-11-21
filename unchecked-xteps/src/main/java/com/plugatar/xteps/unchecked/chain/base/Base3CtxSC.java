@@ -27,8 +27,9 @@ import com.plugatar.xteps.unchecked.stepobject.TriFunctionStep;
  * @param <C>  the context type
  * @param <C2> the second context type
  * @param <C3> the third context type
+ * @param <S>  the type of the steps chain implementing {@code Base3CtxSC}
  */
-public interface Base3CtxSC<C, C2, C3> {
+public interface Base3CtxSC<C, C2, C3, S extends Base3CtxSC<C, C2, C3, S>> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -38,7 +39,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<?> hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
+    S hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
 
     /**
      * Returns the third context.
@@ -66,7 +67,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
      */
-    BaseCtxSC<?> supplyContext(
+    S supplyContext(
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> consumer
     );
 
@@ -90,7 +91,34 @@ public interface Base3CtxSC<C, C2, C3> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
+        TriConsumerStep<? super C, ? super C2, ? super C3> step
+    );
+
+    /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        TriFunctionStep<? super C, ? super C2, ? super C3, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns
+     * this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        String keyword,
         TriConsumerStep<? super C, ? super C2, ? super C3> step
     );
 
@@ -104,9 +132,9 @@ public interface Base3CtxSC<C, C2, C3> {
      * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String keyword,
-        TriConsumerStep<? super C, ? super C2, ? super C3> step
+        TriFunctionStep<? super C, ? super C2, ? super C3, ?> step
     );
 
     /**
@@ -118,7 +146,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> step
     );
@@ -133,7 +161,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         String stepDescription,
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> step

@@ -15,24 +15,18 @@
  */
 package com.plugatar.xteps.checked.chain;
 
-import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.ThrowingBiFunction;
-import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
-import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.checked.chain.base.Base1CtxSC;
 import com.plugatar.xteps.checked.chain.base.Base2CtxSC;
 import com.plugatar.xteps.checked.chain.base.Base3CtxSC;
 import com.plugatar.xteps.checked.chain.base.BaseCtxSC;
 import com.plugatar.xteps.checked.chain.base.MemSC;
-import com.plugatar.xteps.checked.stepobject.BiConsumerStep;
 import com.plugatar.xteps.checked.stepobject.BiFunctionStep;
-import com.plugatar.xteps.checked.stepobject.ConsumerStep;
 import com.plugatar.xteps.checked.stepobject.FunctionStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
-import com.plugatar.xteps.checked.stepobject.TriConsumerStep;
 import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
 
 /**
@@ -45,28 +39,10 @@ import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
  */
 public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
     BaseCtxSC<Mem3CtxSC<C, C2, C3, PS>>,
-    Base1CtxSC<C>,
-    Base2CtxSC<C, C2>,
-    Base3CtxSC<C, C2, C3>,
+    Base1CtxSC<C, Mem3CtxSC<C, C2, C3, PS>>,
+    Base2CtxSC<C, C2, Mem3CtxSC<C, C2, C3, PS>>,
+    Base3CtxSC<C, C2, C3, Mem3CtxSC<C, C2, C3, PS>>,
     MemSC<PS> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingConsumer<C, ?> hook);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingBiConsumer<C, C2, ?> hook);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem3CtxSC<C, C2, C3, PS> hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
 
     /**
      * {@inheritDoc}
@@ -104,138 +80,6 @@ public interface Mem3CtxSC<C, C2, C3, PS extends BaseCtxSC<?>> extends
     @Override
     <U, E extends Throwable> Mem3CtxSC<U, C, C2, Mem3CtxSC<C, C2, C3, PS>> withContext(
         ThrowingTriFunction<? super C, ? super C2, ? super C3, ? extends U, ? extends E> contextFunction
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
-        ThrowingConsumer<? super C, ? extends E> consumer
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
-        ThrowingBiConsumer<? super C, ? super C2, ? extends E> consumer
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> supplyContext(
-        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> consumer
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        ConsumerStep<? super C, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        BiConsumerStep<? super C, ? super C2, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String keyword,
-        ConsumerStep<? super C, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String keyword,
-        BiConsumerStep<? super C, ? super C2, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String keyword,
-        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        ThrowingConsumer<? super C, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        ThrowingBiConsumer<? super C, ? super C2, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        String stepDescription,
-        ThrowingConsumer<? super C, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        String stepDescription,
-        ThrowingBiConsumer<? super C, ? super C2, ? extends E> step
-    ) throws E;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <E extends Throwable> Mem3CtxSC<C, C2, C3, PS> step(
-        String stepName,
-        String stepDescription,
-        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
     /**

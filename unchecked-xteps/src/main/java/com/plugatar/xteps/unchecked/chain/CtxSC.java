@@ -15,12 +15,10 @@
  */
 package com.plugatar.xteps.unchecked.chain;
 
-import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxSC;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxSC;
-import com.plugatar.xteps.unchecked.stepobject.ConsumerStep;
 import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
 import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 
@@ -31,13 +29,7 @@ import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
  */
 public interface CtxSC<C> extends
     BaseCtxSC<CtxSC<C>>,
-    Base1CtxSC<C> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> hook(ThrowingConsumer<C, ?> hook);
+    Base1CtxSC<C, CtxSC<C>> {
 
     /**
      * {@inheritDoc}
@@ -59,50 +51,6 @@ public interface CtxSC<C> extends
     @Override
     <U> Mem2CtxSC<U, C, CtxSC<C>> withContext(
         ThrowingFunction<? super C, ? extends U, ?> contextFunction
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> supplyContext(
-        ThrowingConsumer<? super C, ?> consumer
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> step(
-        ConsumerStep<? super C> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> step(
-        String keyword,
-        ConsumerStep<? super C> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> step(
-        String stepName,
-        ThrowingConsumer<? super C, ?> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    CtxSC<C> step(
-        String stepName,
-        String stepDescription,
-        ThrowingConsumer<? super C, ?> step
     );
 
     /**

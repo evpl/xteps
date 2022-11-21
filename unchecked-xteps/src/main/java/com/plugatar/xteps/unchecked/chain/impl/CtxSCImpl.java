@@ -157,6 +157,15 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final CtxSC<C> step(
+        final SupplierStep<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> step(
         final ConsumerStep<? super C> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
@@ -164,6 +173,15 @@ public class CtxSCImpl<C> implements CtxSC<C> {
             step.accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> step(
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context));
         return this;
     }
 
@@ -184,6 +202,17 @@ public class CtxSCImpl<C> implements CtxSC<C> {
     @Override
     public final CtxSC<C> step(
         final String keyword,
+        final SupplierStep<?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> step(
+        final String keyword,
         final ConsumerStep<? super C> step
     ) {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -192,6 +221,17 @@ public class CtxSCImpl<C> implements CtxSC<C> {
             step.withKeyword(keyword).accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> step(
+        final String keyword,
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context));
         return this;
     }
 
