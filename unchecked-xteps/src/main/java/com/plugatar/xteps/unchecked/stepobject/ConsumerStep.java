@@ -72,11 +72,11 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns dummy ConsumerStep.
+     * Returns dummy {@code ConsumerStep}.
      *
      * @param stepName the step name
      * @param <T>      the type of the input argument
-     * @return dummy ConsumerStep
+     * @return dummy {@code ConsumerStep}
      */
     public static <T> ConsumerStep<T> dummy(final String stepName) {
         return new ConsumerStep<>(
@@ -98,10 +98,10 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns a new ConsumerStep with given keyword in the step name.
+     * Returns a new {@code ConsumerStep} with given keyword in the step name.
      *
      * @param keyword the keyword
-     * @return ConsumerStep with given keyword in the step name
+     * @return {@code ConsumerStep} with given keyword in the step name
      */
     public final ConsumerStep<T> withKeyword(final String keyword) {
         return new ConsumerStep<>(
@@ -110,22 +110,22 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns this step as a RunnableStep.
+     * Returns this step as a {@code RunnableStep}.
      *
      * @param t the input argument
-     * @return RunnableStep
+     * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep(final T t) {
         return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.accept(t));
     }
 
     /**
-     * Returns this step as a SupplierStep.
+     * Returns this step as a {@code SupplierStep}.
      *
      * @param t   the input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return SupplierStep
+     * @return {@code SupplierStep}
      */
     public final <R> SupplierStep<R> asSupplierStep(final T t, final R r) {
         return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
@@ -135,32 +135,32 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns this step as a BiConsumerStep.
+     * Returns this step as a {@code BiConsumerStep}.
      *
      * @param <U> the type of the second input argument
-     * @return BiConsumerStep
+     * @return {@code BiConsumerStep}
      */
     public final <U> BiConsumerStep<T, U> asBiConsumer() {
         return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.accept(t));
     }
 
     /**
-     * Returns this step as a TriConsumerStep.
+     * Returns this step as a {@code TriConsumerStep}.
      *
      * @param <U> the type of the second input argument
      * @param <V> the type of the third input argument
-     * @return TriConsumerStep
+     * @return {@code TriConsumerStep}
      */
     public final <U, V> TriConsumerStep<T, U, V> asTriConsumer() {
         return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.accept(t));
     }
 
     /**
-     * Returns this step as a FunctionStep.
+     * Returns this step as a {@code FunctionStep}.
      *
      * @param r   the result
      * @param <R> the type of the result
-     * @return FunctionStep
+     * @return {@code FunctionStep}
      */
     public final <R> FunctionStep<T, R> asFunctionStep(final R r) {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
@@ -170,12 +170,12 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns this step as a BiFunctionStep.
+     * Returns this step as a {@code BiFunctionStep}.
      *
      * @param r   the result
      * @param <U> the type of the second input argument
      * @param <R> the type of the result
-     * @return BiFunctionStep
+     * @return {@code BiFunctionStep}
      */
     public final <U, R> BiFunctionStep<T, U, R> asBiFunctionStep(final R r) {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
@@ -185,13 +185,13 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
     }
 
     /**
-     * Returns this step as a TriFunctionStep.
+     * Returns this step as a {@code TriFunctionStep}.
      *
      * @param r   the result
      * @param <U> the type of the second input argument
      * @param <V> the type of the third input argument
      * @param <R> the type of the result
-     * @return TriFunctionStep
+     * @return {@code TriFunctionStep}
      */
     public final <U, V, R> TriFunctionStep<T, U, V, R> asTriFunctionStep(final R r) {
         return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {

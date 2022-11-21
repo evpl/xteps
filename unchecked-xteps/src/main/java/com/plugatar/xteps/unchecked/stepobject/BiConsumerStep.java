@@ -73,12 +73,12 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns dummy BiConsumerStep.
+     * Returns dummy {@code BiConsumerStep}.
      *
      * @param stepName the step name
      * @param <T>      the type of the first input argument
      * @param <U>      the type of the second input argument
-     * @return dummy BiConsumerStep
+     * @return dummy {@code BiConsumerStep}
      */
     public static <T, U> BiConsumerStep<T, U> dummy(final String stepName) {
         return new BiConsumerStep<>(
@@ -101,10 +101,10 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns a new BiConsumerStep with given keyword in the step name.
+     * Returns a new {@code BiConsumerStep} with given keyword in the step name.
      *
      * @param keyword the keyword
-     * @return BiConsumerStep with given keyword in the step name
+     * @return {@code BiConsumerStep} with given keyword in the step name
      */
     public final BiConsumerStep<T, U> withKeyword(final String keyword) {
         return new BiConsumerStep<>(
@@ -122,24 +122,24 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns this step as a RunnableStep.
+     * Returns this step as a {@code RunnableStep}.
      *
      * @param t the first input argument
      * @param u the second input argument
-     * @return RunnableStep
+     * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep(final T t, final U u) {
         return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.accept(t, u));
     }
 
     /**
-     * Returns this step as a SupplierStep.
+     * Returns this step as a {@code SupplierStep}.
      *
      * @param t   the first input argument
      * @param u   the second input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return SupplierStep
+     * @return {@code SupplierStep}
      */
     public final <R> SupplierStep<R> asSupplierStep(final T t, final U u, final R r) {
         return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
@@ -149,32 +149,32 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns this step as a ConsumerStep.
+     * Returns this step as a {@code ConsumerStep}.
      *
      * @param u the second input argument
-     * @return ConsumerStep
+     * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T> asConsumerStep(final U u) {
         return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.accept(t, u));
     }
 
     /**
-     * Returns this step as a TriConsumerStep.
+     * Returns this step as a {@code TriConsumerStep}.
      *
      * @param <V> the type of the third input argument
-     * @return TriConsumerStep
+     * @return {@code TriConsumerStep}
      */
     public final <V> TriConsumerStep<T, U, V> asTriConsumerStep() {
         return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.accept(t, u));
     }
 
     /**
-     * Returns this step as a FunctionStep.
+     * Returns this step as a {@code FunctionStep}.
      *
      * @param u   the second input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return FunctionStep
+     * @return {@code FunctionStep}
      */
     public final <R> FunctionStep<T, R> asFunctionStep(final U u, final R r) {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
@@ -184,11 +184,11 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns this step as a BiFunctionStep.
+     * Returns this step as a {@code BiFunctionStep}.
      *
      * @param r   the result
      * @param <R> the type of the result
-     * @return BiFunctionStep
+     * @return {@code BiFunctionStep}
      */
     public final <R> BiFunctionStep<T, U, R> asBiFunctionStep(final R r) {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
@@ -198,12 +198,12 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
     }
 
     /**
-     * Returns this step as a TriFunctionStep.
+     * Returns this step as a {@code TriFunctionStep}.
      *
      * @param r   the result
      * @param <V> the type of the third input argument
      * @param <R> the type of the result
-     * @return TriFunctionStep
+     * @return {@code TriFunctionStep}
      */
     public final <R, V> TriFunctionStep<T, U, V, R> asTriFunctionStep(final R r) {
         return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {
