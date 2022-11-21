@@ -73,11 +73,11 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
     }
 
     /**
-     * Returns dummy SupplierStep.
+     * Returns dummy {@code SupplierStep}.
      *
      * @param stepName the step name
      * @param <R>      the type of the result
-     * @return dummy SupplierStep
+     * @return dummy {@code SupplierStep}
      */
     public static <R> SupplierStep<R, RuntimeException> dummy(final String stepName) {
         return new SupplierStep<>(
@@ -99,10 +99,10 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
     }
 
     /**
-     * Returns a new SupplierStep with given keyword in the step name.
+     * Returns a new {@code SupplierStep} with given keyword in the step name.
      *
      * @param keyword the keyword
-     * @return SupplierStep with given keyword in the step name
+     * @return {@code SupplierStep} with given keyword in the step name
      */
     public final SupplierStep<R, E> withKeyword(final String keyword) {
         return new SupplierStep<>(
@@ -113,7 +113,7 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
     /**
      * Returns this step as unchecked.
      *
-     * @return unchecked SupplierStep
+     * @return unchecked {@code SupplierStep}
      */
     @SuppressWarnings("unchecked")
     public final SupplierStep<R, RuntimeException> asUnchecked() {
@@ -121,75 +121,75 @@ public class SupplierStep<R, E extends Throwable> implements ThrowingSupplier<R,
     }
 
     /**
-     * Returns this step as a RunnableStep.
+     * Returns this step as a {@code RunnableStep}.
      *
-     * @return RunnableStep
+     * @return {@code RunnableStep}
      */
     public final RunnableStep<E> asRunnableStep() {
         return new RunnableStep<>(this.stepName, this.stepDescription, () -> this.step.get());
     }
 
     /**
-     * Returns this step as a ConsumerStep.
+     * Returns this step as a {@code ConsumerStep}.
      *
      * @param <T> the type of the input argument
-     * @return ConsumerStep
+     * @return {@code ConsumerStep}
      */
     public final <T> ConsumerStep<T, E> asConsumerStep() {
         return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.get());
     }
 
     /**
-     * Returns this step as a BiConsumerStep.
+     * Returns this step as a {@code BiConsumerStep}.
      *
      * @param <T> the type of the first input argument
      * @param <U> the type of the second input argument
-     * @return BiConsumerStep
+     * @return {@code BiConsumerStep}
      */
     public final <T, U> BiConsumerStep<T, U, E> asBiConsumerStep() {
         return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.get());
     }
 
     /**
-     * Returns this step as a TriConsumerStep.
+     * Returns this step as a {@code TriConsumerStep}.
      *
      * @param <T> the type of the first input argument
      * @param <U> the type of the second input argument
      * @param <V> the type of the third input argument
-     * @return TriConsumerStep
+     * @return {@code TriConsumerStep}
      */
     public final <T, U, V> TriConsumerStep<T, U, V, E> asTriConsumerStep() {
         return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.get());
     }
 
     /**
-     * Returns this step as a FunctionStep.
+     * Returns this step as a {@code FunctionStep}.
      *
      * @param <T> the type of the input argument
-     * @return FunctionStep
+     * @return {@code FunctionStep}
      */
     public final <T> FunctionStep<T, R, E> asFunctionStep() {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> this.step.get());
     }
 
     /**
-     * Returns this step as a BiFunctionStep.
+     * Returns this step as a {@code BiFunctionStep}.
      *
      * @param <T> the type of the first input argument
      * @param <U> the type of the second input argument
-     * @return BiFunctionStep
+     * @return {@code BiFunctionStep}
      */
     public final <T, U> BiFunctionStep<T, U, R, E> asBiFunctionStep() {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.get());
     }
 
     /**
-     * Returns this step as a TriFunctionStep.
+     * Returns this step as a {@code TriFunctionStep}.
      *
      * @param <T> the type of the first input argument
      * @param <U> the type of the second input argument
      * @param <V> the type of the third input argument
-     * @return TriFunctionStep
+     * @return {@code TriFunctionStep}
      */
     public final <T, U, V> TriFunctionStep<T, U, V, R, E> asTriFunctionStep() {
         return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.get());

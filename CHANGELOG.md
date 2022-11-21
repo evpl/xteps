@@ -2,6 +2,7 @@
 
 ## 5.5 (planned)
 
+* PR #67 updated step objects javadoc
 * PR #66 added new step chains methods with step objects
 * PR #65 renamed stepNamePrefix arguments to keyword
 * PR #64 added methods for getting contexts

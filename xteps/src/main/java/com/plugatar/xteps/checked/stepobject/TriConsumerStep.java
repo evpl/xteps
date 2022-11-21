@@ -76,13 +76,13 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns dummy TriConsumerStep.
+     * Returns dummy {@code TriConsumerStep}.
      *
      * @param stepName the step name
      * @param <T>      the type of the first input argument
      * @param <U>      the type of the second input argument
      * @param <V>      the type of the third input argument
-     * @return dummy TriConsumerStep
+     * @return dummy {@code TriConsumerStep}
      */
     public static <T, U, V> TriConsumerStep<T, U, V, RuntimeException> dummy(final String stepName) {
         return new TriConsumerStep<>(
@@ -107,10 +107,10 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns a new TriConsumerStep with given keyword in the step name.
+     * Returns a new {@code TriConsumerStep} with given keyword in the step name.
      *
      * @param keyword the keyword
-     * @return TriConsumerStep with given keyword in the step name
+     * @return {@code TriConsumerStep} with given keyword in the step name
      */
     public final TriConsumerStep<T, U, V, E> withKeyword(final String keyword) {
         return new TriConsumerStep<>(
@@ -121,7 +121,7 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     /**
      * Returns this step as unchecked.
      *
-     * @return unchecked TriConsumerStep
+     * @return unchecked {@code TriConsumerStep}
      */
     @SuppressWarnings("unchecked")
     public final TriConsumerStep<T, U, V, RuntimeException> asUnchecked() {
@@ -174,26 +174,26 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns this step as a RunnableStep.
+     * Returns this step as a {@code RunnableStep}.
      *
      * @param t the first input argument
      * @param u the second input argument
      * @param v the third input argument
-     * @return RunnableStep
+     * @return {@code RunnableStep}
      */
     public final RunnableStep<E> asRunnableStep(final T t, final U u, final V v) {
         return new RunnableStep<>(this.stepName, this.stepDescription, () -> this.step.accept(t, u, v));
     }
 
     /**
-     * Returns this step as a SupplierStep.
+     * Returns this step as a {@code SupplierStep}.
      *
      * @param t   the first input argument
      * @param u   the second input argument
      * @param v   the third input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return SupplierStep
+     * @return {@code SupplierStep}
      */
     public final <R> SupplierStep<R, E> asSupplierStep(final T t, final U u, final V v, final R r) {
         return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
@@ -203,34 +203,34 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns this step as a ConsumerStep.
+     * Returns this step as a {@code ConsumerStep}.
      *
      * @param u the second input argument
      * @param v the third input argument
-     * @return ConsumerStep
+     * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T, E> asConsumerStep(final U u, final V v) {
         return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.accept(t, u, v));
     }
 
     /**
-     * Returns this step as a BiConsumerStep.
+     * Returns this step as a {@code BiConsumerStep}.
      *
      * @param v the third input argument
-     * @return BiConsumerStep
+     * @return {@code BiConsumerStep}
      */
     public final BiConsumerStep<T, U, E> asBiConsumerStep(final V v) {
         return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.accept(t, u, v));
     }
 
     /**
-     * Returns this step as a FunctionStep.
+     * Returns this step as a {@code FunctionStep}.
      *
      * @param u   the second input argument
      * @param v   the third input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return FunctionStep
+     * @return {@code FunctionStep}
      */
     public final <R> FunctionStep<T, R, E> asFunctionStep(final U u, final V v, final R r) {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
@@ -240,12 +240,12 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns this step as a BiFunctionStep.
+     * Returns this step as a {@code BiFunctionStep}.
      *
      * @param v   the third input argument
      * @param r   the result
      * @param <R> the type of the result
-     * @return BiFunctionStep
+     * @return {@code BiFunctionStep}
      */
     public final <R> BiFunctionStep<T, U, R, E> asBiFunctionStep(final V v, final R r) {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
@@ -255,11 +255,11 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
     }
 
     /**
-     * Returns this step as a TriFunctionStep.
+     * Returns this step as a {@code TriFunctionStep}.
      *
      * @param r   the result
      * @param <R> the type of the result
-     * @return TriFunctionStep
+     * @return {@code TriFunctionStep}
      */
     public final <R> TriFunctionStep<T, U, V, R, E> asTriFunctionStep(final R r) {
         return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {

@@ -76,14 +76,14 @@ public class TriFunctionStep<T, U, V, R> implements ThrowingTriFunction<T, U, V,
     }
 
     /**
-     * Returns dummy TriFunctionStep.
+     * Returns dummy {@code TriFunctionStep}.
      *
      * @param stepName the step name
      * @param <T>      the type of the first input argument
      * @param <U>      the type of the second input argument
      * @param <V>      the type of the third input argument
      * @param <R>      the type of the result
-     * @return dummy TriFunctionStep
+     * @return dummy {@code TriFunctionStep}
      */
     public static <T, U, V, R> TriFunctionStep<T, U, V, R> dummy(final String stepName) {
         return new TriFunctionStep<>(
@@ -108,10 +108,10 @@ public class TriFunctionStep<T, U, V, R> implements ThrowingTriFunction<T, U, V,
     }
 
     /**
-     * Returns a new TriFunctionStep with given keyword in the step name.
+     * Returns a new {@code TriFunctionStep} with given keyword in the step name.
      *
      * @param keyword the keyword
-     * @return TriFunctionStep with given keyword in the step name
+     * @return {@code TriFunctionStep} with given keyword in the step name
      */
     public final TriFunctionStep<T, U, V, R> withKeyword(final String keyword) {
         return new TriFunctionStep<>(
@@ -165,75 +165,75 @@ public class TriFunctionStep<T, U, V, R> implements ThrowingTriFunction<T, U, V,
     }
 
     /**
-     * Returns this step as a RunnableStep.
+     * Returns this step as a {@code RunnableStep}.
      *
      * @param t the first input argument
      * @param u the second input argument
      * @param v the third input argument
-     * @return RunnableStep
+     * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep(final T t, final U u, final V v) {
         return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a SupplierStep.
+     * Returns this step as a {@code SupplierStep}.
      *
      * @param t the first input argument
      * @param u the second input argument
      * @param v the third input argument
-     * @return SupplierStep
+     * @return {@code SupplierStep}
      */
     public final SupplierStep<R> asSupplierStep(final T t, final U u, final V v) {
         return new SupplierStep<>(this.stepName, this.stepDescription, () -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a ConsumerStep.
+     * Returns this step as a {@code ConsumerStep}.
      *
      * @param u the second input argument
      * @param v the third input argument
-     * @return ConsumerStep
+     * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T> asConsumerStep(final U u, final V v) {
         return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a BiConsumerStep.
+     * Returns this step as a {@code BiConsumerStep}.
      *
      * @param v the third input argument
-     * @return BiConsumerStep
+     * @return {@code BiConsumerStep}
      */
     public final BiConsumerStep<T, U> asBiConsumerStep(final V v) {
         return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a TriConsumerStep.
+     * Returns this step as a {@code TriConsumerStep}.
      *
-     * @return TriConsumerStep
+     * @return {@code TriConsumerStep}
      */
     public final TriConsumerStep<T, U, V> asTriConsumerStep() {
         return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a FunctionStep.
+     * Returns this step as a {@code FunctionStep}.
      *
      * @param u the second input argument
      * @param v the third input argument
-     * @return FunctionStep
+     * @return {@code FunctionStep}
      */
     public final FunctionStep<T, R> asFunctionStep(final U u, final V v) {
         return new FunctionStep<>(this.stepName, this.stepDescription, t -> this.step.apply(t, u, v));
     }
 
     /**
-     * Returns this step as a BiFunctionStep.
+     * Returns this step as a {@code BiFunctionStep}.
      *
      * @param v the third input argument
-     * @return BiFunctionStep
+     * @return {@code BiFunctionStep}
      */
     public final BiFunctionStep<T, U, R> asBiFunctionStep(final V v) {
         return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.apply(t, u, v));
