@@ -25,8 +25,9 @@ import com.plugatar.xteps.checked.stepobject.FunctionStep;
  * Base single context steps chain.
  *
  * @param <C> the context type
+ * @param <S> the type of the steps chain implementing {@code Base1CtxSC}
  */
-public interface Base1CtxSC<C> {
+public interface Base1CtxSC<C, S extends Base1CtxSC<C, S>> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -36,7 +37,7 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<?> hook(ThrowingConsumer<C, ?> hook);
+    S hook(ThrowingConsumer<C, ?> hook);
 
     /**
      * Returns the context.
@@ -68,7 +69,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code consumer} is null
      * @throws E              if {@code consumer} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> supplyContext(
+    <E extends Throwable> S supplyContext(
         ThrowingConsumer<? super C, ? extends E> consumer
     ) throws E;
 
@@ -96,7 +97,38 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
+        ConsumerStep<? super C, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @param <E>  the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> S step(
+        FunctionStep<? super C, ?, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns
+     * this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <E>     the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> S step(
+        String keyword,
         ConsumerStep<? super C, ? extends E> step
     ) throws E;
 
@@ -112,9 +144,9 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String keyword,
-        ConsumerStep<? super C, ? extends E> step
+        FunctionStep<? super C, ?, ? extends E> step
     ) throws E;
 
     /**
@@ -128,7 +160,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String stepName,
         ThrowingConsumer<? super C, ? extends E> step
     ) throws E;
@@ -145,7 +177,7 @@ public interface Base1CtxSC<C> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String stepName,
         String stepDescription,
         ThrowingConsumer<? super C, ? extends E> step

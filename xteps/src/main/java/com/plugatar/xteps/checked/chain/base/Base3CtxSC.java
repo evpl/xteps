@@ -27,8 +27,9 @@ import com.plugatar.xteps.checked.stepobject.TriFunctionStep;
  * @param <C>  the context type
  * @param <C2> the second context type
  * @param <C3> the third context type
+ * @param <S>  the type of the steps chain implementing {@code Base3CtxSC}
  */
-public interface Base3CtxSC<C, C2, C3> {
+public interface Base3CtxSC<C, C2, C3, S extends Base3CtxSC<C, C2, C3, S>> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -38,7 +39,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<?> hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
+    S hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
 
     /**
      * Returns the third context.
@@ -70,7 +71,7 @@ public interface Base3CtxSC<C, C2, C3> {
      * @throws XtepsException if {@code consumer} is null
      * @throws E              if {@code consumer} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> supplyContext(
+    <E extends Throwable> S supplyContext(
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> consumer
     ) throws E;
 
@@ -98,7 +99,38 @@ public interface Base3CtxSC<C, C2, C3> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
+        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @param <E>  the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> S step(
+        TriFunctionStep<? super C, ? super C2, ? super C3, ?, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns
+     * this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <E>     the {@code step} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    <E extends Throwable> S step(
+        String keyword,
         TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
 
@@ -114,9 +146,9 @@ public interface Base3CtxSC<C, C2, C3> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String keyword,
-        TriConsumerStep<? super C, ? super C2, ? super C3, ? extends E> step
+        TriFunctionStep<? super C, ? super C2, ? super C3, ?, ? extends E> step
     ) throws E;
 
     /**
@@ -130,7 +162,7 @@ public interface Base3CtxSC<C, C2, C3> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String stepName,
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step
     ) throws E;
@@ -147,7 +179,7 @@ public interface Base3CtxSC<C, C2, C3> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <E extends Throwable> BaseCtxSC<?> step(
+    <E extends Throwable> S step(
         String stepName,
         String stepDescription,
         ThrowingTriConsumer<? super C, ? super C2, ? super C3, ? extends E> step

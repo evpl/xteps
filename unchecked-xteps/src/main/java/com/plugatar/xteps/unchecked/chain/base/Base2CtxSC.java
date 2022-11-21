@@ -26,8 +26,9 @@ import com.plugatar.xteps.unchecked.stepobject.BiFunctionStep;
  *
  * @param <C>  the context type
  * @param <C2> the second context type
+ * @param <S>  the type of the steps chain implementing {@code Base2CtxSC}
  */
-public interface Base2CtxSC<C, C2> {
+public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -37,7 +38,7 @@ public interface Base2CtxSC<C, C2> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<?> hook(ThrowingBiConsumer<C, C2, ?> hook);
+    S hook(ThrowingBiConsumer<C, C2, ?> hook);
 
     /**
      * Returns the second context.
@@ -65,7 +66,7 @@ public interface Base2CtxSC<C, C2> {
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
      */
-    BaseCtxSC<?> supplyContext(
+    S supplyContext(
         ThrowingBiConsumer<? super C, ? super C2, ?> consumer
     );
 
@@ -89,7 +90,34 @@ public interface Base2CtxSC<C, C2> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
+        BiConsumerStep<? super C, ? super C2> step
+    );
+
+    /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        BiFunctionStep<? super C, ? super C2, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns
+     * this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        String keyword,
         BiConsumerStep<? super C, ? super C2> step
     );
 
@@ -103,9 +131,9 @@ public interface Base2CtxSC<C, C2> {
      * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String keyword,
-        BiConsumerStep<? super C, ? super C2> step
+        BiFunctionStep<? super C, ? super C2, ?> step
     );
 
     /**
@@ -117,7 +145,7 @@ public interface Base2CtxSC<C, C2> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         ThrowingBiConsumer<? super C, ? super C2, ?> step
     );
@@ -132,7 +160,7 @@ public interface Base2CtxSC<C, C2> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         String stepDescription,
         ThrowingBiConsumer<? super C, ? super C2, ?> step

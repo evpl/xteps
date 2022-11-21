@@ -221,6 +221,15 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
 
     @Override
     public final Mem2CtxSC<C, C2, PS> step(
+        final SupplierStep<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
         final ConsumerStep<? super C> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
@@ -233,6 +242,15 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
 
     @Override
     public final Mem2CtxSC<C, C2, PS> step(
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context));
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
         final BiConsumerStep<? super C, ? super C2> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
@@ -240,6 +258,15 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
             step.accept(this.context, this.context2);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
+        final BiFunctionStep<? super C, ? super C2, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context, this.context2));
         return this;
     }
 
@@ -260,6 +287,17 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
     @Override
     public final Mem2CtxSC<C, C2, PS> step(
         final String keyword,
+        final SupplierStep<?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
+        final String keyword,
         final ConsumerStep<? super C> step
     ) {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -274,6 +312,17 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
     @Override
     public final Mem2CtxSC<C, C2, PS> step(
         final String keyword,
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context));
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
+        final String keyword,
         final BiConsumerStep<? super C, ? super C2> step
     ) {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -282,6 +331,17 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
             step.withKeyword(keyword).accept(this.context, this.context2);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> step(
+        final String keyword,
+        final BiFunctionStep<? super C, ? super C2, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context, this.context2));
         return this;
     }
 

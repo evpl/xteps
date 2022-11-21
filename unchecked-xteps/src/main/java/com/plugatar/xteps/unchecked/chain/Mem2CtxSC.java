@@ -15,18 +15,14 @@
  */
 package com.plugatar.xteps.unchecked.chain;
 
-import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.ThrowingBiFunction;
-import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.unchecked.chain.base.Base1CtxSC;
 import com.plugatar.xteps.unchecked.chain.base.Base2CtxSC;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxSC;
 import com.plugatar.xteps.unchecked.chain.base.MemSC;
-import com.plugatar.xteps.unchecked.stepobject.BiConsumerStep;
 import com.plugatar.xteps.unchecked.stepobject.BiFunctionStep;
-import com.plugatar.xteps.unchecked.stepobject.ConsumerStep;
 import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
 import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
 
@@ -39,21 +35,9 @@ import com.plugatar.xteps.unchecked.stepobject.SupplierStep;
  */
 public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
     BaseCtxSC<Mem2CtxSC<C, C2, PS>>,
-    Base1CtxSC<C>,
-    Base2CtxSC<C, C2>,
+    Base1CtxSC<C, Mem2CtxSC<C, C2, PS>>,
+    Base2CtxSC<C, C2, Mem2CtxSC<C, C2, PS>>,
     MemSC<PS> {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> hook(ThrowingConsumer<C, ?> hook);
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> hook(ThrowingBiConsumer<C, C2, ?> hook);
 
     /**
      * {@inheritDoc}
@@ -83,94 +67,6 @@ public interface Mem2CtxSC<C, C2, PS extends BaseCtxSC<?>> extends
     @Override
     <U> Mem3CtxSC<U, C, C2, Mem2CtxSC<C, C2, PS>> withContext(
         ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> contextFunction
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> supplyContext(
-        ThrowingConsumer<? super C, ?> consumer
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> supplyContext(
-        ThrowingBiConsumer<? super C, ? super C2, ?> consumer
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        ConsumerStep<? super C> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        BiConsumerStep<? super C, ? super C2> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String keyword,
-        ConsumerStep<? super C> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String keyword,
-        BiConsumerStep<? super C, ? super C2> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String stepName,
-        ThrowingConsumer<? super C, ?> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String stepName,
-        ThrowingBiConsumer<? super C, ? super C2, ?> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String stepName,
-        String stepDescription,
-        ThrowingConsumer<? super C, ?> step
-    );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mem2CtxSC<C, C2, PS> step(
-        String stepName,
-        String stepDescription,
-        ThrowingBiConsumer<? super C, ? super C2, ?> step
     );
 
     /**

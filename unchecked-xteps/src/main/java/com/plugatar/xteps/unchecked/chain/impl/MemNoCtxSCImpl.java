@@ -118,6 +118,15 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
 
     @Override
     public final MemNoCtxSC<P> step(
+        final SupplierStep<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final MemNoCtxSC<P> step(
         final String keyword,
         final RunnableStep step
     ) {
@@ -127,6 +136,17 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
             step.withKeyword(keyword).run();
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final MemNoCtxSC<P> step(
+        final String keyword,
+        final SupplierStep<?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step.withKeyword(keyword));
         return this;
     }
 

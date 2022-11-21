@@ -108,6 +108,18 @@ public interface BaseSC<S extends BaseSC<S>> {
     );
 
     /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        SupplierStep<?> step
+    );
+
+    /**
      * Performs and reports given step with given keyword in the step name and returns this steps chain.
      *
      * @param keyword the keyword
@@ -119,6 +131,20 @@ public interface BaseSC<S extends BaseSC<S>> {
     S step(
         String keyword,
         RunnableStep step
+    );
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        String keyword,
+        SupplierStep<?> step
     );
 
     /**

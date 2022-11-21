@@ -155,6 +155,15 @@ public class CtxSCImpl<C> implements CtxSC<C> {
 
     @Override
     public final <E extends Throwable> CtxSC<C> step(
+        final SupplierStep<?, ? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final <E extends Throwable> CtxSC<C> step(
         final ConsumerStep<? super C, ? extends E> step
     ) throws E {
         if (step == null) { this.throwNullArgException("step"); }
@@ -162,6 +171,15 @@ public class CtxSCImpl<C> implements CtxSC<C> {
             step.accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final <E extends Throwable> CtxSC<C> step(
+        final FunctionStep<? super C, ?, ? extends E> step
+    ) throws E {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context));
         return this;
     }
 
@@ -182,6 +200,17 @@ public class CtxSCImpl<C> implements CtxSC<C> {
     @Override
     public final <E extends Throwable> CtxSC<C> step(
         final String keyword,
+        final SupplierStep<?, ? extends E> step
+    ) throws E {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final <E extends Throwable> CtxSC<C> step(
+        final String keyword,
         final ConsumerStep<? super C, ? extends E> step
     ) throws E {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -190,6 +219,17 @@ public class CtxSCImpl<C> implements CtxSC<C> {
             step.withKeyword(keyword).accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final <E extends Throwable> CtxSC<C> step(
+        final String keyword,
+        final FunctionStep<? super C, ?, ? extends E> step
+    ) throws E {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context));
         return this;
     }
 

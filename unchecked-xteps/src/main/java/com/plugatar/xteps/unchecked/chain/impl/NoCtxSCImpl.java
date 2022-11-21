@@ -97,6 +97,15 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final NoCtxSC step(
+        final SupplierStep<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final NoCtxSC step(
         final String keyword,
         final RunnableStep step
     ) {
@@ -106,6 +115,17 @@ public class NoCtxSCImpl implements NoCtxSC {
             step.withKeyword(keyword).run();
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final NoCtxSC step(
+        final String keyword,
+        final SupplierStep<?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step.withKeyword(keyword));
         return this;
     }
 

@@ -25,8 +25,9 @@ import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
  * Base single context steps chain.
  *
  * @param <C> the context type
+ * @param <S> the type of the steps chain implementing {@code Base1CtxSC}
  */
-public interface Base1CtxSC<C> {
+public interface Base1CtxSC<C, S extends Base1CtxSC<C, S>> {
 
     /**
      * Adds given hook to this steps chain. This hook will be calls in case of any
@@ -36,7 +37,7 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    BaseCtxSC<?> hook(ThrowingConsumer<C, ?> hook);
+    S hook(ThrowingConsumer<C, ?> hook);
 
     /**
      * Returns the context.
@@ -64,7 +65,7 @@ public interface Base1CtxSC<C> {
      * @return this steps chain
      * @throws XtepsException if {@code consumer} is null
      */
-    BaseCtxSC<?> supplyContext(
+    S supplyContext(
         ThrowingConsumer<? super C, ?> consumer
     );
 
@@ -88,7 +89,34 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
+        ConsumerStep<? super C> step
+    );
+
+    /**
+     * Performs and reports given step and returns this steps chain.
+     *
+     * @param step the step
+     * @return this steps chain
+     * @throws XtepsException if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        FunctionStep<? super C, ?> step
+    );
+
+    /**
+     * Performs and reports given step with given keyword in the step name and returns
+     * this steps chain.
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @return this steps chain
+     * @throws XtepsException if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        String keyword,
         ConsumerStep<? super C> step
     );
 
@@ -102,9 +130,9 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String keyword,
-        ConsumerStep<? super C> step
+        FunctionStep<? super C, ?> step
     );
 
     /**
@@ -116,7 +144,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         ThrowingConsumer<? super C, ?> step
     );
@@ -131,7 +159,7 @@ public interface Base1CtxSC<C> {
      * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    BaseCtxSC<?> step(
+    S step(
         String stepName,
         String stepDescription,
         ThrowingConsumer<? super C, ?> step

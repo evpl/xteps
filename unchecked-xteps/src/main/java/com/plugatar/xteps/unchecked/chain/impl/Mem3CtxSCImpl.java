@@ -137,7 +137,6 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
         return this.context;
     }
 
-
     @Override
     public final C2 context2() {
         return this.context2;
@@ -271,6 +270,15 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final Mem3CtxSC<C, C2, C3, PS> step(
+        final SupplierStep<?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
         final ConsumerStep<? super C> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
@@ -278,6 +286,15 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
             step.accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context));
         return this;
     }
 
@@ -295,6 +312,15 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
 
     @Override
     public final Mem3CtxSC<C, C2, C3, PS> step(
+        final BiFunctionStep<? super C, ? super C2, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context, this.context2));
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
         final TriConsumerStep<? super C, ? super C2, ? super C3> step
     ) {
         if (step == null) { this.throwNullArgException("step"); }
@@ -302,6 +328,15 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
             step.accept(this.context, this.context2, this.context3);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final TriFunctionStep<? super C, ? super C2, ? super C3, ?> step
+    ) {
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.apply(this.context, this.context2, this.context3));
         return this;
     }
 
@@ -322,6 +357,17 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
     @Override
     public final Mem3CtxSC<C, C2, C3, PS> step(
         final String keyword,
+        final SupplierStep<?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(step);
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final String keyword,
         final ConsumerStep<? super C> step
     ) {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -330,6 +376,17 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
             step.withKeyword(keyword).accept(this.context);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final String keyword,
+        final FunctionStep<? super C, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context));
         return this;
     }
 
@@ -350,6 +407,17 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
     @Override
     public final Mem3CtxSC<C, C2, C3, PS> step(
         final String keyword,
+        final BiFunctionStep<? super C, ? super C2, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context, this.context2));
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final String keyword,
         final TriConsumerStep<? super C, ? super C2, ? super C3> step
     ) {
         if (keyword == null) { this.throwNullArgException("keyword"); }
@@ -358,6 +426,17 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
             step.withKeyword(keyword).accept(this.context, this.context2, this.context3);
             return null;
         });
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> step(
+        final String keyword,
+        final TriFunctionStep<? super C, ? super C2, ? super C3, ?> step
+    ) {
+        if (keyword == null) { this.throwNullArgException("keyword"); }
+        if (step == null) { this.throwNullArgException("step"); }
+        this.execAction(() -> step.withKeyword(keyword).apply(this.context, this.context2, this.context3));
         return this;
     }
 
