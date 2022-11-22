@@ -20,6 +20,9 @@ import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.container.FakeHookContainer;
+import com.plugatar.xteps.unchecked.chain.CtxSC;
+import com.plugatar.xteps.unchecked.chain.Mem2CtxSC;
+import com.plugatar.xteps.unchecked.chain.Mem3CtxSC;
 import com.plugatar.xteps.unchecked.chain.NoCtxSC;
 import com.plugatar.xteps.unchecked.chain.impl.NoCtxSCImpl;
 import com.plugatar.xteps.unchecked.stepobject.RunnableStep;
@@ -49,7 +52,7 @@ public final class UncheckedXteps {
      *                        or if it's impossible to correctly report the step
      */
     public static void step(final String stepName) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName);
     }
 
     /**
@@ -69,7 +72,7 @@ public final class UncheckedXteps {
      */
     public static void step(final String stepName,
                             final String stepDescription) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription);
     }
 
     /**
@@ -98,7 +101,7 @@ public final class UncheckedXteps {
     public static void step(
         final RunnableStep step
     ) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(step);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(step);
     }
 
     /**
@@ -129,7 +132,7 @@ public final class UncheckedXteps {
         final String keyword,
         final RunnableStep step
     ) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(keyword, step);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(keyword, step);
     }
 
     /**
@@ -159,7 +162,7 @@ public final class UncheckedXteps {
         final String stepName,
         final ThrowingRunnable<?> step
     ) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, step);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, step);
     }
 
     /**
@@ -191,7 +194,7 @@ public final class UncheckedXteps {
         final String stepDescription,
         final ThrowingRunnable<?> step
     ) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription, step);
+        UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription, step);
     }
 
     /**
@@ -223,7 +226,7 @@ public final class UncheckedXteps {
     public static <R> R stepTo(
         final SupplierStep<? extends R> step
     ) {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(step);
+        return UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(step);
     }
 
     /**
@@ -257,7 +260,7 @@ public final class UncheckedXteps {
         final String keyword,
         final SupplierStep<? extends R> step
     ) {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(keyword, step);
+        return UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(keyword, step);
     }
 
     /**
@@ -291,7 +294,7 @@ public final class UncheckedXteps {
         final String stepName,
         final ThrowingSupplier<? extends R, ?> step
     ) {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, step);
+        return UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, step);
     }
 
     /**
@@ -327,7 +330,7 @@ public final class UncheckedXteps {
         final String stepDescription,
         final ThrowingSupplier<? extends R, ?> step
     ) {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, stepDescription, step);
+        return UNCHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, stepDescription, step);
     }
 
     /**
@@ -366,10 +369,65 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static NoCtxSC stepsChain() {
-        return CHECKED_XTEPS_BASE.get().newNoCtxCS();
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS();
     }
 
-    private static final Supplier<UncheckedXtepsBase> CHECKED_XTEPS_BASE = new Supplier<UncheckedXtepsBase>() {
+    /**
+     * Returns a contextual steps chain with given context.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context)}</pre>
+     *
+     * @param context the context
+     * @param <C>     the context type
+     * @return contextual steps chain
+     */
+    public static <C> CtxSC<C> stepsChainOf(final C context) {
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context);
+    }
+
+    /**
+     * Returns a contextual steps chain with given contexts.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context2).withContext(context)}</pre>
+     *
+     * @param context  the context
+     * @param context2 the second context
+     * @param <C>      the context type
+     * @param <C2>     the second context type
+     * @return contextual steps chain
+     */
+    public static <C, C2> Mem2CtxSC<C, C2, CtxSC<C2>> stepsChainOf(
+        final C context,
+        final C2 context2
+    ) {
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context2).withContext(context);
+    }
+
+    /**
+     * Returns a contextual steps chain with given contexts.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context3).withContext(context2).withContext(context)}</pre>
+     *
+     * @param context  the context
+     * @param context2 the second context
+     * @param context3 the third context
+     * @param <C>      the context type
+     * @param <C2>     the second context type
+     * @param <C3>     the third context type
+     * @return contextual steps chain
+     */
+    public static <C, C2, C3> Mem3CtxSC<C, C2, C3, Mem2CtxSC<C2, C3, CtxSC<C3>>> stepsChainOf(
+        final C context,
+        final C2 context2,
+        final C3 context3
+    ) {
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context3).withContext(context2).withContext(context);
+    }
+
+    private static final Supplier<UncheckedXtepsBase> UNCHECKED_XTEPS_BASE = new Supplier<UncheckedXtepsBase>() {
         private volatile UncheckedXtepsBase instance = null;
 
         @Override

@@ -2,6 +2,8 @@
 
 ## 5.5 (planned)
 
+* PR #69 added stepsChainOf method
+* PR #68 Bump client-java from 5.1.12 to 5.1.14
 * PR #67 updated step objects javadoc
 * PR #66 added new step chains methods with step objects
 * PR #65 renamed stepNamePrefix arguments to keyword
