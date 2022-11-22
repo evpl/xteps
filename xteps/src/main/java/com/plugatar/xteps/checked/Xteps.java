@@ -20,6 +20,9 @@ import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.container.FakeHookContainer;
+import com.plugatar.xteps.checked.chain.CtxSC;
+import com.plugatar.xteps.checked.chain.Mem2CtxSC;
+import com.plugatar.xteps.checked.chain.Mem3CtxSC;
 import com.plugatar.xteps.checked.chain.NoCtxSC;
 import com.plugatar.xteps.checked.chain.impl.NoCtxSCImpl;
 import com.plugatar.xteps.checked.stepobject.RunnableStep;
@@ -383,6 +386,61 @@ public final class Xteps {
      */
     public static NoCtxSC stepsChain() {
         return CHECKED_XTEPS_BASE.get().newNoCtxCS();
+    }
+
+    /**
+     * Returns a contextual steps chain with given context.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context)}</pre>
+     *
+     * @param context the context
+     * @param <C>     the context type
+     * @return contextual steps chain
+     */
+    public static <C> CtxSC<C> stepsChainOf(final C context) {
+        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context);
+    }
+
+    /**
+     * Returns a contextual steps chain with given contexts.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context2).withContext(context)}</pre>
+     *
+     * @param context  the context
+     * @param context2 the second context
+     * @param <C>      the context type
+     * @param <C2>     the second context type
+     * @return contextual steps chain
+     */
+    public static <C, C2> Mem2CtxSC<C, C2, CtxSC<C2>> stepsChainOf(
+        final C context,
+        final C2 context2
+    ) {
+        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context2).withContext(context);
+    }
+
+    /**
+     * Returns a contextual steps chain with given contexts.
+     * <p>Alias for</p>
+     * <pre>{@code stepsChain().withContext(context3).withContext(context2).withContext(context)}</pre>
+     *
+     * @param context  the context
+     * @param context2 the second context
+     * @param context3 the third context
+     * @param <C>      the context type
+     * @param <C2>     the second context type
+     * @param <C3>     the third context type
+     * @return contextual steps chain
+     */
+    public static <C, C2, C3> Mem3CtxSC<C, C2, C3, Mem2CtxSC<C2, C3, CtxSC<C3>>> stepsChainOf(
+        final C context,
+        final C2 context2,
+        final C3 context3
+    ) {
+        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+            .withContext(context3).withContext(context2).withContext(context);
     }
 
     private static final Supplier<CheckedXtepsBase> CHECKED_XTEPS_BASE = new Supplier<CheckedXtepsBase>() {

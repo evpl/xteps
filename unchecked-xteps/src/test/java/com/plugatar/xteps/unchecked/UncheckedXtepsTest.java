@@ -16,9 +16,11 @@
 package com.plugatar.xteps.unchecked;
 
 import com.plugatar.xteps.base.StepListener;
+import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
+import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.unchecked.chain.NoCtxSC;
 import org.junit.jupiter.api.AfterAll;
@@ -32,6 +34,7 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -178,6 +181,45 @@ final class UncheckedXtepsTest {
         stepsChain.step(stepName, action);
         assertThatStepPassed(stepName, "", new Object[]{});
         verify(action, times(1)).run();
+    }
+
+    @Test
+    void stepsChainOf1ArgMethod() {
+        @SuppressWarnings("unchecked")
+        final ThrowingConsumer<Object, RuntimeException> action = mock(ThrowingConsumer.class);
+        final Object arg1 = new Object();
+        final String stepName = "stepsChainOf1ArgMethod";
+
+        UncheckedXteps.stepsChainOf(arg1).step(stepName, action);
+        assertThatStepPassed(stepName, "", new Object[]{arg1});
+        verify(action, times(1)).accept(same(arg1));
+    }
+
+    @Test
+    void stepsChainOf2ArgMethod() {
+        @SuppressWarnings("unchecked")
+        final ThrowingBiConsumer<Object, Object, RuntimeException> action = mock(ThrowingBiConsumer.class);
+        final Object arg1 = new Object();
+        final Object arg2 = new Object();
+        final String stepName = "stepsChainOf2ArgMethod";
+
+        UncheckedXteps.stepsChainOf(arg1, arg2).step(stepName, action);
+        assertThatStepPassed(stepName, "", new Object[]{arg1, arg2});
+        verify(action, times(1)).accept(same(arg1), same(arg2));
+    }
+
+    @Test
+    void stepsChainOf3ArgMethod() {
+        @SuppressWarnings("unchecked")
+        final ThrowingTriConsumer<Object, Object, Object, RuntimeException> action = mock(ThrowingTriConsumer.class);
+        final Object arg1 = new Object();
+        final Object arg2 = new Object();
+        final Object arg3 = new Object();
+        final String stepName = "stepsChainOf2ArgMethod";
+
+        UncheckedXteps.stepsChainOf(arg1, arg2, arg3).step(stepName, action);
+        assertThatStepPassed(stepName, "", new Object[]{arg1, arg2, arg3});
+        verify(action, times(1)).accept(same(arg1), same(arg2), same(arg3));
     }
 
     @Test
