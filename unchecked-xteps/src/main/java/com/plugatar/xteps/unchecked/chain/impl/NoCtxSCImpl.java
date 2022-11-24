@@ -23,6 +23,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.ThreadHook;
 import com.plugatar.xteps.unchecked.chain.CtxSC;
 import com.plugatar.xteps.unchecked.chain.NoCtxSC;
 import com.plugatar.xteps.unchecked.stepobject.RunnableStep;
@@ -59,14 +60,25 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     @Override
-    public final NoCtxSC callHooks() {
+    public final NoCtxSC callChainHooks() {
         return this;
     }
 
     @Override
-    public final NoCtxSC hook(final ThrowingRunnable<?> hook) {
+    public final NoCtxSC chainHook(
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(hook);
+        return this;
+    }
+
+    @Override
+    public final NoCtxSC threadHook(
+        final ThrowingRunnable<?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
         return this;
     }
 

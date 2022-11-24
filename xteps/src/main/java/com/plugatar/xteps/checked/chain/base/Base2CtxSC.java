@@ -31,14 +31,28 @@ import com.plugatar.xteps.checked.stepobject.BiFunctionStep;
 public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
 
     /**
-     * Adds given hook to this steps chain. This hook will be calls in case of any
-     * exception in steps chain or in case of {@link BaseSC#callHooks()} method call.
+     * Adds given hook to this steps chain. This hook will be called in case of any
+     * exception in steps chain or in case of {@link BaseSC#callChainHooks()} method call.
      *
      * @param hook the hook
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    S hook(ThrowingBiConsumer<C, C2, ?> hook);
+    S chainHook(
+        ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    );
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    S threadHook(
+        ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    );
 
     /**
      * Returns the second context.

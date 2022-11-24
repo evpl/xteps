@@ -32,14 +32,28 @@ import com.plugatar.xteps.unchecked.stepobject.TriFunctionStep;
 public interface Base3CtxSC<C, C2, C3, S extends Base3CtxSC<C, C2, C3, S>> {
 
     /**
-     * Adds given hook to this steps chain. This hook will be calls in case of any
-     * exception in steps chain or in case of {@link BaseSC#callHooks()} method call.
+     * Adds given hook to this steps chain. This hook will be called in case of any
+     * exception in steps chain or in case of {@link BaseSC#callChainHooks()} method call.
      *
      * @param hook the hook
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    S hook(ThrowingTriConsumer<C, C2, C3, ?> hook);
+    S chainHook(
+        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> hook
+    );
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    S threadHook(
+        ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> hook
+    );
 
     /**
      * Returns the third context.

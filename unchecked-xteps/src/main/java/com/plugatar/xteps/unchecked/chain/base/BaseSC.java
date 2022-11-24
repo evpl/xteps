@@ -37,17 +37,31 @@ public interface BaseSC<S extends BaseSC<S>> {
      * @return this steps chain
      * @throws XtepsException if one or more hooks threw exceptions
      */
-    S callHooks();
+    S callChainHooks();
 
     /**
-     * Adds given hook to this steps chain. This hook will be calls in case of any
-     * exception in steps chain or in case of {@link #callHooks()} method call.
+     * Adds given hook to this steps chain. This hook will be called in case of any
+     * exception in steps chain or in case of {@link #callChainHooks()} method call.
      *
      * @param hook the hook
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    S hook(ThrowingRunnable<?> hook);
+    S chainHook(
+        ThrowingRunnable<?> hook
+    );
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    S threadHook(
+        ThrowingRunnable<?> hook
+    );
 
     /**
      * Returns a contextual steps chain of the new context.

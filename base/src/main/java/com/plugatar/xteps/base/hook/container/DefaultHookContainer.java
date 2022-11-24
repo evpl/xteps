@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.base.container;
+package com.plugatar.xteps.base.hook.container;
 
 import com.plugatar.xteps.base.HookContainer;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.XtepsException;
 
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -27,14 +29,12 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class DefaultHookContainer implements HookContainer {
     private final Deque<ThrowingRunnable<?>> deque;
-    private final Object lock;
 
     /**
      * Ctor.
      */
     public DefaultHookContainer() {
         this.deque = new ConcurrentLinkedDeque<>();
-        this.lock = new Object();
     }
 
     @Override
@@ -45,24 +45,20 @@ public class DefaultHookContainer implements HookContainer {
 
     @Override
     public final void callHooks() {
-        synchronized (this.lock) {
-            if (!this.deque.isEmpty()) {
-                XtepsException baseEx = null;
-                for (ThrowingRunnable<?> hook = this.deque.pollLast(); hook != null; hook = this.deque.pollLast()) {
-                    try {
-                        hook.run();
-                    } catch (final Throwable ex) {
-                        if (baseEx == null) {
-                            baseEx = new XtepsException(
-                                "One or more hooks threw exceptions (see suppressed exceptions)"
-                            );
-                        }
-                        baseEx.addSuppressed(ex);
-                    }
+        if (!this.deque.isEmpty()) {
+            final List<Throwable> exceptions = new ArrayList<>();
+            this.deque.descendingIterator().forEachRemaining(hook -> {
+                try {
+                    hook.run();
+                } catch (final Throwable ex) {
+                    exceptions.add(ex);
                 }
-                if (baseEx != null) {
-                    throw baseEx;
-                }
+            });
+            if (!exceptions.isEmpty()) {
+                final XtepsException baseEx = new XtepsException(
+                    "One or more hooks threw exceptions (see suppressed exceptions)");
+                exceptions.forEach(baseEx::addSuppressed);
+                throw baseEx;
             }
         }
     }
@@ -70,16 +66,14 @@ public class DefaultHookContainer implements HookContainer {
     @Override
     public final void callHooks(final Throwable baseException) {
         if (baseException == null) { this.throwNullArgException("baseException"); }
-        synchronized (this.lock) {
-            if (!this.deque.isEmpty()) {
-                for (ThrowingRunnable<?> hook = this.deque.pollLast(); hook != null; hook = this.deque.pollLast()) {
-                    try {
-                        hook.run();
-                    } catch (final Throwable ex) {
-                        baseException.addSuppressed(ex);
-                    }
+        if (!this.deque.isEmpty()) {
+            this.deque.descendingIterator().forEachRemaining(hook -> {
+                try {
+                    hook.run();
+                } catch (final Throwable ex) {
+                    baseException.addSuppressed(ex);
                 }
-            }
+            });
         }
     }
 

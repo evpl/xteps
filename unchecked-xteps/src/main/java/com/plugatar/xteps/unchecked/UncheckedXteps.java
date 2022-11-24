@@ -19,7 +19,7 @@ import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.base.container.FakeHookContainer;
+import com.plugatar.xteps.base.hook.container.FakeHookContainer;
 import com.plugatar.xteps.unchecked.chain.CtxSC;
 import com.plugatar.xteps.unchecked.chain.Mem2CtxSC;
 import com.plugatar.xteps.unchecked.chain.Mem3CtxSC;
@@ -380,6 +380,7 @@ public final class UncheckedXteps {
      * @param context the context
      * @param <C>     the context type
      * @return contextual steps chain
+     * @throws XtepsException if Xteps configuration is incorrect
      */
     public static <C> CtxSC<C> stepsChainOf(final C context) {
         return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
@@ -396,6 +397,7 @@ public final class UncheckedXteps {
      * @param <C>      the context type
      * @param <C2>     the second context type
      * @return contextual steps chain
+     * @throws XtepsException if Xteps configuration is incorrect
      */
     public static <C, C2> Mem2CtxSC<C, C2, CtxSC<C2>> stepsChainOf(
         final C context,
@@ -417,6 +419,7 @@ public final class UncheckedXteps {
      * @param <C2>     the second context type
      * @param <C3>     the third context type
      * @return contextual steps chain
+     * @throws XtepsException if Xteps configuration is incorrect
      */
     public static <C, C2, C3> Mem3CtxSC<C, C2, C3, Mem2CtxSC<C2, C3, CtxSC<C3>>> stepsChainOf(
         final C context,

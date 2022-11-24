@@ -16,4 +16,4 @@
 /**
  * {@link com.plugatar.xteps.base.HookContainer} implementations.
  */
-package com.plugatar.xteps.base.container;
+package com.plugatar.xteps.base.hook.container;
