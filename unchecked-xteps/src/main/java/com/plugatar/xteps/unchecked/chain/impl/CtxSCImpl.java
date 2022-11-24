@@ -23,6 +23,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.ThreadHook;
 import com.plugatar.xteps.unchecked.chain.CtxSC;
 import com.plugatar.xteps.unchecked.chain.Mem2CtxSC;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxSC;
@@ -68,7 +69,7 @@ public class CtxSCImpl<C> implements CtxSC<C> {
     }
 
     @Override
-    public final CtxSC<C> callHooks() {
+    public final CtxSC<C> callChainHooks() {
         try {
             this.hookContainer.callHooks();
         } catch (final Throwable ex) {
@@ -79,16 +80,38 @@ public class CtxSCImpl<C> implements CtxSC<C> {
     }
 
     @Override
-    public final CtxSC<C> hook(final ThrowingRunnable<?> hook) {
+    public final CtxSC<C> chainHook(
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(hook);
         return this;
     }
 
     @Override
-    public final CtxSC<C> hook(final ThrowingConsumer<C, ?> hook) {
+    public final CtxSC<C> chainHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context));
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> threadHook(
+        final ThrowingRunnable<?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C> threadHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
         return this;
     }
 

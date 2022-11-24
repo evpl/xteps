@@ -23,6 +23,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.ThreadHook;
 import com.plugatar.xteps.unchecked.chain.CtxSC;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxSC;
 import com.plugatar.xteps.unchecked.chain.base.BaseCtxSC;
@@ -69,7 +70,7 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
     }
 
     @Override
-    public final MemNoCtxSC<P> callHooks() {
+    public final MemNoCtxSC<P> callChainHooks() {
         try {
             this.hookContainer.callHooks();
         } catch (final Throwable ex) {
@@ -80,9 +81,20 @@ public class MemNoCtxSCImpl<P extends BaseCtxSC<?>> implements MemNoCtxSC<P> {
     }
 
     @Override
-    public final MemNoCtxSC<P> hook(final ThrowingRunnable<?> hook) {
+    public final MemNoCtxSC<P> chainHook(
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(hook);
+        return this;
+    }
+
+    @Override
+    public final MemNoCtxSC<P> threadHook(
+        final ThrowingRunnable<?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
         return this;
     }
 

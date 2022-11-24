@@ -257,9 +257,9 @@ final class UncheckedXtepsTest {
 
         assertThatCode(() ->
             UncheckedXteps.stepsChain()
-                .hook(hook1)
+                .chainHook(hook1)
                 .withContext(new Object())
-                .hook(hook2)
+                .chainHook(hook2)
                 .supplyContext(ctx -> { throw baseException; })
         ).isSameAs(baseException)
             .hasSuppressedException(exception1)
@@ -275,10 +275,10 @@ final class UncheckedXtepsTest {
 
         assertThatCode(() ->
             UncheckedXteps.stepsChain()
-                .hook(hook1)
+                .chainHook(hook1)
                 .withContext(new Object())
-                .hook(hook2)
-                .callHooks()
+                .chainHook(hook2)
+                .callChainHooks()
         ).isInstanceOf(XtepsException.class)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Tests for {@link com.plugatar.xteps.base.container} package.
+ * Tests for {@link com.plugatar.xteps.base.hook.container} package.
  */
-package com.plugatar.xteps.base.container;
+package com.plugatar.xteps.base.hook.container;

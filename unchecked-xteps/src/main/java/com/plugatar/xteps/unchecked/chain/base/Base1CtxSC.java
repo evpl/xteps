@@ -30,14 +30,28 @@ import com.plugatar.xteps.unchecked.stepobject.FunctionStep;
 public interface Base1CtxSC<C, S extends Base1CtxSC<C, S>> {
 
     /**
-     * Adds given hook to this steps chain. This hook will be calls in case of any
-     * exception in steps chain or in case of {@link BaseSC#callHooks()} method call.
+     * Adds given hook to this steps chain. This hook will be called in case of any
+     * exception in steps chain or in case of {@link BaseSC#callChainHooks()} method call.
      *
      * @param hook the hook
      * @return this steps chain
      * @throws XtepsException if {@code hook} is null
      */
-    S hook(ThrowingConsumer<C, ?> hook);
+    S chainHook(
+        ThrowingConsumer<? super C, ?> hook
+    );
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param hook the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     */
+    S threadHook(
+        ThrowingConsumer<? super C, ?> hook
+    );
 
     /**
      * Returns the context.

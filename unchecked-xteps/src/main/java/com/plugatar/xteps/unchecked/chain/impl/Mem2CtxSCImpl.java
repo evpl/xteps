@@ -25,6 +25,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.ThreadHook;
 import com.plugatar.xteps.unchecked.chain.Mem2CtxSC;
 import com.plugatar.xteps.unchecked.chain.Mem3CtxSC;
 import com.plugatar.xteps.unchecked.chain.MemNoCtxSC;
@@ -86,7 +87,7 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
     }
 
     @Override
-    public final Mem2CtxSC<C, C2, PS> callHooks() {
+    public final Mem2CtxSC<C, C2, PS> callChainHooks() {
         try {
             this.hookContainer.callHooks();
         } catch (final Throwable ex) {
@@ -97,23 +98,56 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
     }
 
     @Override
-    public final Mem2CtxSC<C, C2, PS> hook(final ThrowingRunnable<?> hook) {
+    public final Mem2CtxSC<C, C2, PS> chainHook(
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(hook);
         return this;
     }
 
     @Override
-    public final Mem2CtxSC<C, C2, PS> hook(final ThrowingConsumer<C, ?> hook) {
+    public final Mem2CtxSC<C, C2, PS> chainHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context));
         return this;
     }
 
     @Override
-    public final Mem2CtxSC<C, C2, PS> hook(final ThrowingBiConsumer<C, C2, ?> hook) {
+    public final Mem2CtxSC<C, C2, PS> chainHook(
+        final ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context, this.context2));
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> threadHook(
+        final ThrowingRunnable<?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> threadHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
+        return this;
+    }
+
+    @Override
+    public final Mem2CtxSC<C, C2, PS> threadHook(
+        final ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingBiConsumer.unchecked(hook).accept(this.context, this.context2));
         return this;
     }
 

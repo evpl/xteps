@@ -15,9 +15,9 @@
  */
 package com.plugatar.xteps.base;
 
-import com.plugatar.xteps.base.container.DefaultHookContainer;
 import com.plugatar.xteps.base.handler.DefaultExceptionHandler;
 import com.plugatar.xteps.base.handler.FakeExceptionHandler;
+import com.plugatar.xteps.base.hook.container.DefaultHookContainer;
 import com.plugatar.xteps.base.reporter.DefaultStepReporter;
 import com.plugatar.xteps.base.reporter.FakeStepReporter;
 
@@ -58,6 +58,13 @@ public interface XtepsBase {
      * @return HookContainer generator
      */
     ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator();
+
+    /**
+     * Returns thread hook interval in milliseconds.
+     *
+     * @return thread hook interval in milliseconds
+     */
+    long threadHookInterval();
 
     /**
      * Returns cached XtepsBase instance.
@@ -111,6 +118,7 @@ public interface XtepsBase {
             final ExceptionHandler exceptionHandler = booleanProperty(properties, "xteps.cleanStackTrace", true)
                 ? new DefaultExceptionHandler()
                 : new FakeExceptionHandler();
+            final long threadHookInterval = positiveLongProperty(properties, "xteps.threadHookInterval", 10000L);
             return new XtepsBase() {
                 @Override
                 public StepReporter stepReporter() {
@@ -125,6 +133,11 @@ public interface XtepsBase {
                 @Override
                 public ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator() {
                     return DefaultHookContainer::new;
+                }
+
+                @Override
+                public long threadHookInterval() {
+                    return threadHookInterval;
                 }
             };
         }
@@ -158,7 +171,37 @@ public interface XtepsBase {
             if (trimmedPropertyValue.isEmpty()) {
                 return defaultValue;
             }
-            return trimmedPropertyValue.equalsIgnoreCase("true");
+            if (trimmedPropertyValue.equalsIgnoreCase("false")) {
+                return false;
+            }
+            if (trimmedPropertyValue.equalsIgnoreCase("true")) {
+                return true;
+            }
+            throwXtepsPropertyException(propertyName, propertyValue);
+            return defaultValue;
+        }
+
+        private static long positiveLongProperty(final Properties properties,
+                                                 final String propertyName,
+                                                 final long defaultValue) {
+            final String propertyValue = properties.getProperty(propertyName);
+            if (propertyValue == null) {
+                return defaultValue;
+            }
+            final String trimmedPropertyValue = propertyValue.trim();
+            if (trimmedPropertyValue.isEmpty()) {
+                return defaultValue;
+            }
+            try {
+                final long longValue = Long.parseLong(trimmedPropertyValue);
+                if (longValue < 0L) {
+                    throwXtepsPropertyException(propertyValue, propertyName);
+                }
+                return longValue;
+            } catch (final NumberFormatException ex) {
+                throwXtepsPropertyException(propertyValue, propertyName);
+            }
+            return defaultValue;
         }
 
         private static List<String> stringListProperty(final Properties properties,
@@ -210,6 +253,11 @@ public interface XtepsBase {
             return listeners.stream()
                 .filter(listener -> classes.add(listener.getClass()))
                 .collect(Collectors.toList());
+        }
+
+        private static void throwXtepsPropertyException(final String propertyName,
+                                                        final String propertyValue) {
+            throw new XtepsException("Incorrect boolean value " + propertyValue + " for " + propertyName + "property");
         }
     }
 }

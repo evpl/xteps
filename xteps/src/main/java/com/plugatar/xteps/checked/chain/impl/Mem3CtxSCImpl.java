@@ -27,6 +27,7 @@ import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.ThrowingTriFunction;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.ThreadHook;
 import com.plugatar.xteps.checked.chain.Mem3CtxSC;
 import com.plugatar.xteps.checked.chain.MemNoCtxSC;
 import com.plugatar.xteps.checked.chain.base.BaseCtxSC;
@@ -92,7 +93,7 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
     }
 
     @Override
-    public final Mem3CtxSC<C, C2, C3, PS> callHooks() {
+    public final Mem3CtxSC<C, C2, C3, PS> callChainHooks() {
         try {
             this.hookContainer.callHooks();
         } catch (final Throwable ex) {
@@ -103,30 +104,75 @@ public class Mem3CtxSCImpl<C, C2, C3, PS extends BaseCtxSC<?>> implements Mem3Ct
     }
 
     @Override
-    public final Mem3CtxSC<C, C2, C3, PS> hook(final ThrowingRunnable<?> hook) {
+    public final Mem3CtxSC<C, C2, C3, PS> chainHook(
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(hook);
         return this;
     }
 
     @Override
-    public final Mem3CtxSC<C, C2, C3, PS> hook(final ThrowingConsumer<C, ?> hook) {
+    public final Mem3CtxSC<C, C2, C3, PS> chainHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context));
         return this;
     }
 
     @Override
-    public final Mem3CtxSC<C, C2, C3, PS> hook(final ThrowingBiConsumer<C, C2, ?> hook) {
+    public final Mem3CtxSC<C, C2, C3, PS> chainHook(
+        final ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context, this.context2));
         return this;
     }
 
     @Override
-    public final Mem3CtxSC<C, C2, C3, PS> hook(final ThrowingTriConsumer<C, C2, C3, ?> hook) {
+    public final Mem3CtxSC<C, C2, C3, PS> chainHook(
+        final ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
         this.hookContainer.add(() -> hook.accept(this.context, this.context2, this.context3));
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> threadHook(
+        final ThrowingRunnable<?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> threadHook(
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> threadHook(
+        final ThrowingBiConsumer<? super C, ? super C2, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() -> ThrowingBiConsumer.unchecked(hook).accept(this.context, this.context2));
+        return this;
+    }
+
+    @Override
+    public final Mem3CtxSC<C, C2, C3, PS> threadHook(
+        final ThrowingTriConsumer<? super C, ? super C2, ? super C3, ?> hook
+    ) {
+        if (hook == null) { this.throwNullArgException("hook"); }
+        ThreadHook.add(() ->
+            ThrowingTriConsumer.unchecked(hook).accept(this.context, this.context2, this.context3));
         return this;
     }
 
