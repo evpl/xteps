@@ -2,7 +2,7 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
-[![Version](https://img.shields.io/badge/Version-5.4-blue?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Version](https://img.shields.io/badge/Version-5.5-blue?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
 ![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
@@ -18,8 +18,9 @@ are ready, but you can write your own listener for another reporting system or j
     * [Steps chain](#Steps-chain)
     * [Step objects](#Step-objects)
 * [Parameters](#Parameters)
-* [Features](#Features)
+* [Additional features](#Additional-features)
     * [Steps chain hooks](#Steps-chain-hooks)
+    * [Thread hooks](#Thread-hooks)
     * [Clean stack trace](#Clean-stack-trace)
     * [Checked exceptions](#Checked-exceptions)
     * [Integrations](#Integrations)
@@ -29,14 +30,14 @@ are ready, but you can write your own listener for another reporting system or j
 
 Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 
-|                         | Java (with checked exceptions)                                                                                                                                                         | Java (without checked exceptions) / Kotlin JVM                                                                                                                                                              |
+|                         | Java (checked exceptions are not ignored)                                                                                                                                              | Java (checked exceptions are ignored) / Kotlin JVM                                                                                                                                                          |
 |-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Allure                  | [![Maven Central](https://img.shields.io/badge/-xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)             | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             |
 | Qase                    | [![Maven Central](https://img.shields.io/badge/-xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase)                 | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase)                 |
 | ReportPortal            | [![Maven Central](https://img.shields.io/badge/-xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal) | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) |
 | Custom reporting system | [![Maven Central](https://img.shields.io/badge/-xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)                            | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps)                            |
 
-Read more about [integrations](#Integrations).
+Read more about [checked exceptions](#Checked-exceptions) and [integrations](#Integrations).
 
 ## API
 
@@ -115,6 +116,10 @@ class ExampleTest {
                     driver.findElements(By.id("login_button"))
                 )
             )
+            .stepToContext("Get database connection", () -> {
+                /* ... */
+                return getDatabaseConnection();
+            })
             .hook(Connection::close)
             .step("Check user full name label", (dbConnection, driver) -> {
                 final By usernameLabelLocator = By.id("full_name_label");
@@ -310,12 +315,13 @@ overridden by system properties.
 
 ### Properties list
 
-| Name                  | Type    | Default value | Description                                                                                                                                                                                           |
-|-----------------------|---------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps.enabled         | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
-| xteps.spi             | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
-| xteps.listeners       | String  |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
-| xteps.cleanStackTrace | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
+| Name                     | Type    | Default value | Description                                                                                                                                                                                           |
+|--------------------------|---------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| xteps.enabled            | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
+| xteps.spi                | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
+| xteps.listeners          | String  |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| xteps.cleanStackTrace    | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
+| xteps.threadHookInterval | Long    | `30000`       | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
 
 ### Examples
 
@@ -326,14 +332,15 @@ xteps.enabled=true
 xteps.spi=true
 xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 xteps.cleanStackTrace=true
+xteps.threadHookInterval=30000
 ```
 
-## Features
+## Additional features
 
 ### Steps chain hooks
 
-You can use hooks in a steps chain. Hooks will be closed in case of any exception in steps chain or in case of
-`callHooks()` method invocation. You can use hooks to release resources.
+You can use hooks in a steps chain. Hooks will be called in case of any exception in steps chain or in case of
+`callHooks()` method call. You also can use hooks to release resources.
 
 ```java
 stepsChain().withContext(new AutoCloseableImpl())
@@ -342,6 +349,19 @@ stepsChain().withContext(new AutoCloseableImpl())
         //...
     })
     .callHooks();
+```
+
+### Thread hooks
+
+You can use thread hooks. Hooks will be called after current thread is finished. You also can use hooks to release
+resources.
+
+```java
+stepsChain().withContext(new AutoCloseableImpl())
+    .threadHook(AutoCloseable::close)
+    .step("Step", ctx -> {
+        //...
+    });
 ```
 
 ### Clean stack trace
@@ -446,8 +466,7 @@ the step name and other step attributes at runtime.
 
 ## Java 8 unreported exception bug
 
-You may run into a problem if you use Java 8. The issue is caused by generic exceptions (Unchecked Xteps doesn't have
-this issue).
+You may run into a problem if you use Xteps and Java 8. The issue is caused by generic exceptions.
 
 ```java
 stepsChain()
@@ -459,7 +478,8 @@ stepsChain()
 This code can fail build with this exception `java: unreported exception java.lang.Throwable; must be caught or
 declared to be thrown`.
 
-You can switch to Java 9+ or use functional interfaces static methods to hide any exceptions.
+You can switch to Java 9+ or use functional interfaces static methods to hide any exceptions or just use
+Unchecked Xteps.
 
 ```java
 stepsChain()

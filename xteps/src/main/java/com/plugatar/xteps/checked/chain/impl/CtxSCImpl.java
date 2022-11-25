@@ -23,7 +23,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.base.hook.ThreadHook;
+import com.plugatar.xteps.base.hook.ThreadHooks;
 import com.plugatar.xteps.checked.chain.CtxSC;
 import com.plugatar.xteps.checked.chain.Mem2CtxSC;
 import com.plugatar.xteps.checked.chain.MemNoCtxSC;
@@ -100,7 +100,7 @@ public class CtxSCImpl<C> implements CtxSC<C> {
         final ThrowingRunnable<?> hook
     ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
+        ThreadHooks.add(() -> ThrowingRunnable.unchecked(hook).run());
         return this;
     }
 
@@ -109,7 +109,7 @@ public class CtxSCImpl<C> implements CtxSC<C> {
         final ThrowingConsumer<? super C, ?> hook
     ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHook.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
+        ThreadHooks.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
         return this;
     }
 
