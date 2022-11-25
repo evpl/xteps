@@ -2,6 +2,8 @@
 
 ## 5.6 (planned)
 
+* PR #72 QaseStepListener javadoc fix
+
 ## 5.5 (released 25.11.2022)
 
 * PR #71 refactoring, updated readme

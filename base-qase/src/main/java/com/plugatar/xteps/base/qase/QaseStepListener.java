@@ -42,10 +42,10 @@ public class QaseStepListener implements StepListener {
     }
 
     /**
-     * Ctor.
-     *
      * @param emptyStepNameReplacement the empty step name replacement
      * @param contextParamName         the context param name
+     * @param leftReplacementBorder    the left replacement border
+     * @param rightReplacementBorder   the right replacement border
      */
     public QaseStepListener(final String emptyStepNameReplacement,
                             final String contextParamName,
