@@ -21,7 +21,6 @@ import com.plugatar.xteps.base.XtepsException;
 
 import java.util.Deque;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -65,10 +64,9 @@ public class ThreadHooks {
                     } catch (final InterruptedException ignored) {
                     }
                     if (!HOOKS.isEmpty()) {
-                        final Set<Thread> aliveThreads = Thread.getAllStackTraces().keySet();
-                        HOOKS.keySet().forEach(hookThread -> {
-                            if (!aliveThreads.contains(hookThread)) {
-                                HOOKS.computeIfPresent(hookThread, (thread, deque) -> {
+                        HOOKS.keySet().forEach(t -> {
+                            if (!t.isAlive()) {
+                                HOOKS.computeIfPresent(t, (thread, deque) -> {
                                     deque.descendingIterator().forEachRemaining(hook -> {
                                         try {
                                             hook.run();
