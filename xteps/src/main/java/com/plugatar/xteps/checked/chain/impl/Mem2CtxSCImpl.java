@@ -25,7 +25,7 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.base.hook.ThreadHook;
+import com.plugatar.xteps.base.hook.ThreadHooks;
 import com.plugatar.xteps.checked.chain.Mem2CtxSC;
 import com.plugatar.xteps.checked.chain.Mem3CtxSC;
 import com.plugatar.xteps.checked.chain.MemNoCtxSC;
@@ -127,7 +127,7 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
         final ThrowingRunnable<?> hook
     ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHook.add(() -> ThrowingRunnable.unchecked(hook).run());
+        ThreadHooks.add(() -> ThrowingRunnable.unchecked(hook).run());
         return this;
     }
 
@@ -136,7 +136,7 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
         final ThrowingConsumer<? super C, ?> hook
     ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHook.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
+        ThreadHooks.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
         return this;
     }
 
@@ -145,7 +145,7 @@ public class Mem2CtxSCImpl<C, C2, PS extends BaseCtxSC<?>> implements Mem2CtxSC<
         final ThrowingBiConsumer<? super C, ? super C2, ?> hook
     ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHook.add(() -> ThrowingBiConsumer.unchecked(hook).accept(this.context, this.context2));
+        ThreadHooks.add(() -> ThrowingBiConsumer.unchecked(hook).accept(this.context, this.context2));
         return this;
     }
 

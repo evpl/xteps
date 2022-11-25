@@ -26,29 +26,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Tests for {@link ThreadHook}.
+ * Tests for {@link ThreadHooks}.
  */
 final class ThreadHookTest {
 
     @Test
     void nullArgExceptionForAddMethod() {
-        assertThatCode(() -> ThreadHook.add(null))
+        assertThatCode(() -> ThreadHooks.add(null))
             .isInstanceOf(XtepsException.class);
     }
 
     @Test
     void addMethod() throws Throwable {
-        System.setProperty("xteps.listeners", "com.plugatar.xteps.NotExist");
-        assertThatCode(() -> ThreadHook.add(() -> { }))
+        System.setProperty("xteps.threadHookInterval", "-30000");
+        assertThatCode(() -> ThreadHooks.add(() -> { }))
             .isInstanceOf(XtepsException.class);
-        System.clearProperty("xteps.listeners");
+        System.clearProperty("xteps.threadHookInterval");
 
         final AtomicBoolean isHook1Executed = new AtomicBoolean();
         final ThrowingRunnable<RuntimeException> hook1 = () -> isHook1Executed.set(true);
-        final Thread thread1 = new Thread(() -> ThreadHook.add(hook1));
+        final Thread thread1 = new Thread(() -> ThreadHooks.add(hook1));
         final AtomicBoolean isHook2Executed = new AtomicBoolean();
         final ThrowingRunnable<RuntimeException> hook2 = () -> isHook2Executed.set(true);
-        final Thread thread2 = new Thread(() -> ThreadHook.add(hook2));
+        final Thread thread2 = new Thread(() -> ThreadHooks.add(hook2));
 
         assertThat(isHook1Executed).isFalse();
         assertThat(isHook2Executed).isFalse();

@@ -26,14 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * Thread hook.
+ * Thread hooks.
  */
-public class ThreadHook {
+public class ThreadHooks {
 
     /**
      * Utility class ctor.
      */
-    private ThreadHook() {
+    private ThreadHooks() {
     }
 
     /**
@@ -41,18 +41,18 @@ public class ThreadHook {
      * thread is finished.
      *
      * @param hook the hook
-     * @throws XtepsException if {@code hook} is null
-     *                        or if Xteps configuration is incorrect
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code hook} is null
      */
     public static void add(final ThrowingRunnable<?> hook) {
+        XtepsBase.cached().threadHookInterval(); /* check Xteps configuration */
         if (hook == null) { throw new XtepsException("hook arg is null"); }
-        XtepsBase.cached().threadHookInterval(); /* check Xteps configuration before Inner class static block init */
-        Inner.addHook(Thread.currentThread(), hook);
+        Internal.addHook(Thread.currentThread(), hook);
     }
 
-    private static final class Inner {
+    private static final class Internal {
         private static final Map<Thread, Deque<ThrowingRunnable<?>>> HOOKS = new ConcurrentHashMap<>();
-        private static final long INTERVAL_MS = XtepsBase.cached().threadHookInterval();
+        private static final long INTERVAL_MILLIS = XtepsBase.cached().threadHookInterval();
 
         static {
             final Thread daemonThread = new Thread(() -> {
@@ -62,12 +62,11 @@ public class ThreadHook {
                         final long currentMillis = System.currentTimeMillis();
                         sleep(lastStart, currentMillis);
                         lastStart = currentMillis;
-                    } catch (final InterruptedException ex) {
-                        ex.printStackTrace();
+                    } catch (final InterruptedException ignored) {
                     }
                     if (!HOOKS.isEmpty()) {
                         final Set<Thread> aliveThreads = Thread.getAllStackTraces().keySet();
-                        for (final Thread hookThread : HOOKS.keySet()) {
+                        HOOKS.keySet().forEach(hookThread -> {
                             if (!aliveThreads.contains(hookThread)) {
                                 HOOKS.computeIfPresent(hookThread, (thread, deque) -> {
                                     deque.descendingIterator().forEachRemaining(hook -> {
@@ -80,10 +79,10 @@ public class ThreadHook {
                                     return null;
                                 });
                             }
-                        }
+                        });
                     }
                 }
-            }, "Xteps-hook-daemon-thread");
+            }, "xteps-hook-daemon-thread");
             daemonThread.setDaemon(true);
             daemonThread.start();
 
@@ -95,7 +94,7 @@ public class ThreadHook {
                         ex.printStackTrace();
                     }
                 })),
-                "Xteps-shutdown-hook-thread"
+                "xteps-shutdown-hook-thread"
             ));
         }
 
@@ -106,9 +105,9 @@ public class ThreadHook {
 
         private static void sleep(final long startMillis,
                                   final long currentMillis) throws InterruptedException {
-            final long result = INTERVAL_MS - (currentMillis - startMillis);
-            if (result > 0) {
-                Thread.sleep(result);
+            final long sleepMillis = INTERVAL_MILLIS - currentMillis + startMillis;
+            if (sleepMillis > 0) {
+                Thread.sleep(sleepMillis);
             }
         }
     }

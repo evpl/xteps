@@ -1,7 +1,10 @@
 # Changelog
 
-## 5.5 (planned)
+## 5.6 (planned)
 
+## 5.5 (released 25.11.2022)
+
+* PR #71 refactoring, updated readme
 * PR #70 added ThreadHook
 * PR #69 added stepsChainOf method
 * PR #68 Bump client-java from 5.1.12 to 5.1.14
