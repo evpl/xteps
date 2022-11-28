@@ -6,6 +6,10 @@
 * PR #73 optimized thread hook algorithm
 * PR #72 QaseStepListener javadoc fix
 
+Additional changes:
+
+* PR #75 updated readme links
+
 ## 5.5 (released 25.11.2022)
 
 * PR #71 refactoring, updated readme
