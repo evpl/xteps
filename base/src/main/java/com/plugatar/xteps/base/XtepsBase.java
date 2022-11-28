@@ -44,9 +44,17 @@ public interface XtepsBase {
     /**
      * Returns thread hook interval in milliseconds.
      *
-     * @return thread hook interval in milliseconds
+     * @return thread hook interval
      */
     long threadHookInterval();
+
+    /**
+     * Returns thread hook priority in the range {@link Thread#MIN_PRIORITY} to
+     * {@link Thread#MAX_PRIORITY}.
+     *
+     * @return thread hook priority
+     */
+    int threadHookPriority();
 
     /**
      * Returns cached XtepsBase instance.

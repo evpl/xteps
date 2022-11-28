@@ -83,7 +83,12 @@ final class XtepsBaseProvider {
         final ExceptionHandler exceptionHandler = booleanProperty(properties, "xteps.cleanStackTrace", true)
             ? new DefaultExceptionHandler()
             : new FakeExceptionHandler();
-        final long threadHookInterval = positiveLongProperty(properties, "xteps.threadHookInterval", 30000L);
+        final long threadHookInterval = longPropertyInRange(
+            properties, "xteps.threadHookInterval", 0L, Long.MAX_VALUE, 100L
+        );
+        final int threadHookPriority = intPropertyInRange(
+            properties, "xteps.threadHookPriority", Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY
+        );
         return new XtepsBase() {
             @Override
             public StepReporter stepReporter() {
@@ -103,6 +108,11 @@ final class XtepsBaseProvider {
             @Override
             public long threadHookInterval() {
                 return threadHookInterval;
+            }
+
+            @Override
+            public int threadHookPriority() {
+                return threadHookPriority;
             }
         };
     }
@@ -145,9 +155,11 @@ final class XtepsBaseProvider {
         throw throwXtepsPropertyException(propertyName, propertyValue);
     }
 
-    private static long positiveLongProperty(final Properties properties,
-                                             final String propertyName,
-                                             final long defaultValue) {
+    private static long longPropertyInRange(final Properties properties,
+                                            final String propertyName,
+                                            final long min,
+                                            final long max,
+                                            final long defaultValue) {
         final String propertyValue = properties.getProperty(propertyName);
         if (propertyValue == null) {
             return defaultValue;
@@ -158,12 +170,36 @@ final class XtepsBaseProvider {
         }
         try {
             final long longValue = Long.parseLong(trimmedPropertyValue);
-            if (longValue < 0L) {
-                throw throwXtepsPropertyException(propertyValue, propertyName);
+            if (longValue < min || longValue > max) {
+                throw throwXtepsPropertyException(propertyName, propertyValue);
             }
             return longValue;
         } catch (final NumberFormatException ex) {
-            throw throwXtepsPropertyException(propertyValue, propertyName);
+            throw throwXtepsPropertyException(propertyName, propertyValue);
+        }
+    }
+
+    private static int intPropertyInRange(final Properties properties,
+                                          final String propertyName,
+                                          final int min,
+                                          final int max,
+                                          final int defaultValue) {
+        final String propertyValue = properties.getProperty(propertyName);
+        if (propertyValue == null) {
+            return defaultValue;
+        }
+        final String trimmedPropertyValue = propertyValue.trim();
+        if (trimmedPropertyValue.isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            final int intValue = Integer.parseInt(trimmedPropertyValue);
+            if (intValue < min || intValue > max) {
+                throw throwXtepsPropertyException(propertyName, propertyValue);
+            }
+            return intValue;
+        } catch (final NumberFormatException ex) {
+            throw throwXtepsPropertyException(propertyName, propertyValue);
         }
     }
 

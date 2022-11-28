@@ -2,7 +2,7 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
-[![Version](https://img.shields.io/badge/Version-5.5-blue?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Version](https://img.shields.io/badge/Version-5.5-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
 ![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
@@ -30,12 +30,12 @@ are ready, but you can write your own listener for another reporting system or j
 
 Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 
-|                         | Java (checked exceptions are not ignored)                                                                                                                                              | Java (checked exceptions are ignored) / Kotlin JVM                                                                                                                                                          |
-|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Allure                  | [![Maven Central](https://img.shields.io/badge/-xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure)             | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--allure-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure)             |
-| Qase                    | [![Maven Central](https://img.shields.io/badge/-xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase)                 | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--qase-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase)                 |
-| ReportPortal            | [![Maven Central](https://img.shields.io/badge/-xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal) | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps--reportportal-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) |
-| Custom reporting system | [![Maven Central](https://img.shields.io/badge/-xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps)                            | [![Maven Central](https://img.shields.io/badge/-unchecked--xteps-blue?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps)                            |
+|                         | Java (checked exceptions are not ignored)                                                                                                                                                                                                                                                                                            | Java (checked exceptions are ignored) / Kotlin JVM                                                                                                                                                                                                                                                                                                       |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Allure                  | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/xteps-allure)             | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
+| Qase                    | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                 | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                 |
+| ReportPortal            | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal) | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
+| Custom reporting system | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/xteps)                           | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://maven-badges.herokuapp.com/maven-central/com.plugatar.xteps/unchecked-xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](hhttps://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                           |
 
 Read more about [checked exceptions](#Checked-exceptions) and [integrations](#Integrations).
 
@@ -55,6 +55,7 @@ class ExampleTest {
             /* ... */
             return new ChromeDriver();
         });
+        threadHook(driver::quit);
         step("Login", () -> {
             step("Open page", () ->
                 driver.navigate().to("https://.../login")
@@ -73,6 +74,7 @@ class ExampleTest {
             /* ... */
             return getDatabaseConnection();
         });
+        threadHook(dbConnection::close);
         step("Check user full name label", () -> {
             final By usernameLabelLocator = By.id("full_name_label");
             new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
@@ -101,7 +103,7 @@ class ExampleTest {
                 /* ... */
                 return new ChromeDriver();
             })
-            .hook(WebDriver::quit)
+            .chainHook(WebDriver::quit)
             .nestedSteps("Login", chain -> chain
                 .step("Open page", driver ->
                     driver.navigate().to("https://.../login")
@@ -120,7 +122,7 @@ class ExampleTest {
                 /* ... */
                 return getDatabaseConnection();
             })
-            .hook(Connection::close)
+            .chainHook(Connection::close)
             .step("Check user full name label", (dbConnection, driver) -> {
                 final By usernameLabelLocator = By.id("full_name_label");
                 new WebDriverWait(driver, Duration.ofSeconds(5)).until(visibilityOfElementLocated(usernameLabelLocator));
@@ -218,13 +220,13 @@ public class ExampleTest {
     void stepObjectsExample() {
         stepsChain()
             .stepToContext(new CreateWebDriver())
-            .hook(WebDriver::quit)
+            .chainHook(WebDriver::quit)
             .step(new OpenPage("https://.../login"))
             .step(new TypeLogin("user123"))
             .step(new TypePassword("1234567890"))
             .step(new ClickOnLoginButton())
             .stepToContext(new DatabaseConnection())
-            .hook(Connection::close)
+            .chainHook(Connection::close)
             .step(new CheckUserFullName("user123"))
             .callHooks();
     }
@@ -255,13 +257,13 @@ You can use stubs before actually implementing the steps.
 void stepObjectsExample() {
     stepsChain()
         .stepToContext(SupplierStep.<WebDriver>dummy("Create WebDriver"))
-        .hook(WebDriver::quit)
+        .chainHook(WebDriver::quit)
         .step(RunnableStep.dummy("Open page https://.../login"))
         .step(RunnableStep.dummy("Type login user123"))
         .step(RunnableStep.dummy("Type password 1234567890"))
         .step(RunnableStep.dummy("Click on login button"))
         .stepToContext(SupplierStep.<Connection>dummy("Get database connection"))
-        .hook(Connection::close)
+        .chainHook(Connection::close)
         .step(RunnableStep.dummy("Check user full name"))
         .callHooks();
 }
@@ -292,7 +294,7 @@ public class ExampleTest {
                 /* ... */
                 return new ChromeDriver();
             })
-            .hook(WebDriver::quit)
+            .chainHook(WebDriver::quit)
             .step("When", new OpenPage("https://.../login"))
             .step("And", new TypeLogin("user123"))
             .step("And", new TypePassword("1234567890"))
@@ -321,7 +323,8 @@ overridden by system properties.
 | xteps.spi                | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
 | xteps.listeners          | String  |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
 | xteps.cleanStackTrace    | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
-| xteps.threadHookInterval | Long    | `30000`       | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
+| xteps.threadHookInterval | Long    | `100`         | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
+| xteps.threadHookPriority | Integer | `5`           | Thread hook daemon thread priority in the range `1` to `10`.                                                                                                                                          |
 
 ### Examples
 
@@ -344,7 +347,7 @@ You can use hooks in a steps chain. Hooks will be called in case of any exceptio
 
 ```java
 stepsChain().withContext(new AutoCloseableImpl())
-    .hook(AutoCloseable::close)
+    .chainHook(AutoCloseable::close)
     .step("Step", ctx -> {
         //...
     })
