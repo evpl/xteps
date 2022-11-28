@@ -38,7 +38,7 @@ final class ThreadHookTest {
 
     @Test
     void addMethod() throws Throwable {
-        System.setProperty("xteps.threadHookInterval", "-30000");
+        System.setProperty("xteps.threadHookInterval", "-100");
         assertThatCode(() -> ThreadHooks.add(() -> { }))
             .isInstanceOf(XtepsException.class);
         System.clearProperty("xteps.threadHookInterval");

@@ -44,7 +44,7 @@ public class ThreadHooks {
      *                        or if {@code hook} is null
      */
     public static void add(final ThrowingRunnable<?> hook) {
-        XtepsBase.cached().threadHookInterval(); /* check Xteps configuration */
+        XtepsBase.cached(); /* check Xteps configuration */
         if (hook == null) { throw new XtepsException("hook arg is null"); }
         Internal.addHook(Thread.currentThread(), hook);
     }
@@ -54,19 +54,25 @@ public class ThreadHooks {
         private static final long INTERVAL_MILLIS = XtepsBase.cached().threadHookInterval();
 
         static {
+            /* Daemon thread */
             final Thread daemonThread = new Thread(() -> {
-                long lastStart = System.currentTimeMillis();
+                long lastStartMillis = System.currentTimeMillis();
                 while (true) {
                     try {
-                        final long currentMillis = System.currentTimeMillis();
-                        sleep(lastStart, currentMillis);
-                        lastStart = currentMillis;
-                    } catch (final InterruptedException ignored) {
+                        final long startMillis = System.currentTimeMillis();
+                        final long millisToSleep = INTERVAL_MILLIS - startMillis + lastStartMillis;
+                        if (millisToSleep > 0) {
+                            Thread.sleep(millisToSleep);
+                        }
+                        lastStartMillis = startMillis;
+                    } catch (final InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                     if (!HOOKS.isEmpty()) {
-                        HOOKS.keySet().forEach(t -> {
-                            if (!t.isAlive()) {
-                                HOOKS.computeIfPresent(t, (thread, deque) -> {
+                        HOOKS.keySet().forEach(thread -> {
+                            if (!thread.isAlive()) {
+                                HOOKS.computeIfPresent(thread, (t, deque) -> {
                                     deque.descendingIterator().forEachRemaining(hook -> {
                                         try {
                                             hook.run();
@@ -82,8 +88,9 @@ public class ThreadHooks {
                 }
             }, "xteps-hook-daemon-thread");
             daemonThread.setDaemon(true);
+            daemonThread.setPriority(XtepsBase.cached().threadHookPriority());
             daemonThread.start();
-
+            /* Shutdown hook */
             Runtime.getRuntime().addShutdownHook(new Thread(() ->
                 HOOKS.values().forEach(queue -> queue.descendingIterator().forEachRemaining(hook -> {
                     try {
@@ -99,14 +106,6 @@ public class ThreadHooks {
         private static void addHook(final Thread thread,
                                     final ThrowingRunnable<?> hook) {
             HOOKS.computeIfAbsent(thread, k -> new ConcurrentLinkedDeque<>()).add(hook);
-        }
-
-        private static void sleep(final long startMillis,
-                                  final long currentMillis) throws InterruptedException {
-            final long sleepMillis = INTERVAL_MILLIS - currentMillis + startMillis;
-            if (sleepMillis > 0) {
-                Thread.sleep(sleepMillis);
-            }
         }
     }
 }
