@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepsChainOf;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -37,8 +37,8 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
      *
      * @param step the step
      */
-    protected ConsumerStep(final ThrowingConsumer<? super T, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public ConsumerStep(final ThrowingConsumer<? super T, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(ConsumerStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -89,12 +89,12 @@ public class ConsumerStep<T> implements ThrowingConsumer<T, RuntimeException> {
      *
      * @param t the input argument
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final void accept(final T t) {
-        UncheckedXteps.stepsChain().withContext(t)
-            .step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t).step(this.stepName, this.stepDescription, this.step);
     }
 
     /**

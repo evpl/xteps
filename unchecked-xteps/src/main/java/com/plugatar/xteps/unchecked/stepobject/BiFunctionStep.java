@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepsChainOf;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -39,8 +39,8 @@ public class BiFunctionStep<T, U, R> implements ThrowingBiFunction<T, U, R, Runt
      *
      * @param step the step
      */
-    protected BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(BiFunctionStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -95,12 +95,12 @@ public class BiFunctionStep<T, U, R> implements ThrowingBiFunction<T, U, R, Runt
      * @param u the second input argument
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final R apply(final T t, final U u) {
-        return UncheckedXteps.stepsChain().withContext(u).withContext(t)
-            .stepTo(this.stepName, this.stepDescription, this.step);
+        return stepsChainOf(t, u).stepTo(this.stepName, this.stepDescription, this.step);
     }
 
     /**

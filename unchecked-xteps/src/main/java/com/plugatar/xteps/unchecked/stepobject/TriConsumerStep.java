@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepsChainOf;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -40,8 +40,8 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      *
      * @param step the step
      */
-    protected TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(TriConsumerStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -96,12 +96,12 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @param u the second input argument
      * @param v the third input argument
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final void accept(final T t, final U u, final V v) {
-        UncheckedXteps.stepsChain().withContext(v).withContext(u).withContext(t)
-            .step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u, v).step(this.stepName, this.stepDescription, this.step);
     }
 
     /**

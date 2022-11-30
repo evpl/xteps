@@ -17,9 +17,9 @@ package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.Xteps;
 
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.Xteps.step;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -37,8 +37,8 @@ public class RunnableStep<E extends Throwable> implements ThrowingRunnable<E> {
      *
      * @param step the step
      */
-    protected RunnableStep(final ThrowingRunnable<? extends E> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public RunnableStep(final ThrowingRunnable<? extends E> step) {
+        this.stepName = humanReadableOrEmptyStepName(RunnableStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -87,12 +87,13 @@ public class RunnableStep<E extends Throwable> implements ThrowingRunnable<E> {
      * Performs and reports this step.
      *
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if this step threw exception
      */
     @Override
     public final void run() throws E {
-        Xteps.stepsChain().step(this.stepName, this.stepDescription, this.step);
+        step(this.stepName, this.stepDescription, this.step);
     }
 
     /**

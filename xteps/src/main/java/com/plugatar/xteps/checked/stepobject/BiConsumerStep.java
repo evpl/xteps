@@ -17,9 +17,9 @@ package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.Xteps;
 
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.Xteps.stepsChainOf;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -39,8 +39,8 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
      *
      * @param step the step
      */
-    protected BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ? extends E> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ? extends E> step) {
+        this.stepName = humanReadableOrEmptyStepName(BiConsumerStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -93,13 +93,13 @@ public class BiConsumerStep<T, U, E extends Throwable> implements ThrowingBiCons
      * @param t the first input argument
      * @param u the second input argument
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if this step threw exception
      */
     @Override
     public final void accept(final T t, final U u) throws E {
-        Xteps.stepsChain().withContext(u).withContext(t)
-            .step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u).step(this.stepName, this.stepDescription, this.step);
     }
 
     /**
