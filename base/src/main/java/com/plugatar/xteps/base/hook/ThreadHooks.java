@@ -105,7 +105,7 @@ public class ThreadHooks {
 
         private static void addHook(final Thread thread,
                                     final ThrowingRunnable<?> hook) {
-            HOOKS.computeIfAbsent(thread, k -> new ConcurrentLinkedDeque<>()).add(hook);
+            HOOKS.computeIfAbsent(thread, t -> new ConcurrentLinkedDeque<>()).addLast(hook);
         }
     }
 }

@@ -2,6 +2,7 @@
 
 ## 5.6 (planned)
 
+* PR #80 small refactoring
 * PR #79 added missed com.plugatar.xteps.base.hook package-info
 * PR #78 added step objects public ctor without step name
 * PR #77 Bump qase-api from 3.0.0 to 3.0.1

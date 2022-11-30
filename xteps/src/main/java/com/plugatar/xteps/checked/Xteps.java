@@ -398,7 +398,7 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static NoCtxSC stepsChain() {
-        return CHECKED_XTEPS_BASE.get().newNoCtxCS();
+        return CHECKED_XTEPS_BASE.get().newNoCtxSC();
     }
 
     /**
@@ -413,7 +413,7 @@ public final class Xteps {
      * @see #stepsChain()
      */
     public static <C> CtxSC<C> stepsChainOf(final C context) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context);
     }
 
@@ -434,7 +434,7 @@ public final class Xteps {
         final C context,
         final C2 context2
     ) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context2).withContext(context);
     }
 
@@ -458,7 +458,7 @@ public final class Xteps {
         final C2 context2,
         final C3 context3
     ) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context3).withContext(context2).withContext(context);
     }
 
@@ -503,7 +503,7 @@ public final class Xteps {
             return this.simpleNoCtxSC;
         }
 
-        private NoCtxSC newNoCtxCS() {
+        private NoCtxSC newNoCtxSC() {
             return new NoCtxSCImpl(
                 this.xtepsBase.stepReporter(),
                 this.xtepsBase.exceptionHandler(),

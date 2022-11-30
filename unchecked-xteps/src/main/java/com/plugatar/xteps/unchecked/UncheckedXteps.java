@@ -382,7 +382,7 @@ public final class UncheckedXteps {
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static NoCtxSC stepsChain() {
-        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS();
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxSC();
     }
 
     /**
@@ -397,7 +397,7 @@ public final class UncheckedXteps {
      * @see #stepsChain()
      */
     public static <C> CtxSC<C> stepsChainOf(final C context) {
-        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context);
     }
 
@@ -418,7 +418,7 @@ public final class UncheckedXteps {
         final C context,
         final C2 context2
     ) {
-        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context2).withContext(context);
     }
 
@@ -442,7 +442,7 @@ public final class UncheckedXteps {
         final C2 context2,
         final C3 context3
     ) {
-        return UNCHECKED_XTEPS_BASE.get().newNoCtxCS()
+        return UNCHECKED_XTEPS_BASE.get().newNoCtxSC()
             .withContext(context3).withContext(context2).withContext(context);
     }
 
@@ -487,7 +487,7 @@ public final class UncheckedXteps {
             return this.simpleNoCtxSC;
         }
 
-        private NoCtxSC newNoCtxCS() {
+        private NoCtxSC newNoCtxSC() {
             return new NoCtxSCImpl(
                 this.xtepsBase.stepReporter(),
                 this.xtepsBase.exceptionHandler(),
