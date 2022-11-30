@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.6 (planned)
+## 5.6 (30.11.2022)
 
 * PR #80 small refactoring
 * PR #79 added missed com.plugatar.xteps.base.hook package-info
