@@ -2,8 +2,10 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
-[![Version](https://img.shields.io/badge/Version-5.5-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Maven Central](https://img.shields.io/badge/maven--central-5.6-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Javadoc](https://img.shields.io/badge/javadoc-5.6-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![GitHub Workflow Status (master)](https://img.shields.io/github/workflow/status/evpl/xteps/All%20tests/master)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
 ![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
 
@@ -24,7 +26,7 @@ are ready, but you can write your own listener for another reporting system or j
     * [Clean stack trace](#Clean-stack-trace)
     * [Checked exceptions](#Checked-exceptions)
     * [Integrations](#Integrations)
-* [Java 8 unreported exception bug](#Java-8-unreported-exception-bug)
+* [JDK 8 unreported exception bug](#JDK-8-unreported-exception-bug)
 
 ## How to use
 
@@ -43,8 +45,8 @@ Read more about [checked exceptions](#Checked-exceptions) and [integrations](#In
 
 ### Static methods
 
-First part of Xteps API is a set of static `step` and `stepTo` methods located in the `com.plugatar.xteps.checked.Xteps`
-/ `com.plugatar.xteps.unchecked.UncheckedXteps` class.
+First part of Xteps API is a set of `step`, `stepTo` and `threadHook` static methods located in the
+`com.plugatar.xteps.checked.Xteps` / `com.plugatar.xteps.unchecked.UncheckedXteps` class.
 
 ```java
 class ExampleTest {
@@ -90,7 +92,8 @@ class ExampleTest {
 
 ### Steps chain
 
-Second part is a static `stepsChain` method located in the `com.plugatar.xteps.checked.Xteps` /
+Second part is a steps chain starts with `stepsChain`, `stepsChainOf(T)`, `stepsChainOf(T1, T2)` and
+`stepsChainOf(T1, T2, T3)` static method located in the `com.plugatar.xteps.checked.Xteps` /
 `com.plugatar.xteps.unchecked.UncheckedXteps` class.
 
 ```java
@@ -240,7 +243,7 @@ class LoginAs extends ConsumerStep<WebDriver> {
 
     public LoginAs(String username, String password) {
         super("Login as " + username + " / " + password, driver ->
-            stepsChain().withContext(driver)
+            stepsChainOf(driver)
                 .step(new OpenPage("https://.../login"))
                 .step(new TypeLogin(username))
                 .step(new TypePassword(password))
@@ -254,7 +257,7 @@ You can use stubs before actually implementing the steps.
 
 ```java
 @Test
-void stepObjectsExample() {
+void dummyStepObjectsExample() {
     stepsChain()
         .stepToContext(SupplierStep.<WebDriver>dummy("Create WebDriver"))
         .chainHook(WebDriver::quit)
@@ -317,14 +320,14 @@ overridden by system properties.
 
 ### Properties list
 
-| Name                     | Type    | Default value | Description                                                                                                                                                                                           |
-|--------------------------|---------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps.enabled            | Boolean | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
-| xteps.spi                | Boolean | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
-| xteps.listeners          | String  |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
-| xteps.cleanStackTrace    | Boolean | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
-| xteps.threadHookInterval | Long    | `100`         | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
-| xteps.threadHookPriority | Integer | `5`           | Thread hook daemon thread priority in the range `1` to `10`.                                                                                                                                          |
+| Name                     | Type    | Required | Default value | Description                                                                                                                                                                                           |
+|--------------------------|---------|----------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| xteps.enabled            | Boolean | No       | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
+| xteps.spi                | Boolean | No       | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
+| xteps.listeners          | String  | No       |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| xteps.cleanStackTrace    | Boolean | No       | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
+| xteps.threadHookInterval | Long    | No       | `100`         | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
+| xteps.threadHookPriority | Integer | No       | `5`           | Thread hook daemon thread priority in the range `1` to `10`.                                                                                                                                          |
 
 ### Examples
 
@@ -343,7 +346,7 @@ xteps.threadHookInterval=30000
 ### Steps chain hooks
 
 You can use hooks in a steps chain. Hooks will be called in case of any exception in steps chain or in case of
-`callHooks()` method call. You also can use hooks to release resources.
+`callHooks` method call. You also can use hooks to release resources.
 
 ```java
 stepsChain().withContext(new AutoCloseableImpl())
@@ -467,9 +470,9 @@ This steps will be reported with name "Step with context = 111 and previous cont
 You can also use utility methods for Allure and Qase - `AllureStepUtils` and `QaseStepUtils`. It allows you to change
 the step name and other step attributes at runtime.
 
-## Java 8 unreported exception bug
+## JDK 8 unreported exception bug
 
-You may run into a problem if you use Xteps and Java 8. The issue is caused by generic exceptions.
+You may run into a problem if you use Xteps and JDK 8. The issue is caused by generic exceptions.
 
 ```java
 stepsChain()
@@ -481,8 +484,8 @@ stepsChain()
 This code can fail build with this exception `java: unreported exception java.lang.Throwable; must be caught or
 declared to be thrown`.
 
-You can switch to Java 9+ or use functional interfaces static methods to hide any exceptions or just use
-Unchecked Xteps.
+You can switch to JDK 9+ or switch to Unchecked Xteps or use functional interfaces static methods to hide any
+exceptions.
 
 ```java
 stepsChain()

@@ -12,8 +12,9 @@
 
 Additional changes:
 
-* PR #75 updated readme links
+* PR #81 updated readme
 * PR #76 updated readme links 2
+* PR #75 updated readme links
 
 ## 5.5 (released 25.11.2022)
 
