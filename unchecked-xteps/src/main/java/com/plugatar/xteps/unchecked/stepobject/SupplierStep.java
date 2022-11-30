@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepTo;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -37,8 +37,8 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      *
      * @param step the step
      */
-    protected SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(SupplierStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -89,11 +89,12 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      *
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final R get() {
-        return UncheckedXteps.stepsChain().stepTo(this.stepName, this.stepDescription, this.step);
+        return stepTo(this.stepName, this.stepDescription, this.step);
     }
 
     /**

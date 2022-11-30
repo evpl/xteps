@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepsChainOf;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -38,8 +38,8 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
      *
      * @param step the step
      */
-    protected FunctionStep(final ThrowingFunction<? super T, ? extends R, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public FunctionStep(final ThrowingFunction<? super T, ? extends R, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(FunctionStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -92,12 +92,12 @@ public class FunctionStep<T, R> implements ThrowingFunction<T, R, RuntimeExcepti
      * @param t the input argument
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final R apply(final T t) {
-        return UncheckedXteps.stepsChain().withContext(t)
-            .stepTo(this.stepName, this.stepDescription, this.step);
+        return stepsChainOf(t).stepTo(this.stepName, this.stepDescription, this.step);
     }
 
     /**

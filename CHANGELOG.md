@@ -2,6 +2,7 @@
 
 ## 5.6 (planned)
 
+* PR #78 added step objects public ctor without step name
 * PR #74 added threadHookPriority option
 * PR #73 optimized thread hook algorithm
 * PR #72 QaseStepListener javadoc fix

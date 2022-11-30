@@ -17,9 +17,9 @@ package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiFunction;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.Xteps;
 
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.Xteps.stepsChainOf;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -40,8 +40,8 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
      *
      * @param step the step
      */
-    protected BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends E> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public BiFunctionStep(final ThrowingBiFunction<? super T, ? super U, ? extends R, ? extends E> step) {
+        this.stepName = humanReadableOrEmptyStepName(BiFunctionStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -96,13 +96,13 @@ public class BiFunctionStep<T, U, R, E extends Throwable> implements ThrowingBiF
      * @param u the second input argument
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if this step threw exception
      */
     @Override
     public final R apply(final T t, final U u) throws E {
-        return Xteps.stepsChain().withContext(u).withContext(t)
-            .stepTo(this.stepName, this.stepDescription, this.step);
+        return stepsChainOf(t, u).stepTo(this.stepName, this.stepDescription, this.step);
     }
 
     /**

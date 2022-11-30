@@ -17,9 +17,9 @@ package com.plugatar.xteps.checked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingTriConsumer;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.checked.Xteps;
 
-import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.checked.Xteps.stepsChainOf;
+import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -41,8 +41,8 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
      *
      * @param step the step
      */
-    protected TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ? extends E> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ? extends E> step) {
+        this.stepName = humanReadableOrEmptyStepName(TriConsumerStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -97,13 +97,13 @@ public class TriConsumerStep<T, U, V, E extends Throwable> implements ThrowingTr
      * @param u the second input argument
      * @param v the third input argument
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if this step threw exception
      */
     @Override
     public final void accept(final T t, final U u, final V v) throws E {
-        Xteps.stepsChain().withContext(v).withContext(u).withContext(t)
-            .step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u, v).step(this.stepName, this.stepDescription, this.step);
     }
 
     /**

@@ -17,9 +17,9 @@ package com.plugatar.xteps.unchecked.stepobject;
 
 import com.plugatar.xteps.base.ThrowingBiConsumer;
 import com.plugatar.xteps.base.XtepsException;
-import com.plugatar.xteps.unchecked.UncheckedXteps;
 
-import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableStepNameOfClass;
+import static com.plugatar.xteps.unchecked.UncheckedXteps.stepsChainOf;
+import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanReadableOrEmptyStepName;
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
@@ -38,8 +38,8 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      *
      * @param step the step
      */
-    protected BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ?> step) {
-        this.stepName = humanReadableStepNameOfClass(this.getClass());
+    public BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ?> step) {
+        this.stepName = humanReadableOrEmptyStepName(BiConsumerStep.class, this.getClass());
         this.stepDescription = "";
         this.step = step;
     }
@@ -92,12 +92,12 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @param t the first input argument
      * @param u the second input argument
      * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final void accept(final T t, final U u) {
-        UncheckedXteps.stepsChain().withContext(u).withContext(t)
-            .step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u).step(this.stepName, this.stepDescription, this.step);
     }
 
     /**

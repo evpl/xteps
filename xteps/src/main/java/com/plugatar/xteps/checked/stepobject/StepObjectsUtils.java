@@ -26,8 +26,11 @@ final class StepObjectsUtils {
     private StepObjectsUtils() {
     }
 
-    static String humanReadableStepNameOfClass(final Class<?> cls) {
-        return cls.getSimpleName().replace('_', ' ');
+    static <T> String humanReadableOrEmptyStepName(final Class<? super T> baseClass,
+                                                   final Class<? extends T> thisClass) {
+        return thisClass == baseClass
+            ? ""
+            : thisClass.getSimpleName().replace('_', ' ');
     }
 
     static String stepNameWithKeyword(final String keyword,
