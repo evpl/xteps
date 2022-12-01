@@ -94,7 +94,7 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends RunnableStep<RuntimeException> {
+     * public class CustomStep extends RunnableStep {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -123,7 +123,7 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends RunnableStep<RuntimeException> {
+     * public class CustomStep extends RunnableStep {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -132,7 +132,7 @@ public final class UncheckedXteps {
      *     }
      * }
      *
-     * step("GIVEN", new CustomStep());
+     * step("When", new CustomStep());
      * }</pre>
      *
      * @param keyword the keyword
@@ -216,7 +216,7 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     * public class CustomStep extends SupplierStep<String> {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -248,7 +248,7 @@ public final class UncheckedXteps {
      * <p>Code example:</p>
      *
      * <pre>{@code
-     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     * public class CustomStep extends SupplierStep<String> {
      *
      *     public CustomStep() {
      *         super("Custom step", () -> {
@@ -258,7 +258,7 @@ public final class UncheckedXteps {
      *     }
      * }
      *
-     * String result = stepTo("GIVEN", new CustomStep());
+     * String result = stepTo("When", new CustomStep());
      * }</pre>
      *
      * @param keyword the keyword
