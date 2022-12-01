@@ -4,6 +4,10 @@
 
 * PR #82 Xteps and UncheckedXteps javadoc fix
 
+Additional changes:
+
+* PR #83 updated readme
+
 ## 5.6 (30.11.2022)
 
 * PR #80 small refactoring

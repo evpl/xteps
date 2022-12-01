@@ -32,12 +32,31 @@ are ready, but you can write your own listener for another reporting system or j
 
 Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 
-|                         | Java (checked exceptions are not ignored)                                                                                                                                                                                                                                                                                        | Java (checked exceptions are ignored) / Kotlin JVM                                                                                                                                                                                                                                                                                                   |
-|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Allure                  | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)             | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)             |
-| Qase                    | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                 | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                 |
-| ReportPortal            | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal) | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
-| Custom reporting system | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/xteps)                           | [![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=for-the-badge)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=for-the-badge)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                           |
+|                         | Java (checked exceptions are not ignored)                                                                                                                                                                                                                                                                                                                | Java (checked exceptions are ignored) / Kotlin JVM                                                                                                                                                                                                                                                                                                                                     |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Allure                  | `xteps-allure`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)                   | `unchecked-xteps-allure`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)                   |
+| Qase                    | `xteps-qase`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                         | `unchecked-xteps-qase`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                         |
+| ReportPortal            | `xteps-reportportal`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal) | `unchecked-xteps-reportportal`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
+| Custom reporting system | `xteps`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps)                                        | `unchecked-xteps`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                                        |
+
+Maven:
+
+```xml
+<dependency>
+  <groupId>com.plugatar.xteps</groupId>
+  <artifactId>{artifact name from table}</artifactId>
+  <version>5.6</version>
+  <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+dependencies {
+    testCompile 'com.plugatar.xteps:{artifact name from table}:5.6'
+}
+```
 
 Read more about [checked exceptions](#Checked-exceptions) and [integrations](#Integrations).
 
@@ -135,7 +154,7 @@ class ExampleTest {
                 final String uiFullName = driver.findElement(usernameLabelLocator).getText();
                 assertEquals(uiFullName, databaseFullName);
             })
-            .callHooks();
+            .callChainHooks();
     }
 }
 ```
@@ -231,7 +250,7 @@ public class ExampleTest {
             .stepToContext(new DatabaseConnection())
             .chainHook(Connection::close)
             .step(new CheckUserFullName("user123"))
-            .callHooks();
+            .callChainHooks();
     }
 }
 ```
@@ -268,7 +287,7 @@ void dummyStepObjectsExample() {
         .stepToContext(SupplierStep.<Connection>dummy("Get database connection"))
         .chainHook(Connection::close)
         .step(RunnableStep.dummy("Check user full name"))
-        .callHooks();
+        .callChainHooks();
 }
 ```
 
@@ -303,7 +322,7 @@ public class ExampleTest {
             .step("And", new TypePassword("1234567890"))
             .step("And", new ClickOnLoginButton())
             .step("Then", new UserFullNameIs("Expected Name"))
-            .callHooks();
+            .callChainHooks();
     }
 }
 ```
@@ -339,6 +358,7 @@ xteps.spi=true
 xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 xteps.cleanStackTrace=true
 xteps.threadHookInterval=30000
+xteps.threadHookPriority=5
 ```
 
 ## Additional features
@@ -346,7 +366,7 @@ xteps.threadHookInterval=30000
 ### Steps chain hooks
 
 You can use hooks in a steps chain. Hooks will be called in case of any exception in steps chain or in case of
-`callHooks` method call. You also can use hooks to release resources.
+`callChainHooks` method call. You also can use hooks to release resources.
 
 ```java
 stepsChain().withContext(new AutoCloseableImpl())
@@ -354,7 +374,7 @@ stepsChain().withContext(new AutoCloseableImpl())
     .step("Step", ctx -> {
         //...
     })
-    .callHooks();
+    .callChainHooks();
 ```
 
 ### Thread hooks
