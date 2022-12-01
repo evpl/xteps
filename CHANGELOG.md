@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.6 (planned)
+
+* PR #82 Xteps and UncheckedXteps javadoc fix
+
 ## 5.6 (30.11.2022)
 
 * PR #80 small refactoring

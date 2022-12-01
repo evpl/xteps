@@ -134,7 +134,7 @@ public final class Xteps {
      *     }
      * }
      *
-     * step("GIVEN", new CustomStep());
+     * step("When", new CustomStep());
      * }</pre>
      *
      * @param keyword the keyword
@@ -268,7 +268,7 @@ public final class Xteps {
      *     }
      * }
      *
-     * String result = stepTo("GIVEN", new CustomStep());
+     * String result = stepTo("When", new CustomStep());
      * }</pre>
      *
      * @param keyword the keyword
