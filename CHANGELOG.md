@@ -5,10 +5,6 @@
 * PR #84 DefaultExceptionHandler refactoring
 * PR #82 Xteps and UncheckedXteps javadoc fix
 
-Additional changes:
-
-* PR #83 updated readme
-
 ## 5.6 (30.11.2022)
 
 * PR #80 small refactoring
@@ -19,15 +15,9 @@ Additional changes:
 * PR #73 optimized thread hook algorithm
 * PR #72 QaseStepListener javadoc fix
 
-Additional changes:
-
-* PR #81 updated readme
-* PR #76 updated readme links 2
-* PR #75 updated readme links
-
 ## 5.5 (released 25.11.2022)
 
-* PR #71 refactoring, updated readme
+* PR #71 refactoring
 * PR #70 added ThreadHook
 * PR #69 added stepsChainOf method
 * PR #68 Bump client-java from 5.1.12 to 5.1.14

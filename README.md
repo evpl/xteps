@@ -54,7 +54,15 @@ Gradle:
 
 ```groovy
 dependencies {
-    testCompile 'com.plugatar.xteps:{artifact name from table}:5.6'
+    testImplementation 'com.plugatar.xteps:{artifact name from table}:5.6'
+}
+```
+
+Kotlin DSL:
+
+```groovy
+dependencies {
+    testImplementation("com.plugatar.xteps:{artifact name from table}:5.6")
 }
 ```
 
@@ -357,7 +365,7 @@ xteps.enabled=true
 xteps.spi=true
 xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 xteps.cleanStackTrace=true
-xteps.threadHookInterval=30000
+xteps.threadHookInterval=100
 xteps.threadHookPriority=5
 ```
 
