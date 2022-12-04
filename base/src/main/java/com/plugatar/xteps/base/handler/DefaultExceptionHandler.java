@@ -18,19 +18,25 @@ package com.plugatar.xteps.base.handler;
 import com.plugatar.xteps.base.ExceptionHandler;
 import com.plugatar.xteps.base.XtepsException;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * ThreadLocal memorizing clean stack trace ExceptionHandler.
+ * Default ExceptionHandler.
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
-    private static final ThreadLocal<Throwable> LAST_EXCEPTION = new ThreadLocal<>();
+    private static final ThreadLocal<FixedMaxSizeUniqueQueue<Throwable>> EXCEPTIONS =
+        ThreadLocal.withInitial(FixedMaxSizeUniqueQueue::new);
     private final Predicate<StackTraceElement> notXtepsClassStackTraceElementFilter;
 
+    /**
+     * Ctor.
+     */
     public DefaultExceptionHandler() {
         final String xtepsClassPrefix = "com.plugatar.xteps";
         this.notXtepsClassStackTraceElementFilter = element -> !element.getClassName().startsWith(xtepsClassPrefix);
@@ -43,9 +49,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         final Set<Throwable> allRelatedExceptions = Collections.newSetFromMap(new IdentityHashMap<>(8));
         recursivelyAddAllRelatedExceptions(allRelatedExceptions, exception);
         for (final Throwable currentEx : allRelatedExceptions) {
-            final Throwable lastEx = LAST_EXCEPTION.get();
-            if (!(currentEx instanceof XtepsException) && currentEx != lastEx) {
-                LAST_EXCEPTION.set(currentEx);
+            if (!(currentEx instanceof XtepsException) && EXCEPTIONS.get().offer(currentEx)) {
                 final StackTraceElement[] originST = currentEx.getStackTrace();
                 if (originST.length != 0) {
                     final StackTraceElement[] cleanST = Arrays.stream(originST)
@@ -69,6 +73,30 @@ public class DefaultExceptionHandler implements ExceptionHandler {
             for (final Throwable suppressedEx : causeEx.getSuppressed()) {
                 recursivelyAddAllRelatedExceptions(exceptions, suppressedEx);
             }
+        }
+    }
+
+    private static final class FixedMaxSizeUniqueQueue<T> {
+        private final Set<T> set;
+        private final Queue<T> queue;
+
+        private FixedMaxSizeUniqueQueue() {
+            /* Array size = 32, max count of elements without resizing = 10 */
+            this.set = Collections.newSetFromMap(new IdentityHashMap<>(8));
+            /* Array size = 16, max count of elements without resizing = 15 */
+            this.queue = new ArrayDeque<>(8);
+        }
+
+        private boolean offer(final T element) {
+            if (this.set.add(element)) {
+                this.queue.add(element);
+                /* To avoid arrays resizing this queue contains only 9 elements, 10th will be removed */
+                if (this.set.size() == 10) {
+                    this.set.remove(this.queue.remove());
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

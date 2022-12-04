@@ -1,7 +1,8 @@
 # Changelog
 
-## 5.6 (planned)
+## 5.7 (planned)
 
+* PR #84 DefaultExceptionHandler refactoring
 * PR #82 Xteps and UncheckedXteps javadoc fix
 
 Additional changes:
