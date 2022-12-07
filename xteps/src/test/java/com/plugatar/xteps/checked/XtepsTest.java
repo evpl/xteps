@@ -62,6 +62,8 @@ final class XtepsTest {
         System.clearProperty("xteps.spi");
         System.clearProperty("xteps.listeners");
         System.clearProperty("xteps.cleanStackTrace");
+        System.clearProperty("xteps.threadHookInterval");
+        System.clearProperty("xteps.threadHookPriority");
     }
 
     private static void assertThatStepPassed(final String stepName,
@@ -230,19 +232,19 @@ final class XtepsTest {
 
         final String stepName1 = "stepsChainMethodWithContexts 1";
         Xteps.stepsChain()
-            .withContext(context1)
+            .withCtx(context1)
             .step(stepName1, ctx -> { });
         assertThatStepPassed(stepName1, "", new Object[]{context1});
 
         final String stepName2 = "stepsChainMethodWithContexts 2";
         Xteps.stepsChain()
-            .withContext(context1).withContext(context2)
+            .withCtx(context1).withCtx(context2)
             .step(stepName2, ctx -> { });
         assertThatStepPassed(stepName2, "", new Object[]{context2, context1});
 
         final String stepName3 = "stepsChainMethodWithContexts 3";
         Xteps.stepsChain()
-            .withContext(context1).withContext(context2).withContext(context3)
+            .withCtx(context1).withCtx(context2).withCtx(context3)
             .step(stepName3, ctx -> { });
         assertThatStepPassed(stepName3, "", new Object[]{context3, context2, context1});
     }
@@ -258,9 +260,9 @@ final class XtepsTest {
         assertThatCode(() ->
             Xteps.stepsChain()
                 .chainHook(hook1)
-                .withContext(new Object())
+                .withCtx(new Object())
                 .chainHook(hook2)
-                .supplyContext(ctx -> { throw baseException; })
+                .action(ctx -> { throw baseException; })
         ).isSameAs(baseException)
             .hasSuppressedException(exception1)
             .hasSuppressedException(exception2);
@@ -276,7 +278,7 @@ final class XtepsTest {
         assertThatCode(() ->
             Xteps.stepsChain()
                 .chainHook(hook1)
-                .withContext(new Object())
+                .withCtx(new Object())
                 .chainHook(hook2)
                 .callChainHooks()
         ).isInstanceOf(XtepsException.class)
@@ -344,25 +346,25 @@ final class XtepsTest {
         }
 
         @Override
-        public void stepStarted(final String stepUUID,
-                                final String stepName,
-                                final String stepDescription,
-                                final Object[] contexts) {
-            stepStartedUUID = stepUUID;
-            stepStartedName = stepName;
-            stepStartedDescription = stepDescription;
-            stepStartedContexts = contexts;
+        public void stepStarted(final String uuid,
+                                final String name,
+                                final String description,
+                                final Object[] params) {
+            stepStartedUUID = uuid;
+            stepStartedName = name;
+            stepStartedDescription = description;
+            stepStartedContexts = params;
         }
 
         @Override
-        public void stepPassed(final String stepUUID) {
-            stepPassedUUID = stepUUID;
+        public void stepPassed(final String uuid) {
+            stepPassedUUID = uuid;
         }
 
         @Override
-        public void stepFailed(final String stepUUID,
+        public void stepFailed(final String uuid,
                                final Throwable exception) {
-            stepFailedUUID = stepUUID;
+            stepFailedUUID = uuid;
             stepFailedException = exception;
         }
     }

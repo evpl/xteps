@@ -59,41 +59,41 @@ public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
      *
      * @return the second context
      */
-    C2 context2();
+    C2 ctx2();
 
     /**
      * Returns a context steps chain of the new context.
      *
-     * @param contextFunction the context function
-     * @param <U>             the context type
+     * @param function the context function
+     * @param <U>      the context type
      * @return contextual steps chain
-     * @throws XtepsException if {@code contextFunction} is null
-     */
-    <U> BaseCtxSC<?> withContext(
-        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> contextFunction
-    );
-
-    /**
-     * Supply context to given consumer and returns this steps chain.
-     *
-     * @param consumer the consumer
-     * @return this steps chain
-     * @throws XtepsException if {@code consumer} is null
-     */
-    S supplyContext(
-        ThrowingBiConsumer<? super C, ? super C2, ?> consumer
-    );
-
-    /**
-     * Apply context to given function and returns result.
-     *
-     * @param function the function
-     * @param <R>      the {@code function} result type
-     * @return the {@code function} result
      * @throws XtepsException if {@code function} is null
      */
-    <R> R applyContext(
-        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> function
+    <U> BaseCtxSC<?> withCtx(
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> function
+    );
+
+    /**
+     * Performs given action and returns this steps chain.
+     *
+     * @param action the action
+     * @return this steps chain
+     * @throws XtepsException if {@code action} is null
+     */
+    S action(
+        ThrowingBiConsumer<? super C, ? super C2, ?> action
+    );
+
+    /**
+     * Performs given action and returns the action result.
+     *
+     * @param action the action
+     * @param <R>    the {@code action} result type
+     * @return the {@code action} result
+     * @throws XtepsException if {@code action} is null
+     */
+    <R> R actionTo(
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> action
     );
 
     /**
@@ -148,36 +148,48 @@ public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
     S step(
         String keyword,
         BiFunctionStep<? super C, ? super C2, ?> step
+    );
+
+    /**
+     * Performs and reports given step with empty name and returns this steps chain.
+     *
+     * @param action the step action
+     * @return this steps chain
+     * @throws XtepsException if {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    S step(
+        ThrowingBiConsumer<? super C, ? super C2, ?> action
     );
 
     /**
      * Performs and reports given step with given name and returns this steps chain.
      *
-     * @param stepName the step name
-     * @param step     the step
+     * @param name   the step name
+     * @param action the step action
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
     S step(
-        String stepName,
-        ThrowingBiConsumer<? super C, ? super C2, ?> step
+        String name,
+        ThrowingBiConsumer<? super C, ? super C2, ?> action
     );
 
     /**
      * Performs and reports given step with given name and description and returns this steps chain.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
     S step(
-        String stepName,
-        String stepDescription,
-        ThrowingBiConsumer<? super C, ? super C2, ?> step
+        String name,
+        String desc,
+        ThrowingBiConsumer<? super C, ? super C2, ?> action
     );
 
     /**
@@ -189,7 +201,7 @@ public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
      * @throws XtepsException if {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<?> stepToContext(
+    <U> BaseCtxSC<?> stepToCtx(
         BiFunctionStep<? super C, ? super C2, ? extends U> step
     );
 
@@ -204,43 +216,57 @@ public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
      * @throws XtepsException if {@code keyword} or {@code step} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<?> stepToContext(
+    <U> BaseCtxSC<?> stepToCtx(
         String keyword,
         BiFunctionStep<? super C, ? super C2, ? extends U> step
+    );
+
+    /**
+     * Performs and reports given step with empty name and returns a contextual
+     * steps chain of the new context.
+     *
+     * @param action the step action
+     * @param <U>    the context type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <U> BaseCtxSC<?> stepToCtx(
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> action
     );
 
     /**
      * Performs and reports given step with given name and returns a contextual
      * steps chain of the new context.
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <U>      the context type
+     * @param name   the step name
+     * @param action the step action
+     * @param <U>    the context type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<?> stepToContext(
-        String stepName,
-        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> step
+    <U> BaseCtxSC<?> stepToCtx(
+        String name,
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> action
     );
 
     /**
      * Performs and reports given step with given name and description and returns
      * a contextual steps chain of the new context.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <U>             the context type
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <U>    the context type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
-    <U> BaseCtxSC<?> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> step
+    <U> BaseCtxSC<?> stepToCtx(
+        String name,
+        String desc,
+        ThrowingBiFunction<? super C, ? super C2, ? extends U, ?> action
     );
 
     /**
@@ -273,34 +299,47 @@ public interface Base2CtxSC<C, C2, S extends Base2CtxSC<C, C2, S>> {
     );
 
     /**
-     * Performs and reports given step with given name and returns the step result.
+     * Performs and reports given step with empty name and returns the step result.
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <R>      the result type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code step} is null
+     * @param action the step action
+     * @param <R>    the result type
+     * @return {@code action} result
+     * @throws XtepsException if {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
-        String stepName,
-        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> step
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> action
+    );
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
+     *
+     * @param name   the step name
+     * @param action the step action
+     * @param <R>    the result type
+     * @return {@code action} result
+     * @throws XtepsException if {@code name} or {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     */
+    <R> R stepTo(
+        String name,
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> action
     );
 
     /**
      * Performs and reports given step with given name and description and returns the step result.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <R>             the result type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <R>    the result type
+     * @return {@code action} result
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
      */
     <R> R stepTo(
-        String stepName,
-        String stepDescription,
-        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> step
+        String name,
+        String desc,
+        ThrowingBiFunction<? super C, ? super C2, ? extends R, ?> action
     );
 }

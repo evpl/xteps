@@ -23,25 +23,25 @@ public interface StepReporter {
     /**
      * Reports given step and returns step result.
      *
-     * @param exceptionHandler the step name
-     * @param hookContainer    the exception handler
-     * @param stepName         the hook container
-     * @param stepDescription  the step description
-     * @param contexts         the contexts array
-     * @param step             the origin supplier
-     * @param <R>              the type of the {@code step} result
-     * @param <E>              the {@code step} exception type
-     * @return the {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code contexts}
-     *                        or {@code step} is null
-     * @throws E              if {@code step} threw exception
+     * @param exceptionHandler the exception handler
+     * @param hookContainer    the hook container
+     * @param name             the step name
+     * @param description      the step description
+     * @param params           the step params array
+     * @param action           the step action
+     * @param <R>              the type of the {@code action} result
+     * @param <E>              the {@code action} exception type
+     * @return the {@code action} result
+     * @throws XtepsException if {@code name} or {@code description} or {@code params}
+     *                        or {@code action} is null
+     * @throws E              if {@code action} threw exception
      */
     <R, E extends Throwable> R report(
         HookContainer hookContainer,
         ExceptionHandler exceptionHandler,
-        String stepName,
-        String stepDescription,
-        Object[] contexts,
-        ThrowingSupplier<? extends R, ? extends E> step
+        String name,
+        String description,
+        Object[] params,
+        ThrowingSupplier<? extends R, ? extends E> action
     ) throws E;
 }

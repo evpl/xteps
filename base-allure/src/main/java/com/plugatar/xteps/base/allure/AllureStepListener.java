@@ -31,120 +31,107 @@ import java.util.Map;
  * {@link StepListener} implementation for Allure.
  */
 public class AllureStepListener implements StepListener {
-    private final String emptyStepNameReplacement;
-    private final String stepDescriptionAttachmentName;
-    private final String contextParamName;
+    private final String emptyNameReplacement;
+    private final String descriptionAttachmentName;
 
     /**
      * Zero-argument public ctor.
      */
     public AllureStepListener() {
-        this("step", "context", "Step description");
+        this("Step", "Step description");
     }
 
     /**
      * Ctor.
      *
-     * @param emptyStepNameReplacement      the empty step name replacement
-     * @param contextParamName              the context param name
-     * @param stepDescriptionAttachmentName the step description attachment name
+     * @param emptyNameReplacement      the empty step name replacement
+     * @param descriptionAttachmentName the step description attachment name
      */
-    public AllureStepListener(final String emptyStepNameReplacement,
-                              final String contextParamName,
-                              final String stepDescriptionAttachmentName) {
+    public AllureStepListener(final String emptyNameReplacement,
+                              final String descriptionAttachmentName) {
         final Class<Allure> dependencyCheck = Allure.class;
-        if (emptyStepNameReplacement == null) {
-            throw new NullPointerException("emptyStepNameReplacement arg is null");
+        if (emptyNameReplacement == null) {
+            throw new NullPointerException("emptyNameReplacement arg is null");
         }
-        if (emptyStepNameReplacement.isEmpty()) {
-            throw new IllegalArgumentException("emptyStepNameReplacement arg is empty");
+        if (emptyNameReplacement.isEmpty()) {
+            throw new IllegalArgumentException("emptyNameReplacement arg is empty");
         }
-        if (contextParamName == null) {
-            throw new NullPointerException("contextParamName arg is null");
+        if (descriptionAttachmentName == null) {
+            throw new NullPointerException("descriptionAttachmentName arg is null");
         }
-        if (contextParamName.isEmpty()) {
-            throw new IllegalArgumentException("contextParamName arg is empty");
+        if (descriptionAttachmentName.isEmpty()) {
+            throw new IllegalArgumentException("descriptionAttachmentName arg is empty");
         }
-        if (stepDescriptionAttachmentName == null) {
-            throw new NullPointerException("stepDescriptionAttachmentName arg is null");
-        }
-        if (stepDescriptionAttachmentName.isEmpty()) {
-            throw new IllegalArgumentException("stepDescriptionAttachmentName arg is empty");
-        }
-        this.emptyStepNameReplacement = emptyStepNameReplacement;
-        this.contextParamName = contextParamName;
-        this.stepDescriptionAttachmentName = stepDescriptionAttachmentName;
+        this.emptyNameReplacement = emptyNameReplacement;
+        this.descriptionAttachmentName = descriptionAttachmentName;
     }
 
     @Override
-    public final void stepStarted(final String stepUUID,
-                                  final String stepName,
-                                  final String stepDescription,
-                                  final Object[] contexts) {
+    public final void stepStarted(final String uuid,
+                                  final String name,
+                                  final String description,
+                                  final Object[] params) {
         Map<String, Object> replacements = null;
         /* Step name processing */
-        final String processedStepName;
-        if (stepName.isEmpty()) {
-            processedStepName = this.emptyStepNameReplacement;
+        final String processedName;
+        if (name.isEmpty()) {
+            processedName = this.emptyNameReplacement;
         } else {
-            if (contexts.length == 0) {
-                processedStepName = stepName;
+            if (params.length == 0) {
+                processedName = name;
             } else {
-                replacements = this.contextsMap(contexts);
-                processedStepName = this.processedTemplate(stepName, replacements);
+                replacements = this.paramsMap(params);
+                processedName = this.processedTemplate(name, replacements);
             }
         }
         /* Step description processing */
-        final String processedStepDescription;
-        if (stepDescription.isEmpty()) {
-            processedStepDescription = null;
+        final String processedDescription;
+        if (description.isEmpty()) {
+            processedDescription = null;
         } else {
-            if (contexts.length == 0) {
-                processedStepDescription = stepDescription;
+            if (params.length == 0) {
+                processedDescription = description;
             } else {
                 if (replacements == null) {
-                    replacements = this.contextsMap(contexts);
+                    replacements = this.paramsMap(params);
                 }
-                processedStepDescription = this.processedTemplate(stepDescription, replacements);
+                processedDescription = this.processedTemplate(description, replacements);
             }
         }
         /* Reporting */
         Allure.getLifecycle().startStep(
-            stepUUID,
-            new StepResult().setName(processedStepName).setDescription(processedStepDescription)
+            uuid,
+            new StepResult().setName(processedName).setDescription(processedDescription)
         );
     }
 
     @Override
-    public final void stepPassed(final String stepUUID) {
+    public final void stepPassed(final String uuid) {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
-        allureLifecycle.updateStep(stepUUID, stepResult -> {
+        allureLifecycle.updateStep(uuid, stepResult -> {
             this.attachStepDescriptionIfPresent(stepResult);
             stepResult.setStatus(Status.PASSED);
         });
-        allureLifecycle.stopStep(stepUUID);
+        allureLifecycle.stopStep(uuid);
     }
 
     @Override
-    public final void stepFailed(final String stepUUID,
+    public final void stepFailed(final String uuid,
                                  final Throwable exception) {
         final AllureLifecycle allureLifecycle = Allure.getLifecycle();
-        allureLifecycle.updateStep(stepUUID, stepResult -> {
+        allureLifecycle.updateStep(uuid, stepResult -> {
             this.attachStepDescriptionIfPresent(stepResult);
             stepResult.setStatus(ResultsUtils.getStatus(exception).orElse(Status.BROKEN))
                 .setStatusDetails(ResultsUtils.getStatusDetails(exception).orElse(null));
         });
-        allureLifecycle.stopStep(stepUUID);
+        allureLifecycle.stopStep(uuid);
     }
 
-    private Map<String, Object> contextsMap(final Object[] contexts) {
-        if (contexts.length != 0) {
-            final Map<String, Object> map = new HashMap<>(contexts.length * 2, 1.0f);
-            map.put(this.contextParamName, contexts[0]);
-            map.put("0", contexts[0]);
-            for (int idx = 1; idx < contexts.length; ++idx) {
-                map.put(String.valueOf(idx), contexts[idx]);
-                map.put(this.contextParamName + (idx + 1), contexts[idx]);
+    private Map<String, Object> paramsMap(final Object[] params) {
+        if (params.length != 0) {
+            final Map<String, Object> map = new HashMap<>(params.length, 1.0f);
+            for (int idx = 0; idx < params.length; ++idx) {
+                map.put(String.valueOf(idx), params[idx]);
             }
             return map;
         }
@@ -153,13 +140,15 @@ public class AllureStepListener implements StepListener {
 
     private String processedTemplate(final String template,
                                      final Map<String, Object> replacements) {
-        return NamingUtils.processNameTemplate(template, replacements);
+        return replacements.isEmpty()
+            ? template
+            : NamingUtils.processNameTemplate(template, replacements);
     }
 
     private void attachStepDescriptionIfPresent(final StepResult stepResult) {
         final String stepDescription = stepResult.getDescription();
         if (stepDescription != null && !stepDescription.isEmpty()) {
-            Allure.attachment(this.stepDescriptionAttachmentName, stepDescription);
+            Allure.attachment(this.descriptionAttachmentName, stepDescription);
         }
     }
 }

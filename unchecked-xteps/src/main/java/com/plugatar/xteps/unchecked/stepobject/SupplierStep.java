@@ -23,65 +23,96 @@ import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanRead
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
- * Supplier step. This step will be executed and reported when calling the {@link #get()} method.
+ * Supplier step. This step will be executed and reported when calling the
+ * {@link #get()} method.
  *
  * @param <R> the type of the result
  */
 public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
-    private final String stepName;
-    private final String stepDescription;
-    private final ThrowingSupplier<? extends R, ?> step;
+
+    /**
+     * The keyword of this step.
+     */
+    private final String keyword;
+
+    /**
+     * The name of this step.
+     */
+    private final String name;
+
+    /**
+     * The description of this step.
+     */
+    private final String desc;
+
+    /**
+     * The action of this step.
+     */
+    private final ThrowingSupplier<? extends R, ?> action;
 
     /**
      * Ctor.
      *
-     * @param step the step
+     * @param action the step action
      */
-    public SupplierStep(final ThrowingSupplier<? extends R, ?> step) {
-        this.stepName = humanReadableOrEmptyStepName(SupplierStep.class, this.getClass());
-        this.stepDescription = "";
-        this.step = step;
+    public SupplierStep(final ThrowingSupplier<? extends R, ?> action) {
+        this.keyword = "";
+        this.name = humanReadableOrEmptyStepName(SupplierStep.class, this.getClass());
+        this.desc = "";
+        this.action = action;
     }
 
     /**
      * Ctor.
      *
-     * @param stepName the step name
-     * @param step     the step
+     * @param name   the step name
+     * @param action the step action
      */
-    public SupplierStep(final String stepName,
-                        final ThrowingSupplier<? extends R, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = "";
-        this.step = step;
+    public SupplierStep(final String name,
+                        final ThrowingSupplier<? extends R, ?> action) {
+        this("", name, "", action);
     }
 
     /**
      * Ctor.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
      */
-    public SupplierStep(final String stepName,
-                        final String stepDescription,
-                        final ThrowingSupplier<? extends R, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = stepDescription;
-        this.step = step;
+    public SupplierStep(final String name,
+                        final String desc,
+                        final ThrowingSupplier<? extends R, ?> action) {
+        this("", name, desc, action);
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param keyword the step keyword
+     * @param name    the step name
+     * @param desc    the step description
+     * @param action  the step action
+     */
+    public SupplierStep(final String keyword,
+                        final String name,
+                        final String desc,
+                        final ThrowingSupplier<? extends R, ?> action) {
+        this.keyword = keyword;
+        this.name = name;
+        this.desc = desc;
+        this.action = action;
     }
 
     /**
      * Returns dummy {@code SupplierStep}.
      *
-     * @param stepName the step name
-     * @param <R>      the type of the result
+     * @param name the step name
+     * @param <R>  the type of the result
      * @return dummy {@code SupplierStep}
      */
-    public static <R> SupplierStep<R> dummy(final String stepName) {
-        return new SupplierStep<>(
-            stepName, () -> { throw new XtepsException("Step not implemented"); }
-        );
+    public static <R> SupplierStep<R> dummy(final String name) {
+        return new SupplierStep<>(name, () -> { throw new XtepsException("Step not implemented"); });
     }
 
     /**
@@ -89,12 +120,12 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      *
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
+     *                        or if {@link #keyword} or {@link #name} or {@link #desc} or {@link #action} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final R get() {
-        return stepTo(this.stepName, this.stepDescription, this.step);
+        return stepTo(stepNameWithKeyword(this.keyword, this.name), this.desc, this.action);
     }
 
     /**
@@ -104,9 +135,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code SupplierStep} with given keyword in the step name
      */
     public final SupplierStep<R> withKeyword(final String keyword) {
-        return new SupplierStep<>(
-            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
-        );
+        return new SupplierStep<>(keyword, this.name, this.desc, this.action);
     }
 
     /**
@@ -115,7 +144,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep() {
-        return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.get());
+        return new RunnableStep(this.name, this.desc, () -> this.action.get());
     }
 
     /**
@@ -125,7 +154,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code ConsumerStep}
      */
     public final <T> ConsumerStep<T> asConsumerStep() {
-        return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.get());
+        return new ConsumerStep<>(this.name, this.desc, t -> this.action.get());
     }
 
     /**
@@ -136,7 +165,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code BiConsumerStep}
      */
     public final <T, U> BiConsumerStep<T, U> asBiConsumerStep() {
-        return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.get());
+        return new BiConsumerStep<>(this.name, this.desc, (t, u) -> this.action.get());
     }
 
     /**
@@ -148,7 +177,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code TriConsumerStep}
      */
     public final <T, U, V> TriConsumerStep<T, U, V> asTriConsumerStep() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.get());
+        return new TriConsumerStep<>(this.name, this.desc, (t, u, v) -> this.action.get());
     }
 
     /**
@@ -158,7 +187,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code FunctionStep}
      */
     public final <T> FunctionStep<T, R> asFunctionStep() {
-        return new FunctionStep<>(this.stepName, this.stepDescription, t -> this.step.get());
+        return new FunctionStep<>(this.name, this.desc, t -> this.action.get());
     }
 
     /**
@@ -169,7 +198,7 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code BiFunctionStep}
      */
     public final <T, U> BiFunctionStep<T, U, R> asBiFunctionStep() {
-        return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.get());
+        return new BiFunctionStep<>(this.name, this.desc, (t, u) -> this.action.get());
     }
 
     /**
@@ -181,11 +210,11 @@ public class SupplierStep<R> implements ThrowingSupplier<R, RuntimeException> {
      * @return {@code TriFunctionStep}
      */
     public final <T, U, V> TriFunctionStep<T, U, V, R> asTriFunctionStep() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.get());
+        return new TriFunctionStep<>(this.name, this.desc, (t, u, v) -> this.action.get());
     }
 
     @Override
     public final String toString() {
-        return "SupplierStep(" + this.stepName + ")";
+        return "SupplierStep(" + stepNameWithKeyword(this.keyword, this.name) + ")";
     }
 }

@@ -34,9 +34,13 @@ final class StepObjectsUtils {
     }
 
     static String stepNameWithKeyword(final String keyword,
-                                      final String stepName) {
-        return keyword == null || stepName == null
+                                      final String name) {
+        return keyword == null || name == null
             ? null
-            : keyword + " " + stepName;
+            : keyword.isEmpty()
+            ? name
+            : name.isEmpty()
+            ? keyword
+            : keyword + " " + name;
     }
 }

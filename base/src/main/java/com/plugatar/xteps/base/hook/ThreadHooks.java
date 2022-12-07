@@ -56,19 +56,9 @@ public class ThreadHooks {
         static {
             /* Daemon thread */
             final Thread daemonThread = new Thread(() -> {
-                long lastStartMillis = System.currentTimeMillis();
+                long lastStartMillis;
                 while (true) {
-                    try {
-                        final long startMillis = System.currentTimeMillis();
-                        final long millisToSleep = INTERVAL_MILLIS - startMillis + lastStartMillis;
-                        if (millisToSleep > 0) {
-                            Thread.sleep(millisToSleep);
-                        }
-                        lastStartMillis = startMillis;
-                    } catch (final InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                    lastStartMillis = System.currentTimeMillis();
                     if (!HOOKS.isEmpty()) {
                         HOOKS.keySet().forEach(thread -> {
                             if (!thread.isAlive()) {
@@ -84,6 +74,16 @@ public class ThreadHooks {
                                 });
                             }
                         });
+                    }
+                    try {
+                        final long startMillis = System.currentTimeMillis();
+                        final long millisToSleep = INTERVAL_MILLIS - startMillis + lastStartMillis;
+                        if (millisToSleep > 0) {
+                            Thread.sleep(millisToSleep);
+                        }
+                    } catch (final InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }, "xteps-hook-daemon-thread");

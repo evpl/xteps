@@ -23,67 +23,98 @@ import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.humanRead
 import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameWithKeyword;
 
 /**
- * BiConsumer step. This step will be executed and reported when calling the {@link #accept(Object, Object)} method.
+ * BiConsumer step. This step will be executed and reported when calling the
+ * {@link #accept(Object, Object)} method.
  *
  * @param <T> the type of the first input argument
  * @param <U> the type of the second input argument
  */
 public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeException> {
-    private final String stepName;
-    private final String stepDescription;
-    private final ThrowingBiConsumer<? super T, ? super U, ?> step;
+
+    /**
+     * The keyword of this step.
+     */
+    private final String keyword;
+
+    /**
+     * The name of this step.
+     */
+    private final String name;
+
+    /**
+     * The description of this step.
+     */
+    private final String desc;
+
+    /**
+     * The action of this step.
+     */
+    private final ThrowingBiConsumer<? super T, ? super U, ?> action;
 
     /**
      * Ctor.
      *
-     * @param step the step
+     * @param action the step action
      */
-    public BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ?> step) {
-        this.stepName = humanReadableOrEmptyStepName(BiConsumerStep.class, this.getClass());
-        this.stepDescription = "";
-        this.step = step;
+    public BiConsumerStep(final ThrowingBiConsumer<? super T, ? super U, ?> action) {
+        this.keyword = "";
+        this.name = humanReadableOrEmptyStepName(BiConsumerStep.class, this.getClass());
+        this.desc = "";
+        this.action = action;
     }
 
     /**
      * Ctor.
      *
-     * @param stepName the step name
-     * @param step     the step
+     * @param name   the step name
+     * @param action the step action
      */
-    public BiConsumerStep(final String stepName,
-                          final ThrowingBiConsumer<? super T, ? super U, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = "";
-        this.step = step;
+    public BiConsumerStep(final String name,
+                          final ThrowingBiConsumer<? super T, ? super U, ?> action) {
+        this("", name, "", action);
     }
 
     /**
      * Ctor.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
      */
-    public BiConsumerStep(final String stepName,
-                          final String stepDescription,
-                          final ThrowingBiConsumer<? super T, ? super U, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = stepDescription;
-        this.step = step;
+    public BiConsumerStep(final String name,
+                          final String desc,
+                          final ThrowingBiConsumer<? super T, ? super U, ?> action) {
+        this("", name, desc, action);
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param keyword the step keyword
+     * @param name    the step name
+     * @param desc    the step description
+     * @param action  the step action
+     */
+    public BiConsumerStep(final String keyword,
+                          final String name,
+                          final String desc,
+                          final ThrowingBiConsumer<? super T, ? super U, ?> action) {
+        this.keyword = keyword;
+        this.name = name;
+        this.desc = desc;
+        this.action = action;
     }
 
     /**
      * Returns dummy {@code BiConsumerStep}.
      *
-     * @param stepName the step name
-     * @param <T>      the type of the first input argument
-     * @param <U>      the type of the second input argument
+     * @param name the step name
+     * @param <T>  the type of the first input argument
+     * @param <U>  the type of the second input argument
      * @return dummy {@code BiConsumerStep}
      */
-    public static <T, U> BiConsumerStep<T, U> dummy(final String stepName) {
-        return new BiConsumerStep<>(
-            stepName, (t, u) -> { throw new XtepsException("Step not implemented"); }
-        );
+    public static <T, U> BiConsumerStep<T, U> dummy(final String name) {
+        return new BiConsumerStep<>(name, (t, u) -> { throw new XtepsException("Step not implemented"); });
     }
 
     /**
@@ -92,12 +123,12 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @param t the first input argument
      * @param u the second input argument
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
+     *                        or if {@link #keyword} or {@link #name} or {@link #desc} or {@link #action} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final void accept(final T t, final U u) {
-        stepsChainOf(t, u).step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u).step(stepNameWithKeyword(this.keyword, this.name), this.desc, this.action);
     }
 
     /**
@@ -107,9 +138,7 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code BiConsumerStep} with given keyword in the step name
      */
     public final BiConsumerStep<T, U> withKeyword(final String keyword) {
-        return new BiConsumerStep<>(
-            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
-        );
+        return new BiConsumerStep<>(keyword, this.name, this.desc, this.action);
     }
 
     /**
@@ -118,7 +147,7 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code BiConsumerStep<U, T>}
      */
     public final BiConsumerStep<U, T> asUT() {
-        return new BiConsumerStep<>(this.stepName, this.stepDescription, (u, t) -> this.step.accept(t, u));
+        return new BiConsumerStep<>(this.name, this.desc, (u, t) -> this.action.accept(t, u));
     }
 
     /**
@@ -129,7 +158,7 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep(final T t, final U u) {
-        return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.accept(t, u));
+        return new RunnableStep(this.name, this.desc, () -> this.action.accept(t, u));
     }
 
     /**
@@ -142,8 +171,8 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code SupplierStep}
      */
     public final <R> SupplierStep<R> asSupplierStep(final T t, final U u, final R r) {
-        return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
-            this.step.accept(t, u);
+        return new SupplierStep<>(this.name, this.desc, () -> {
+            this.action.accept(t, u);
             return r;
         });
     }
@@ -155,7 +184,7 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T> asConsumerStep(final U u) {
-        return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.accept(t, u));
+        return new ConsumerStep<>(this.name, this.desc, t -> this.action.accept(t, u));
     }
 
     /**
@@ -165,7 +194,7 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code TriConsumerStep}
      */
     public final <V> TriConsumerStep<T, U, V> asTriConsumerStep() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.accept(t, u));
+        return new TriConsumerStep<>(this.name, this.desc, (t, u, v) -> this.action.accept(t, u));
     }
 
     /**
@@ -177,8 +206,8 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code FunctionStep}
      */
     public final <R> FunctionStep<T, R> asFunctionStep(final U u, final R r) {
-        return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
-            this.step.accept(t, u);
+        return new FunctionStep<>(this.name, this.desc, t -> {
+            this.action.accept(t, u);
             return r;
         });
     }
@@ -191,8 +220,8 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code BiFunctionStep}
      */
     public final <R> BiFunctionStep<T, U, R> asBiFunctionStep(final R r) {
-        return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
-            this.step.accept(t, u);
+        return new BiFunctionStep<>(this.name, this.desc, (t, u) -> {
+            this.action.accept(t, u);
             return r;
         });
     }
@@ -206,14 +235,14 @@ public class BiConsumerStep<T, U> implements ThrowingBiConsumer<T, U, RuntimeExc
      * @return {@code TriFunctionStep}
      */
     public final <R, V> TriFunctionStep<T, U, V, R> asTriFunctionStep(final R r) {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {
-            this.step.accept(t, u);
+        return new TriFunctionStep<>(this.name, this.desc, (t, u, v) -> {
+            this.action.accept(t, u);
             return r;
         });
     }
 
     @Override
     public final String toString() {
-        return "BiConsumerStep(" + this.stepName + ")";
+        return "BiConsumerStep(" + stepNameWithKeyword(this.keyword, this.name) + ")";
     }
 }

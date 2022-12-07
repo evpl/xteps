@@ -30,21 +30,21 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> withContext(U context);
+    <U> CtxSC<U, S> withCtx(U context);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> withContext(
-        ThrowingSupplier<? extends U, ?> contextSupplier
+    <U> CtxSC<U, S> withCtx(
+        ThrowingSupplier<? extends U, ?> supplier
     );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> stepToContext(
+    <U> CtxSC<U, S> stepToCtx(
         SupplierStep<? extends U> step
     );
 
@@ -52,7 +52,7 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> stepToContext(
+    <U> CtxSC<U, S> stepToCtx(
         String keyword,
         SupplierStep<? extends U> step
     );
@@ -61,18 +61,26 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> stepToContext(
-        String stepName,
-        ThrowingSupplier<? extends U, ?> step
+    <U> CtxSC<U, S> stepToCtx(
+        ThrowingSupplier<? extends U, ?> action
     );
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends U, ?> step
+    <U> CtxSC<U, S> stepToCtx(
+        String name,
+        ThrowingSupplier<? extends U, ?> action
+    );
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U> CtxSC<U, S> stepToCtx(
+        String name,
+        String desc,
+        ThrowingSupplier<? extends U, ?> action
     );
 }

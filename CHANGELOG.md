@@ -2,6 +2,13 @@
 
 ## 5.7 (planned)
 
+* PR #85 Step listeners refactoring
+* PR #85 Step objects refactoring
+* PR #85 ThreadHooks class refactoring
+* PR #85 Added new steps chain methods without name
+* PR #85 Renamed methods parameters for better view in IDE hints
+* PR #85 Renamed methods for better view
+* PR #85 Renamed steps chain classes for better view
 * PR #84 DefaultExceptionHandler refactoring
 * PR #82 Xteps and UncheckedXteps javadoc fix
 

@@ -23,29 +23,29 @@ public interface StepListener {
     /**
      * Invoked each time a step starts.
      *
-     * @param stepUUID        the step UUID (not null, UUID format)
-     * @param stepName        the step name (not null, may be empty)
-     * @param stepDescription the step description (not null, may be empty)
-     * @param contexts        the contexts array (not null, but elements may be null)
+     * @param uuid        the step UUID (not null, UUID format)
+     * @param name        the step name (not null, may be empty)
+     * @param description the step description (not null, may be empty)
+     * @param params      the params array (not null, but elements may be null)
      */
-    void stepStarted(String stepUUID,
-                     String stepName,
-                     String stepDescription,
-                     Object[] contexts);
+    void stepStarted(String uuid,
+                     String name,
+                     String description,
+                     Object[] params);
 
     /**
      * Invoked each time a step passes.
      *
-     * @param stepUUID the step UUID (not null, UUID format)
+     * @param uuid the step UUID (not null, UUID format)
      */
-    void stepPassed(String stepUUID);
+    void stepPassed(String uuid);
 
     /**
      * Invoked each time a step fails.
      *
-     * @param stepUUID  the step UUID (not null, UUID format)
+     * @param uuid      the step UUID (not null, UUID format)
      * @param exception the step exception (not null)
      */
-    void stepFailed(String stepUUID,
+    void stepFailed(String uuid,
                     Throwable exception);
 }

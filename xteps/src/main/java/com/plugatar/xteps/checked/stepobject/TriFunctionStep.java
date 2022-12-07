@@ -33,63 +33,101 @@ import static com.plugatar.xteps.checked.stepobject.StepObjectsUtils.stepNameWit
  * @param <E> the type of the throwing exception
  */
 public class TriFunctionStep<T, U, V, R, E extends Throwable> implements ThrowingTriFunction<T, U, V, R, E> {
-    private final String stepName;
-    private final String stepDescription;
-    private final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> step;
+
+    /**
+     * The keyword of this step.
+     */
+    private final String keyword;
+
+    /**
+     * The name of this step.
+     */
+    private final String name;
+
+    /**
+     * The description of this step.
+     */
+    private final String desc;
+
+    /**
+     * The action of this step.
+     */
+    private final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> action;
 
     /**
      * Ctor.
      *
-     * @param step the step
+     * @param action the step action
      */
-    public TriFunctionStep(final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> step) {
-        this.stepName = humanReadableOrEmptyStepName(TriFunctionStep.class, this.getClass());
-        this.stepDescription = "";
-        this.step = step;
+    public TriFunctionStep(
+        final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> action
+    ) {
+        this.keyword = "";
+        this.name = humanReadableOrEmptyStepName(TriFunctionStep.class, this.getClass());
+        this.desc = "";
+        this.action = action;
     }
 
     /**
      * Ctor.
      *
-     * @param stepName the step name
-     * @param step     the step
+     * @param name   the step name
+     * @param action the step action
      */
-    public TriFunctionStep(final String stepName,
-                           final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> step) {
-        this.stepName = stepName;
-        this.stepDescription = "";
-        this.step = step;
+    public TriFunctionStep(
+        final String name,
+        final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> action
+    ) {
+        this("", name, "", action);
     }
 
     /**
      * Ctor.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
      */
-    public TriFunctionStep(final String stepName,
-                           final String stepDescription,
-                           final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> step) {
-        this.stepName = stepName;
-        this.stepDescription = stepDescription;
-        this.step = step;
+    public TriFunctionStep(
+        final String name,
+        final String desc,
+        final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> action
+    ) {
+        this("", name, desc, action);
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param keyword the step keyword
+     * @param name    the step name
+     * @param desc    the step description
+     * @param action  the step action
+     */
+    public TriFunctionStep(
+        final String keyword,
+        final String name,
+        final String desc,
+        final ThrowingTriFunction<? super T, ? super U, ? super V, ? extends R, ? extends E> action
+    ) {
+        this.keyword = keyword;
+        this.name = name;
+        this.desc = desc;
+        this.action = action;
     }
 
     /**
      * Returns dummy {@code TriFunctionStep}.
      *
-     * @param stepName the step name
-     * @param <T>      the type of the first input argument
-     * @param <U>      the type of the second input argument
-     * @param <V>      the type of the third input argument
-     * @param <R>      the type of the result
+     * @param name the step name
+     * @param <T>  the type of the first input argument
+     * @param <U>  the type of the second input argument
+     * @param <V>  the type of the third input argument
+     * @param <R>  the type of the result
      * @return dummy {@code TriFunctionStep}
      */
-    public static <T, U, V, R> TriFunctionStep<T, U, V, R, RuntimeException> dummy(final String stepName) {
-        return new TriFunctionStep<>(
-            stepName, (t, u, v) -> { throw new XtepsException("Step not implemented"); }
-        );
+    public static <T, U, V, R> TriFunctionStep<T, U, V, R, RuntimeException> dummy(final String name) {
+        return new TriFunctionStep<>(name, (t, u, v) -> { throw new XtepsException("Step not implemented"); });
     }
 
     /**
@@ -100,13 +138,13 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @param v the third input argument
      * @return the result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
+     *                        or if {@link #keyword} or {@link #name} or {@link #desc} or {@link #action} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if this step threw exception
      */
     @Override
     public final R apply(final T t, final U u, final V v) throws E {
-        return stepsChainOf(t, u, v).stepTo(this.stepName, this.stepDescription, this.step);
+        return stepsChainOf(t, u, v).stepTo(stepNameWithKeyword(this.keyword, this.name), this.desc, this.action);
     }
 
     /**
@@ -116,9 +154,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep} with given keyword in the step name
      */
     public final TriFunctionStep<T, U, V, R, E> withKeyword(final String keyword) {
-        return new TriFunctionStep<>(
-            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
-        );
+        return new TriFunctionStep<>(keyword, this.name, this.desc, this.action);
     }
 
     /**
@@ -137,7 +173,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep<T, V, U, R, E>}
      */
     public final TriFunctionStep<T, V, U, R, E> asTVU() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, v, u) -> this.step.apply(t, u, v));
+        return new TriFunctionStep<>(this.name, this.desc, (t, v, u) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -146,7 +182,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep<U, T, V, R, E>}
      */
     public final TriFunctionStep<U, T, V, R, E> asUTV() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (u, t, v) -> this.step.apply(t, u, v));
+        return new TriFunctionStep<>(this.name, this.desc, (u, t, v) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -155,7 +191,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep<U, V, T, R, E>}
      */
     public final TriFunctionStep<U, V, T, R, E> asUVT() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (u, v, t) -> this.step.apply(t, u, v));
+        return new TriFunctionStep<>(this.name, this.desc, (u, v, t) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -164,7 +200,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep<V, T, U, R, E>}
      */
     public final TriFunctionStep<V, T, U, R, E> asVTU() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (v, t, u) -> this.step.apply(t, u, v));
+        return new TriFunctionStep<>(this.name, this.desc, (v, t, u) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -173,7 +209,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriFunctionStep<V, U, T, R, E>}
      */
     public final TriFunctionStep<V, U, T, R, E> asVUT() {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (v, u, t) -> this.step.apply(t, u, v));
+        return new TriFunctionStep<>(this.name, this.desc, (v, u, t) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -185,7 +221,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code RunnableStep}
      */
     public final RunnableStep<E> asRunnableStep(final T t, final U u, final V v) {
-        return new RunnableStep<>(this.stepName, this.stepDescription, () -> this.step.apply(t, u, v));
+        return new RunnableStep<>(this.name, this.desc, () -> this.action.apply(t, u, v));
     }
 
     /**
@@ -197,7 +233,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code SupplierStep}
      */
     public final SupplierStep<R, E> asSupplierStep(final T t, final U u, final V v) {
-        return new SupplierStep<>(this.stepName, this.stepDescription, () -> this.step.apply(t, u, v));
+        return new SupplierStep<>(this.name, this.desc, () -> this.action.apply(t, u, v));
     }
 
     /**
@@ -208,7 +244,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T, E> asConsumerStep(final U u, final V v) {
-        return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.apply(t, u, v));
+        return new ConsumerStep<>(this.name, this.desc, t -> this.action.apply(t, u, v));
     }
 
     /**
@@ -218,7 +254,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code BiConsumerStep}
      */
     public final BiConsumerStep<T, U, E> asBiConsumerStep(final V v) {
-        return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.apply(t, u, v));
+        return new BiConsumerStep<>(this.name, this.desc, (t, u) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -227,7 +263,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code TriConsumerStep}
      */
     public final TriConsumerStep<T, U, V, E> asTriConsumerStep() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, u, v) -> this.step.apply(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (t, u, v) -> this.action.apply(t, u, v));
     }
 
     /**
@@ -238,7 +274,7 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code FunctionStep}
      */
     public final FunctionStep<T, R, E> asFunctionStep(final U u, final V v) {
-        return new FunctionStep<>(this.stepName, this.stepDescription, t -> this.step.apply(t, u, v));
+        return new FunctionStep<>(this.name, this.desc, t -> this.action.apply(t, u, v));
     }
 
     /**
@@ -248,11 +284,11 @@ public class TriFunctionStep<T, U, V, R, E extends Throwable> implements Throwin
      * @return {@code BiFunctionStep}
      */
     public final BiFunctionStep<T, U, R, E> asBiFunctionStep(final V v) {
-        return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.apply(t, u, v));
+        return new BiFunctionStep<>(this.name, this.desc, (t, u) -> this.action.apply(t, u, v));
     }
 
     @Override
     public final String toString() {
-        return "TriFunctionStep(" + this.stepName + ")";
+        return "TriFunctionStep(" + stepNameWithKeyword(this.keyword, this.name) + ")";
     }
 }

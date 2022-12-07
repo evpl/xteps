@@ -119,7 +119,7 @@ class ExampleTest {
 
 ### Steps chain
 
-Second part is a steps chain starts with `stepsChain`, `stepsChainOf(T)`, `stepsChainOf(T1, T2)` and
+Second part is a steps chain starts with `stepsChain`, `stepsChainOf`, `stepsChainOf(T)`, `stepsChainOf(T1, T2)` and
 `stepsChainOf(T1, T2, T3)` static method located in the `com.plugatar.xteps.checked.Xteps` /
 `com.plugatar.xteps.unchecked.UncheckedXteps` class.
 
@@ -129,7 +129,7 @@ class ExampleTest {
     @Test
     void stepsChainMethodExample() {
         stepsChain()
-            .stepToContext("Create WebDriver", () -> {
+            .stepToCtx("Create WebDriver", () -> {
                 /* ... */
                 return new ChromeDriver();
             })
@@ -148,7 +148,7 @@ class ExampleTest {
                     driver.findElements(By.id("login_button"))
                 )
             )
-            .stepToContext("Get database connection", () -> {
+            .stepToCtx("Get database connection", () -> {
                 /* ... */
                 return getDatabaseConnection();
             })
@@ -249,13 +249,13 @@ public class ExampleTest {
     @Test
     void stepObjectsExample() {
         stepsChain()
-            .stepToContext(new CreateWebDriver())
+            .stepToCtx(new CreateWebDriver())
             .chainHook(WebDriver::quit)
             .step(new OpenPage("https://.../login"))
             .step(new TypeLogin("user123"))
             .step(new TypePassword("1234567890"))
             .step(new ClickOnLoginButton())
-            .stepToContext(new DatabaseConnection())
+            .stepToCtx(new DatabaseConnection())
             .chainHook(Connection::close)
             .step(new CheckUserFullName("user123"))
             .callChainHooks();
@@ -286,13 +286,13 @@ You can use stubs before actually implementing the steps.
 @Test
 void dummyStepObjectsExample() {
     stepsChain()
-        .stepToContext(SupplierStep.<WebDriver>dummy("Create WebDriver"))
+        .stepToCtx(SupplierStep.<WebDriver>dummy("Create WebDriver"))
         .chainHook(WebDriver::quit)
         .step(RunnableStep.dummy("Open page https://.../login"))
         .step(RunnableStep.dummy("Type login user123"))
         .step(RunnableStep.dummy("Type password 1234567890"))
         .step(RunnableStep.dummy("Click on login button"))
-        .stepToContext(SupplierStep.<Connection>dummy("Get database connection"))
+        .stepToCtx(SupplierStep.<Connection>dummy("Get database connection"))
         .chainHook(Connection::close)
         .step(RunnableStep.dummy("Check user full name"))
         .callChainHooks();
@@ -320,7 +320,7 @@ public class ExampleTest {
     @Test
     void bddStyleExample() {
         stepsChain()
-            .withContext(() -> {
+            .withCtx(() -> {
                 /* ... */
                 return new ChromeDriver();
             })
@@ -377,7 +377,7 @@ You can use hooks in a steps chain. Hooks will be called in case of any exceptio
 `callChainHooks` method call. You also can use hooks to release resources.
 
 ```java
-stepsChain().withContext(new AutoCloseableImpl())
+stepsChain().withCtx(new AutoCloseableImpl())
     .chainHook(AutoCloseable::close)
     .step("Step", ctx -> {
         //...
@@ -391,7 +391,7 @@ You can use thread hooks. Hooks will be called after current thread is finished.
 resources.
 
 ```java
-stepsChain().withContext(new AutoCloseableImpl())
+stepsChain().withCtx(new AutoCloseableImpl())
     .threadHook(AutoCloseable::close)
     .step("Step", ctx -> {
         //...
@@ -483,17 +483,14 @@ You can use step name or step description replacements by the way provided by Al
 
 ```java
 stepsChain()
-    .withContext("value")
-    .withContext(111)
-    .step("Step with context = {context} and previous context = {context2}", (integer, string) -> {
-        //...
-    })
+    .withCtx("value")
+    .withCtx(111)
     .step("Step with context = {0} and previous context = {1}", (integer, string) -> {
         //...
     });
 ```
 
-This steps will be reported with name "Step with context = 111 and previous context = value".
+This step will be reported with name "Step with context = 111 and previous context = value".
 
 You can also use utility methods for Allure and Qase - `AllureStepUtils` and `QaseStepUtils`. It allows you to change
 the step name and other step attributes at runtime.

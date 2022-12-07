@@ -30,21 +30,21 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U> CtxSC<U> withContext(U context);
+    <U> CtxSC<U, S> withCtx(U context);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> CtxSC<U> withContext(
-        ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    <U, E extends Throwable> CtxSC<U, S> withCtx(
+        ThrowingSupplier<? extends U, ? extends E> supplier
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> CtxSC<U> stepToContext(
+    <U, E extends Throwable> CtxSC<U, S> stepToCtx(
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -52,7 +52,7 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> CtxSC<U> stepToContext(
+    <U, E extends Throwable> CtxSC<U, S> stepToCtx(
         String keyword,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
@@ -61,18 +61,26 @@ public interface BaseNoCtxSC<S extends BaseNoCtxSC<S>> extends BaseSC<S> {
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> CtxSC<U> stepToContext(
-        String stepName,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> CtxSC<U, S> stepToCtx(
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> CtxSC<U> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> CtxSC<U, S> stepToCtx(
+        String name,
+        ThrowingSupplier<? extends U, ? extends E> action
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> CtxSC<U, S> stepToCtx(
+        String name,
+        String desc,
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 }
