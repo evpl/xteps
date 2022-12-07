@@ -2,8 +2,8 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
-[![Maven Central](https://img.shields.io/badge/maven--central-5.6-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
-[![Javadoc](https://img.shields.io/badge/javadoc-5.6-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
+[![Maven Central](https://img.shields.io/badge/maven--central-5.7-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Javadoc](https://img.shields.io/badge/javadoc-5.7-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub Workflow Status (master)](https://img.shields.io/github/workflow/status/evpl/xteps/All%20tests/master)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
@@ -45,7 +45,7 @@ Maven:
 <dependency>
   <groupId>com.plugatar.xteps</groupId>
   <artifactId>{artifact name from table}</artifactId>
-  <version>5.6</version>
+  <version>5.7</version>
   <scope>test</scope>
 </dependency>
 ```
@@ -54,7 +54,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testImplementation 'com.plugatar.xteps:{artifact name from table}:5.6'
+    testImplementation 'com.plugatar.xteps:{artifact name from table}:5.7'
 }
 ```
 
@@ -62,7 +62,7 @@ Kotlin DSL:
 
 ```groovy
 dependencies {
-    testImplementation("com.plugatar.xteps:{artifact name from table}:5.6")
+    testImplementation("com.plugatar.xteps:{artifact name from table}:5.7")
 }
 ```
 
@@ -485,12 +485,12 @@ You can use step name or step description replacements by the way provided by Al
 stepsChain()
     .withCtx("value")
     .withCtx(111)
-    .step("Step with context = {0} and previous context = {1}", (integer, string) -> {
+    .step("Step with context = {0} and second context = {1}", (integer, string) -> {
         //...
     });
 ```
 
-This step will be reported with name "Step with context = 111 and previous context = value".
+This step will be reported with name "Step with context = 111 and second context = value".
 
 You can also use utility methods for Allure and Qase - `AllureStepUtils` and `QaseStepUtils`. It allows you to change
 the step name and other step attributes at runtime.

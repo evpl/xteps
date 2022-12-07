@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.7 (planned)
+## 5.7 (07.12.2022)
 
 * PR #85 Step listeners refactoring
 * PR #85 Step objects refactoring
