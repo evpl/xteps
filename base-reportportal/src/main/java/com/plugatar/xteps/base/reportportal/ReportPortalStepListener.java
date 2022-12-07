@@ -29,91 +29,81 @@ import java.util.Map;
  * {@link StepListener} implementation for ReportPortal.
  */
 public class ReportPortalStepListener implements StepListener {
-    private final String emptyStepNameReplacement;
+    private final String emptyNameReplacement;
     private final TemplateConfiguration templateConfiguration;
-    private final String contextParamName;
 
     /**
      * Zero-argument public ctor.
      */
     public ReportPortalStepListener() {
-        this("step", "context", new TemplateConfiguration());
+        this("Step", new TemplateConfiguration());
     }
 
     /**
      * Ctor.
      *
-     * @param emptyStepNameReplacement the empty step name replacement
-     * @param contextParamName         the context param name
-     * @param templateConfiguration    the template configuration
+     * @param emptyNameReplacement  the empty step name replacement
+     * @param templateConfiguration the template configuration
      */
-    public ReportPortalStepListener(final String emptyStepNameReplacement,
-                                    final String contextParamName,
+    public ReportPortalStepListener(final String emptyNameReplacement,
                                     final TemplateConfiguration templateConfiguration) {
         final Class<Launch> dependencyCheck = Launch.class;
-        if (emptyStepNameReplacement == null) {
-            throw new NullPointerException("emptyStepNameReplacement arg is null");
+        if (emptyNameReplacement == null) {
+            throw new NullPointerException("emptyNameReplacement arg is null");
         }
-        if (emptyStepNameReplacement.isEmpty()) {
-            throw new IllegalArgumentException("emptyStepNameReplacement arg is empty");
-        }
-        if (contextParamName == null) {
-            throw new NullPointerException("contextParamName arg is null");
-        }
-        if (contextParamName.isEmpty()) {
-            throw new IllegalArgumentException("contextParamName arg is empty");
+        if (emptyNameReplacement.isEmpty()) {
+            throw new IllegalArgumentException("emptyNameReplacement arg is empty");
         }
         if (templateConfiguration == null) {
             throw new NullPointerException("templateConfiguration arg is null");
         }
-        this.emptyStepNameReplacement = emptyStepNameReplacement;
-        this.contextParamName = contextParamName;
+        this.emptyNameReplacement = emptyNameReplacement;
         this.templateConfiguration = templateConfiguration;
     }
 
     @Override
-    public final void stepStarted(final String stepUUID,
-                                  final String stepName,
-                                  final String stepDescription,
-                                  final Object[] contexts) {
+    public final void stepStarted(final String uuid,
+                                  final String name,
+                                  final String description,
+                                  final Object[] params) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
             Map<String, Object> replacements = null;
             /* Step name processing */
-            final String processedStepName;
-            if (stepName.isEmpty()) {
-                processedStepName = this.emptyStepNameReplacement;
+            final String processedName;
+            if (name.isEmpty()) {
+                processedName = this.emptyNameReplacement;
             } else {
-                if (contexts.length == 0) {
-                    processedStepName = stepName;
+                if (params.length == 0) {
+                    processedName = name;
                 } else {
-                    replacements = this.contextsMap(contexts);
-                    processedStepName = this.processedTemplate(stepName, replacements);
+                    replacements = this.paramsMap(params);
+                    processedName = this.processedTemplate(name, replacements);
                 }
             }
             /* Step description processing */
-            final String processedStepDescription;
-            if (stepDescription.isEmpty()) {
-                processedStepDescription = null;
+            final String processedDescription;
+            if (description.isEmpty()) {
+                processedDescription = null;
             } else {
-                if (contexts.length == 0) {
-                    processedStepDescription = stepDescription;
+                if (params.length == 0) {
+                    processedDescription = description;
                 } else {
                     if (replacements == null) {
-                        replacements = this.contextsMap(contexts);
+                        replacements = this.paramsMap(params);
                     }
-                    processedStepDescription = this.processedTemplate(stepDescription, replacements);
+                    processedDescription = this.processedTemplate(description, replacements);
                 }
             }
             /* Reporting */
             launch.getStepReporter().startNestedStep(
-                StepRequestUtils.buildStartStepRequest(processedStepName, processedStepDescription)
+                StepRequestUtils.buildStartStepRequest(processedName, processedDescription)
             );
         }
     }
 
     @Override
-    public final void stepPassed(final String stepUUID) {
+    public final void stepPassed(final String uuid) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
             launch.getStepReporter().finishNestedStep();
@@ -121,7 +111,7 @@ public class ReportPortalStepListener implements StepListener {
     }
 
     @Override
-    public final void stepFailed(final String stepUUID,
+    public final void stepFailed(final String uuid,
                                  final Throwable exception) {
         final Launch launch = Launch.currentLaunch();
         if (launch != null) {
@@ -129,14 +119,11 @@ public class ReportPortalStepListener implements StepListener {
         }
     }
 
-    private Map<String, Object> contextsMap(final Object[] contexts) {
-        if (contexts.length != 0) {
-            final Map<String, Object> map = new HashMap<>(contexts.length * 2, 1.0f);
-            map.put(this.contextParamName, contexts[0]);
-            map.put("0", contexts[0]);
-            for (int idx = 1; idx < contexts.length; ++idx) {
-                map.put(String.valueOf(idx), contexts[idx]);
-                map.put(this.contextParamName + (idx + 1), contexts[idx]);
+    private Map<String, Object> paramsMap(final Object[] params) {
+        if (params.length != 0) {
+            final Map<String, Object> map = new HashMap<>(params.length, 1.0f);
+            for (int idx = 0; idx < params.length; ++idx) {
+                map.put(String.valueOf(idx), params[idx]);
             }
             return map;
         }
@@ -145,6 +132,8 @@ public class ReportPortalStepListener implements StepListener {
 
     private String processedTemplate(final String template,
                                      final Map<String, Object> replacements) {
-        return TemplateProcessing.processTemplate(template, replacements, this.templateConfiguration);
+        return replacements.isEmpty()
+            ? template
+            : TemplateProcessing.processTemplate(template, replacements, this.templateConfiguration);
     }
 }

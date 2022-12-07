@@ -31,62 +31,92 @@ import static com.plugatar.xteps.unchecked.stepobject.StepObjectsUtils.stepNameW
  * @param <V> the type of the third input argument
  */
 public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, RuntimeException> {
-    private final String stepName;
-    private final String stepDescription;
-    private final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step;
+
+    /**
+     * The keyword of this step.
+     */
+    private final String keyword;
+
+    /**
+     * The name of this step.
+     */
+    private final String name;
+
+    /**
+     * The description of this step.
+     */
+    private final String desc;
+
+    /**
+     * The action of this step.
+     */
+    private final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> action;
 
     /**
      * Ctor.
      *
-     * @param step the step
+     * @param action the step action
      */
-    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
-        this.stepName = humanReadableOrEmptyStepName(TriConsumerStep.class, this.getClass());
-        this.stepDescription = "";
-        this.step = step;
+    public TriConsumerStep(final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> action) {
+        this.keyword = "";
+        this.name = humanReadableOrEmptyStepName(TriConsumerStep.class, this.getClass());
+        this.desc = "";
+        this.action = action;
     }
 
     /**
      * Ctor.
      *
-     * @param stepName the step name
-     * @param step     the step
+     * @param name   the step name
+     * @param action the step action
      */
-    public TriConsumerStep(final String stepName,
-                           final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = "";
-        this.step = step;
+    public TriConsumerStep(final String name,
+                           final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> action) {
+        this("", name, "", action);
     }
 
     /**
      * Ctor.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
      */
-    public TriConsumerStep(final String stepName,
-                           final String stepDescription,
-                           final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> step) {
-        this.stepName = stepName;
-        this.stepDescription = stepDescription;
-        this.step = step;
+    public TriConsumerStep(final String name,
+                           final String desc,
+                           final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> action) {
+        this("", name, desc, action);
+    }
+
+    /**
+     * Ctor.
+     *
+     * @param keyword the step keyword
+     * @param name    the step name
+     * @param desc    the step description
+     * @param action  the step action
+     */
+    public TriConsumerStep(final String keyword,
+                           final String name,
+                           final String desc,
+                           final ThrowingTriConsumer<? super T, ? super U, ? super V, ?> action) {
+        this.keyword = keyword;
+        this.name = name;
+        this.desc = desc;
+        this.action = action;
     }
 
     /**
      * Returns dummy {@code TriConsumerStep}.
      *
-     * @param stepName the step name
-     * @param <T>      the type of the first input argument
-     * @param <U>      the type of the second input argument
-     * @param <V>      the type of the third input argument
+     * @param name the step name
+     * @param <T>  the type of the first input argument
+     * @param <U>  the type of the second input argument
+     * @param <V>  the type of the third input argument
      * @return dummy {@code TriConsumerStep}
      */
-    public static <T, U, V> TriConsumerStep<T, U, V> dummy(final String stepName) {
-        return new TriConsumerStep<>(
-            stepName, (t, u, v) -> { throw new XtepsException("Step not implemented"); }
-        );
+    public static <T, U, V> TriConsumerStep<T, U, V> dummy(final String name) {
+        return new TriConsumerStep<>(name, (t, u, v) -> { throw new XtepsException("Step not implemented"); });
     }
 
     /**
@@ -96,12 +126,12 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @param u the second input argument
      * @param v the third input argument
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@link #stepName} or {@link #stepDescription} or {@link #step} is null
+     *                        or if {@link #keyword} or {@link #name} or {@link #desc} or {@link #action} is null
      *                        or if it's impossible to correctly report the step
      */
     @Override
     public final void accept(final T t, final U u, final V v) {
-        stepsChainOf(t, u, v).step(this.stepName, this.stepDescription, this.step);
+        stepsChainOf(t, u, v).step(stepNameWithKeyword(this.keyword, this.name), this.desc, this.action);
     }
 
     /**
@@ -111,9 +141,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep} with given keyword in the step name
      */
     public final TriConsumerStep<T, U, V> withKeyword(final String keyword) {
-        return new TriConsumerStep<>(
-            stepNameWithKeyword(keyword, this.stepName), this.stepDescription, this.step
-        );
+        return new TriConsumerStep<>(keyword, this.name, this.desc, this.action);
     }
 
     /**
@@ -122,7 +150,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep<T, V, U>}
      */
     public final TriConsumerStep<T, V, U> asTVU() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (t, v, u) -> this.step.accept(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (t, v, u) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -131,7 +159,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep<U, T, V>}
      */
     public final TriConsumerStep<U, T, V> asUTV() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (u, t, v) -> this.step.accept(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (u, t, v) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -140,7 +168,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep<U, V, T>}
      */
     public final TriConsumerStep<U, V, T> asUVT() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (u, v, t) -> this.step.accept(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (u, v, t) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -149,7 +177,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep<V, T, U>}
      */
     public final TriConsumerStep<V, T, U> asVTU() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (v, t, u) -> this.step.accept(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (v, t, u) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -158,7 +186,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriConsumerStep<V, U, T>}
      */
     public final TriConsumerStep<V, U, T> asVUT() {
-        return new TriConsumerStep<>(this.stepName, this.stepDescription, (v, u, t) -> this.step.accept(t, u, v));
+        return new TriConsumerStep<>(this.name, this.desc, (v, u, t) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -170,7 +198,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code RunnableStep}
      */
     public final RunnableStep asRunnableStep(final T t, final U u, final V v) {
-        return new RunnableStep(this.stepName, this.stepDescription, () -> this.step.accept(t, u, v));
+        return new RunnableStep(this.name, this.desc, () -> this.action.accept(t, u, v));
     }
 
     /**
@@ -184,8 +212,8 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code SupplierStep}
      */
     public final <R> SupplierStep<R> asSupplierStep(final T t, final U u, final V v, final R r) {
-        return new SupplierStep<>(this.stepName, this.stepDescription, () -> {
-            this.step.accept(t, u, v);
+        return new SupplierStep<>(this.name, this.desc, () -> {
+            this.action.accept(t, u, v);
             return r;
         });
     }
@@ -198,7 +226,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code ConsumerStep}
      */
     public final ConsumerStep<T> asConsumerStep(final U u, final V v) {
-        return new ConsumerStep<>(this.stepName, this.stepDescription, t -> this.step.accept(t, u, v));
+        return new ConsumerStep<>(this.name, this.desc, t -> this.action.accept(t, u, v));
     }
 
     /**
@@ -208,7 +236,7 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code BiConsumerStep}
      */
     public final BiConsumerStep<T, U> asBiConsumerStep(final V v) {
-        return new BiConsumerStep<>(this.stepName, this.stepDescription, (t, u) -> this.step.accept(t, u, v));
+        return new BiConsumerStep<>(this.name, this.desc, (t, u) -> this.action.accept(t, u, v));
     }
 
     /**
@@ -221,8 +249,8 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code FunctionStep}
      */
     public final <R> FunctionStep<T, R> asFunctionStep(final U u, final V v, final R r) {
-        return new FunctionStep<>(this.stepName, this.stepDescription, t -> {
-            this.step.accept(t, u, v);
+        return new FunctionStep<>(this.name, this.desc, t -> {
+            this.action.accept(t, u, v);
             return r;
         });
     }
@@ -236,8 +264,8 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code BiFunctionStep}
      */
     public final <R> BiFunctionStep<T, U, R> asBiFunctionStep(final V v, final R r) {
-        return new BiFunctionStep<>(this.stepName, this.stepDescription, (t, u) -> {
-            this.step.accept(t, u, v);
+        return new BiFunctionStep<>(this.name, this.desc, (t, u) -> {
+            this.action.accept(t, u, v);
             return r;
         });
     }
@@ -250,14 +278,14 @@ public class TriConsumerStep<T, U, V> implements ThrowingTriConsumer<T, U, V, Ru
      * @return {@code TriFunctionStep}
      */
     public final <R> TriFunctionStep<T, U, V, R> asTriFunctionStep(final R r) {
-        return new TriFunctionStep<>(this.stepName, this.stepDescription, (t, u, v) -> {
-            this.step.accept(t, u, v);
+        return new TriFunctionStep<>(this.name, this.desc, (t, u, v) -> {
+            this.action.accept(t, u, v);
             return r;
         });
     }
 
     @Override
     public final String toString() {
-        return "TriConsumerStep(" + this.stepName + ")";
+        return "TriConsumerStep(" + stepNameWithKeyword(this.keyword, this.name) + ")";
     }
 }

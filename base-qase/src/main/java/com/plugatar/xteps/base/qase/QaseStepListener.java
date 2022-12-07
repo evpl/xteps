@@ -29,8 +29,7 @@ import java.util.Map;
  * {@link StepListener} implementation for Qase.
  */
 public class QaseStepListener implements StepListener {
-    private final String emptyStepNameReplacement;
-    private final String contextParamName;
+    private final String emptyNameReplacement;
     private final char leftReplacementBorder;
     private final char rightReplacementBorder;
 
@@ -38,85 +37,76 @@ public class QaseStepListener implements StepListener {
      * Zero-argument public ctor.
      */
     public QaseStepListener() {
-        this("step", "context", '{', '}');
+        this("Step", '{', '}');
     }
 
     /**
-     * @param emptyStepNameReplacement the empty step name replacement
-     * @param contextParamName         the context param name
-     * @param leftReplacementBorder    the left replacement border
-     * @param rightReplacementBorder   the right replacement border
+     * @param emptyNameReplacement   the empty step name replacement
+     * @param leftReplacementBorder  the left replacement border
+     * @param rightReplacementBorder the right replacement border
      */
-    public QaseStepListener(final String emptyStepNameReplacement,
-                            final String contextParamName,
+    public QaseStepListener(final String emptyNameReplacement,
                             final char leftReplacementBorder,
                             final char rightReplacementBorder) {
         final Class<StepStorage> dependencyCheck = StepStorage.class;
-        if (emptyStepNameReplacement == null) {
-            throw new NullPointerException("emptyStepNameReplacement arg is null");
+        if (emptyNameReplacement == null) {
+            throw new NullPointerException("emptyNameReplacement arg is null");
         }
-        if (emptyStepNameReplacement.isEmpty()) {
-            throw new IllegalArgumentException("emptyStepNameReplacement arg is empty");
+        if (emptyNameReplacement.isEmpty()) {
+            throw new IllegalArgumentException("emptyNameReplacement arg is empty");
         }
-        if (contextParamName == null) {
-            throw new NullPointerException("contextParamName arg is null");
-        }
-        if (contextParamName.isEmpty()) {
-            throw new IllegalArgumentException("contextParamName arg is empty");
-        }
-        this.emptyStepNameReplacement = emptyStepNameReplacement;
-        this.contextParamName = contextParamName;
+        this.emptyNameReplacement = emptyNameReplacement;
         this.leftReplacementBorder = leftReplacementBorder;
         this.rightReplacementBorder = rightReplacementBorder;
     }
 
     @Override
-    public final void stepStarted(final String stepUUID,
-                                  final String stepName,
-                                  final String stepDescription,
-                                  final Object[] contexts) {
+    public final void stepStarted(final String uuid,
+                                  final String name,
+                                  final String description,
+                                  final Object[] params) {
         Map<String, Object> replacements = null;
         /* Step name processing */
-        final String processedStepName;
-        if (stepName.isEmpty()) {
-            processedStepName = this.emptyStepNameReplacement;
+        final String processedName;
+        if (name.isEmpty()) {
+            processedName = this.emptyNameReplacement;
         } else {
-            if (contexts.length == 0) {
-                processedStepName = stepName;
+            if (params.length == 0) {
+                processedName = name;
             } else {
-                replacements = this.contextsMap(contexts);
-                processedStepName = this.processedTemplate(stepName, replacements);
+                replacements = this.paramsMap(params);
+                processedName = this.processedTemplate(name, replacements);
             }
         }
         /* Step description processing */
-        final String processedStepDescription;
-        if (stepDescription.isEmpty()) {
-            processedStepDescription = null;
+        final String processedDescription;
+        if (description.isEmpty()) {
+            processedDescription = null;
         } else {
-            if (contexts.length == 0) {
-                processedStepDescription = stepDescription;
+            if (params.length == 0) {
+                processedDescription = description;
             } else {
                 if (replacements == null) {
-                    replacements = this.contextsMap(contexts);
+                    replacements = this.paramsMap(params);
                 }
-                processedStepDescription = this.processedTemplate(stepDescription, replacements);
+                processedDescription = this.processedTemplate(description, replacements);
             }
         }
         /* Reporting */
         StepStorage.startStep();
         StepStorage.getCurrentStep()
-            .action(processedStepName)
-            .comment(processedStepDescription);
+            .action(processedName)
+            .comment(processedDescription);
     }
 
     @Override
-    public final void stepPassed(final String stepUUID) {
+    public final void stepPassed(final String uuid) {
         StepStorage.getCurrentStep().status(ResultCreateStepsInner.StatusEnum.PASSED);
         StepStorage.stopStep();
     }
 
     @Override
-    public final void stepFailed(final String stepUUID,
+    public final void stepFailed(final String uuid,
                                  final Throwable exception) {
         StepStorage.getCurrentStep()
             .status(ResultCreateStepsInner.StatusEnum.FAILED)
@@ -124,14 +114,11 @@ public class QaseStepListener implements StepListener {
         StepStorage.stopStep();
     }
 
-    private Map<String, Object> contextsMap(final Object[] contexts) {
-        if (contexts.length != 0) {
-            final Map<String, Object> map = new HashMap<>(contexts.length * 2, 1.0f);
-            map.put(this.wrappedParamName(this.contextParamName), contexts[0]);
-            map.put(this.wrappedParamName("0"), contexts[0]);
-            for (int idx = 1; idx < contexts.length; ++idx) {
-                map.put(this.wrappedParamName(String.valueOf(idx)), contexts[idx]);
-                map.put(this.wrappedParamName(this.contextParamName + (idx + 1)), contexts[idx]);
+    private Map<String, Object> paramsMap(final Object[] params) {
+        if (params.length != 0) {
+            final Map<String, Object> map = new HashMap<>(params.length, 1.0f);
+            for (int idx = 0; idx < params.length; ++idx) {
+                map.put(this.leftReplacementBorder + String.valueOf(idx) + this.rightReplacementBorder, params[idx]);
             }
             return map;
         }
@@ -140,15 +127,17 @@ public class QaseStepListener implements StepListener {
 
     private String processedTemplate(final String template,
                                      final Map<String, Object> replacements) {
+        if (replacements.isEmpty()) {
+            return template;
+        }
         String processedTemplate = template;
         for (final Map.Entry<String, Object> entry : replacements.entrySet()) {
-            processedTemplate = processedTemplate.replace(entry.getKey(), objToString(entry.getValue()));
+            final String key = entry.getKey();
+            if (processedTemplate.contains(key)) {
+                processedTemplate = processedTemplate.replace(key, objToString(entry.getValue()));
+            }
         }
         return processedTemplate;
-    }
-
-    private String wrappedParamName(final String paramName) {
-        return this.leftReplacementBorder + paramName + this.rightReplacementBorder;
     }
 
     private static String objToString(final Object obj) {

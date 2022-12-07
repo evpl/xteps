@@ -36,7 +36,7 @@ final class QaseStepListenerTest {
 
         listener.stepStarted(uuid, "", stepDescription, new Object[]{});
         final ResultCreateStepsInner step = StepStorage.getCurrentStep();
-        assertThat(step.getAction()).isEqualTo("step");
+        assertThat(step.getAction()).isEqualTo("Step");
         assertThat(step.getComment()).isEqualTo(stepDescription);
         assertThat(step.getStatus()).isNull();
         StepStorage.stopStep();
@@ -75,8 +75,8 @@ final class QaseStepListenerTest {
     void stepStartedMethodWithContextReplacements() {
         final QaseStepListener listener = new QaseStepListener();
         final String uuid = UUID.randomUUID().toString();
-        final String stepName = "step name, first context = {context}, second context = {1}";
-        final String stepDescription = "step description, first context = {0}, second context = {context2}";
+        final String stepName = "step name, first context = {0}, second context = {1}";
+        final String stepDescription = "step description, first context = {0}, second context = {1}";
 
         listener.stepStarted(uuid, stepName, stepDescription, new Object[]{"context value 1", "context value 2"});
         final ResultCreateStepsInner step = StepStorage.getCurrentStep();

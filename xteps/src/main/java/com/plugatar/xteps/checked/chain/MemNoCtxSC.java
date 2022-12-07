@@ -24,7 +24,7 @@ import com.plugatar.xteps.checked.chain.base.MemSC;
  *
  * @param <PS> the previous context steps chain type
  */
-public interface MemNoCtxSC<PS extends BaseCtxSC<?>> extends
+public interface MemNoCtxSC<PS extends BaseCtxSC<PS>> extends
     BaseNoCtxSC<MemNoCtxSC<PS>>,
     MemSC<PS> {
 }

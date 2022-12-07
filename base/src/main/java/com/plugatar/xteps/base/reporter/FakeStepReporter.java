@@ -36,19 +36,19 @@ public class FakeStepReporter implements StepReporter {
     public final <R, E extends Throwable> R report(
         final HookContainer hookContainer,
         final ExceptionHandler exceptionHandler,
-        final String stepName,
-        final String stepDescription,
-        final Object[] contexts,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final String name,
+        final String description,
+        final Object[] params,
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
         if (hookContainer == null) { throwNullArgException("hookContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (contexts == null) { throwNullArgException("contexts"); }
-        if (step == null) { throwNullArgException("step"); }
+        if (name == null) { throwNullArgException("name"); }
+        if (description == null) { throwNullArgException("description"); }
+        if (params == null) { throwNullArgException("params"); }
+        if (action == null) { throwNullArgException("action"); }
         try {
-            return step.get();
+            return action.get();
         } catch (final Throwable stepEx) {
             hookContainer.callHooks(stepEx);
             exceptionHandler.handle(stepEx);

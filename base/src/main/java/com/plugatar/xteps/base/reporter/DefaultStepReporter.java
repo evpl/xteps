@@ -54,23 +54,23 @@ public class DefaultStepReporter implements StepReporter {
     public final <R, E extends Throwable> R report(
         final HookContainer hookContainer,
         final ExceptionHandler exceptionHandler,
-        final String stepName,
-        final String stepDescription,
-        final Object[] contexts,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final String name,
+        final String description,
+        final Object[] params,
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
         if (hookContainer == null) { throwNullArgException("hookContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
-        if (stepName == null) { throwNullArgException("stepName"); }
-        if (stepDescription == null) { throwNullArgException("stepDescription"); }
-        if (contexts == null) { throwNullArgException("contexts"); }
-        if (step == null) { throwNullArgException("step"); }
+        if (name == null) { throwNullArgException("name"); }
+        if (description == null) { throwNullArgException("description"); }
+        if (params == null) { throwNullArgException("params"); }
+        if (action == null) { throwNullArgException("action"); }
         /* Step start */
         final String uuid = UUID.randomUUID().toString();
         XtepsException listenerException = null;
         for (final StepListener listener : this.listeners) {
             try {
-                listener.stepStarted(uuid, stepName, stepDescription, contexts);
+                listener.stepStarted(uuid, name, description, params);
             } catch (final Throwable ex) {
                 if (listenerException == null) {
                     listenerException = listenerException();
@@ -82,7 +82,7 @@ public class DefaultStepReporter implements StepReporter {
         E stepException = null;
         R stepResult = null;
         try {
-            stepResult = step.get();
+            stepResult = action.get();
         } catch (final Throwable ex) {
             stepException = (E) ex;
         }

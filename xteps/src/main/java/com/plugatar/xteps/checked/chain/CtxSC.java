@@ -19,45 +19,49 @@ import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.checked.chain.base.Base1CtxSC;
 import com.plugatar.xteps.checked.chain.base.BaseCtxSC;
+import com.plugatar.xteps.checked.chain.base.BaseSC;
+import com.plugatar.xteps.checked.chain.base.MemSC;
 import com.plugatar.xteps.checked.stepobject.FunctionStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
 /**
  * Contextual steps chain.
  *
- * @param <C> the context type
+ * @param <C>  the context type
+ * @param <PS> the previous steps chain type
  */
-public interface CtxSC<C> extends
-    BaseCtxSC<CtxSC<C>>,
-    Base1CtxSC<C, CtxSC<C>> {
+public interface CtxSC<C, PS extends BaseSC<PS>> extends
+    BaseCtxSC<CtxSC<C, PS>>,
+    Base1CtxSC<C, CtxSC<C, PS>>,
+    MemSC<PS> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U> Mem2CtxSC<U, C, CtxSC<C>> withContext(U context);
+    <U> Ctx2SC<U, C, CtxSC<C, PS>> withCtx(U context);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> withContext(
-        ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> withCtx(
+        ThrowingSupplier<? extends U, ? extends E> supplier
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> withContext(
-        ThrowingFunction<? super C, ? extends U, ? extends E> contextFunction
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> withCtx(
+        ThrowingFunction<? super C, ? extends U, ? extends E> function
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -65,7 +69,7 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -73,7 +77,7 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
         String keyword,
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
@@ -82,7 +86,7 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
         String keyword,
         FunctionStep<? super C, ? extends U, ? extends E> step
     ) throws E;
@@ -91,17 +95,15 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepName,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepName,
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
         ThrowingFunction<? super C, ? extends U, ? extends E> step
     ) throws E;
 
@@ -109,19 +111,37 @@ public interface CtxSC<C> extends
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
+        String name,
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    <U, E extends Throwable> Mem2CtxSC<U, C, CtxSC<C>> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingFunction<? super C, ? extends U, ? extends E> step
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
+        String name,
+        ThrowingFunction<? super C, ? extends U, ? extends E> action
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
+        String name,
+        String desc,
+        ThrowingSupplier<? extends U, ? extends E> action
+    ) throws E;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <U, E extends Throwable> Ctx2SC<U, C, CtxSC<C, PS>> stepToCtx(
+        String name,
+        String desc,
+        ThrowingFunction<? super C, ? extends U, ? extends E> action
     ) throws E;
 }

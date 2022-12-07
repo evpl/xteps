@@ -32,7 +32,7 @@ import com.plugatar.xteps.checked.stepobject.SupplierStep;
 /**
  * No context steps chain implementation.
  */
-public class NoCtxSCImpl implements NoCtxSC {
+public class NoCtxSCOf implements NoCtxSC {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
     private final HookContainer hookContainer;
@@ -46,9 +46,9 @@ public class NoCtxSCImpl implements NoCtxSC {
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
      *                              or {@code hookContainer} is null
      */
-    public NoCtxSCImpl(final StepReporter stepReporter,
-                       final ExceptionHandler exceptionHandler,
-                       final HookContainer hookContainer) {
+    public NoCtxSCOf(final StepReporter stepReporter,
+                     final ExceptionHandler exceptionHandler,
+                     final HookContainer hookContainer) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
         if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
@@ -59,6 +59,12 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final NoCtxSC callChainHooks() {
+        try {
+            this.hookContainer.callHooks();
+        } catch (final Throwable ex) {
+            this.exceptionHandler.handle(ex);
+            throw ex;
+        }
         return this;
     }
 
@@ -81,16 +87,52 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     @Override
-    public final <U> CtxSC<U> withContext(final U context) {
+    public final <U> CtxSC<U, NoCtxSC> withCtx(final U context) {
         return this.newCtxStepsChain(context);
     }
 
     @Override
-    public final <U, E extends Throwable> CtxSC<U> withContext(
-        final ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> withCtx(
+        final ThrowingSupplier<? extends U, ? extends E> supplier
     ) throws E {
-        if (contextSupplier == null) { this.throwNullArgException("contextSupplier"); }
-        return this.newCtxStepsChain(this.execAction(contextSupplier));
+        if (supplier == null) { this.throwNullArgException("supplier"); }
+        return this.newCtxStepsChain(this.execAction(supplier));
+    }
+
+    @Override
+    public final <E extends Throwable> NoCtxSC action(
+        final ThrowingRunnable<? extends E> action
+    ) throws E {
+        if (action == null) { this.throwNullArgException("action"); }
+        this.execAction(() -> {
+            action.run();
+            return null;
+        });
+        return this;
+    }
+
+    @Override
+    public final <R, E extends Throwable> R actionTo(
+        final ThrowingSupplier<? extends R, ? extends E> action
+    ) throws E {
+        if (action == null) { this.throwNullArgException("action"); }
+        return this.execAction(action);
+    }
+
+    @Override
+    public final NoCtxSC step(final String name) {
+        return this.step(name, "");
+    }
+
+    @Override
+    public final NoCtxSC step(
+        final String name,
+        final String desc
+    ) {
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
+        this.reportStep(name, desc, () -> null);
+        return this;
     }
 
     @Override
@@ -140,47 +182,38 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     @Override
-    public final NoCtxSC step(final String stepName) {
-        return this.step(stepName, "");
-    }
-
-    @Override
-    public final NoCtxSC step(
-        final String stepName,
-        final String stepDescription
-    ) {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
-        this.reportStep(stepName, stepDescription, () -> null);
-        return this;
+    public final <E extends Throwable> NoCtxSC step(
+        final ThrowingRunnable<? extends E> action
+    ) throws E {
+        return this.step("", "", action);
     }
 
     @Override
     public final <E extends Throwable> NoCtxSC step(
-        final String stepName,
-        final ThrowingRunnable<? extends E> step
+        final String name,
+        final ThrowingRunnable<? extends E> action
     ) throws E {
-        return this.step(stepName, "", step);
+        return this.step(name, "", action);
     }
 
     @Override
     public final <E extends Throwable> NoCtxSC step(
-        final String stepName,
-        final String stepDescription,
-        final ThrowingRunnable<? extends E> step
+        final String name,
+        final String desc,
+        final ThrowingRunnable<? extends E> action
     ) throws E {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
-        if (step == null) { this.throwNullArgException("step"); }
-        this.reportStep(stepName, stepDescription, () -> {
-            step.run();
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
+        if (action == null) { this.throwNullArgException("action"); }
+        this.reportStep(name, desc, () -> {
+            action.run();
             return null;
         });
         return this;
     }
 
     @Override
-    public final <U, E extends Throwable> CtxSC<U> stepToContext(
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> stepToCtx(
         final SupplierStep<? extends U, ? extends E> step
     ) throws E {
         if (step == null) { this.throwNullArgException("step"); }
@@ -188,7 +221,7 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     @Override
-    public final <U, E extends Throwable> CtxSC<U> stepToContext(
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> stepToCtx(
         final String keyword,
         final SupplierStep<? extends U, ? extends E> step
     ) throws E {
@@ -198,23 +231,30 @@ public class NoCtxSCImpl implements NoCtxSC {
     }
 
     @Override
-    public final <U, E extends Throwable> CtxSC<U> stepToContext(
-        final String stepName,
-        final ThrowingSupplier<? extends U, ? extends E> step
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> stepToCtx(
+        final ThrowingSupplier<? extends U, ? extends E> action
     ) throws E {
-        return this.stepToContext(stepName, "", step);
+        return this.stepToCtx("", "", action);
     }
 
     @Override
-    public final <U, E extends Throwable> CtxSC<U> stepToContext(
-        final String stepName,
-        final String stepDescription,
-        final ThrowingSupplier<? extends U, ? extends E> step
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> stepToCtx(
+        final String name,
+        final ThrowingSupplier<? extends U, ? extends E> action
     ) throws E {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
-        if (step == null) { this.throwNullArgException("step"); }
-        return this.newCtxStepsChain(this.reportStep(stepName, stepDescription, step));
+        return this.stepToCtx(name, "", action);
+    }
+
+    @Override
+    public final <U, E extends Throwable> CtxSC<U, NoCtxSC> stepToCtx(
+        final String name,
+        final String desc,
+        final ThrowingSupplier<? extends U, ? extends E> action
+    ) throws E {
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
+        if (action == null) { this.throwNullArgException("action"); }
+        return this.newCtxStepsChain(this.reportStep(name, desc, action));
     }
 
     @Override
@@ -237,42 +277,56 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepName,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        return this.stepTo(stepName, "", step);
+        return this.stepTo("", "", action);
     }
 
     @Override
     public final <R, E extends Throwable> R stepTo(
-        final String stepName,
-        final String stepDescription,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final String name,
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
-        if (step == null) { this.throwNullArgException("step"); }
-        return this.reportStep(stepName, stepDescription, step);
+        return this.stepTo(name, "", action);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R stepTo(
+        final String name,
+        final String desc,
+        final ThrowingSupplier<? extends R, ? extends E> action
+    ) throws E {
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
+        if (action == null) { this.throwNullArgException("action"); }
+        return this.reportStep(name, desc, action);
     }
 
     @Override
     public final <E extends Throwable> NoCtxSC nestedSteps(
-        final String stepName,
         final ThrowingConsumer<NoCtxSC, ? extends E> stepsChain
     ) throws E {
-        return this.nestedSteps(stepName, "", stepsChain);
+        return this.nestedSteps("", "", stepsChain);
     }
 
     @Override
     public final <E extends Throwable> NoCtxSC nestedSteps(
-        final String stepName,
-        final String stepDescription,
+        final String name,
         final ThrowingConsumer<NoCtxSC, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
+        return this.nestedSteps(name, "", stepsChain);
+    }
+
+    @Override
+    public final <E extends Throwable> NoCtxSC nestedSteps(
+        final String name,
+        final String desc,
+        final ThrowingConsumer<NoCtxSC, ? extends E> stepsChain
+    ) throws E {
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
-        this.reportStep(stepName, stepDescription, () -> {
+        this.reportStep(name, desc, () -> {
             stepsChain.accept(this);
             return null;
         });
@@ -281,22 +335,29 @@ public class NoCtxSCImpl implements NoCtxSC {
 
     @Override
     public final <R, E extends Throwable> R nestedStepsTo(
-        final String stepName,
         final ThrowingFunction<NoCtxSC, ? extends R, ? extends E> stepsChain
     ) throws E {
-        return this.nestedStepsTo(stepName, "", stepsChain);
+        return this.nestedStepsTo("", "", stepsChain);
     }
 
     @Override
     public final <R, E extends Throwable> R nestedStepsTo(
-        final String stepName,
-        final String stepDescription,
+        final String name,
         final ThrowingFunction<NoCtxSC, ? extends R, ? extends E> stepsChain
     ) throws E {
-        if (stepName == null) { this.throwNullArgException("stepName"); }
-        if (stepDescription == null) { this.throwNullArgException("stepDescription"); }
+        return this.nestedStepsTo(name, "", stepsChain);
+    }
+
+    @Override
+    public final <R, E extends Throwable> R nestedStepsTo(
+        final String name,
+        final String desc,
+        final ThrowingFunction<NoCtxSC, ? extends R, ? extends E> stepsChain
+    ) throws E {
+        if (name == null) { this.throwNullArgException("name"); }
+        if (desc == null) { this.throwNullArgException("desc"); }
         if (stepsChain == null) { this.throwNullArgException("stepsChain"); }
-        return this.reportStep(stepName, stepDescription, () -> stepsChain.apply(this));
+        return this.reportStep(name, desc, () -> stepsChain.apply(this));
     }
 
     @Override
@@ -331,8 +392,8 @@ public class NoCtxSCImpl implements NoCtxSC {
         }
     }
 
-    private <U> CtxSC<U> newCtxStepsChain(final U newContext) {
-        return new CtxSCImpl<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext);
+    private <U> CtxSC<U, NoCtxSC> newCtxStepsChain(final U newContext) {
+        return new CtxSCOf<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext, this);
     }
 
     private void throwNullArgException(final String argName) {

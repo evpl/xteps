@@ -70,46 +70,71 @@ public interface BaseSC<S extends BaseSC<S>> {
      * @param <U>     the new context type
      * @return contextual steps chain
      */
-    <U> BaseCtxSC<?> withContext(U context);
+    <U> BaseCtxSC<?> withCtx(U context);
 
     /**
      * Returns a context steps chain of the new context.
      *
-     * @param contextSupplier the context supplier
-     * @param <U>             the context type
-     * @param <E>             the {@code contextSupplier} exception type
+     * @param supplier the context supplier
+     * @param <U>      the context type
+     * @param <E>      the {@code supplier} exception type
      * @return contextual steps chain
-     * @throws XtepsException if {@code contextSupplier} is null
-     * @throws E              if {@code contextSupplier} threw exception
+     * @throws XtepsException if {@code supplier} is null
+     * @throws E              if {@code supplier} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<?> withContext(
-        ThrowingSupplier<? extends U, ? extends E> contextSupplier
+    <U, E extends Throwable> BaseCtxSC<?> withCtx(
+        ThrowingSupplier<? extends U, ? extends E> supplier
+    ) throws E;
+
+    /**
+     * Performs given action and returns this steps chain.
+     *
+     * @param action the action
+     * @param <E>    the {@code action} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code action} is null
+     * @throws E              if {@code action} threw exception
+     */
+    <E extends Throwable> S action(
+        ThrowingRunnable<? extends E> action
+    ) throws E;
+
+    /**
+     * Performs given action and returns the action result.
+     *
+     * @param action the action
+     * @param <R>    the {@code action} result type
+     * @param <E>    the {@code action} exception type
+     * @return the {@code action} result
+     * @throws XtepsException if {@code action} is null
+     * @throws E              if {@code action} threw exception
+     */
+    <R, E extends Throwable> R actionTo(
+        ThrowingSupplier<? extends R, ? extends E> action
     ) throws E;
 
     /**
      * Performs and reports empty step with given name and returns this steps chain.
      *
-     * @param stepName the step name
+     * @param name the step name
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} is null
+     * @throws XtepsException if {@code name} is null
      *                        or if it's impossible to correctly report the step
      */
-    S step(String stepName);
+    S step(String name);
 
     /**
      * Performs and reports empty step with given name and description and returns
      * this steps chain.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
+     * @param name the step name
+     * @param desc the step description
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} is null
+     * @throws XtepsException if {@code name} or {@code desc} is null
      *                        or if it's impossible to correctly report the step
      */
-    S step(
-        String stepName,
-        String stepDescription
-    );
+    S step(String name,
+           String desc);
 
     /**
      * Performs and reports given step and returns this steps chain.
@@ -172,37 +197,51 @@ public interface BaseSC<S extends BaseSC<S>> {
     ) throws E;
 
     /**
-     * Performs and reports given step with given name and returns this steps chain.
+     * Performs and reports given step action with empty name and returns this steps chain.
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <E>      the {@code step} exception type
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
-     *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws XtepsException if {@code action} is null
+     *                        or if it's impossible to correctly report the step action
+     * @throws E              if {@code action} threw exception
      */
     <E extends Throwable> S step(
-        String stepName,
-        ThrowingRunnable<? extends E> step
+        ThrowingRunnable<? extends E> action
+    ) throws E;
+
+    /**
+     * Performs and reports given step action with given name and returns this steps chain.
+     *
+     * @param name   the step name
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code name} or {@code action} is null
+     *                        or if it's impossible to correctly report the action
+     * @throws E              if {@code action} threw exception
+     */
+    <E extends Throwable> S step(
+        String name,
+        ThrowingRunnable<? extends E> action
     ) throws E;
 
     /**
      * Performs and reports given step with given name and description and returns this steps chain.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <E>             the {@code step} exception type
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     <E extends Throwable> S step(
-        String stepName,
-        String stepDescription,
-        ThrowingRunnable<? extends E> step
+        String name,
+        String desc,
+        ThrowingRunnable<? extends E> action
     ) throws E;
 
     /**
@@ -216,7 +255,7 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToCtx(
         SupplierStep<? extends U, ? extends E> step
     ) throws E;
 
@@ -233,47 +272,63 @@ public interface BaseSC<S extends BaseSC<S>> {
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code step} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
+    <U, E extends Throwable> BaseCtxSC<?> stepToCtx(
         String keyword,
         SupplierStep<? extends U, ? extends E> step
+    ) throws E;
+
+    /**
+     * Performs and reports given step with empty name and returns a contextual
+     * steps chain of the new context.
+     *
+     * @param action the step action
+     * @param <U>    the context type
+     * @param <E>    the {@code step} exception type
+     * @return contextual steps chain
+     * @throws XtepsException if {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code action} threw exception
+     */
+    <U, E extends Throwable> BaseCtxSC<?> stepToCtx(
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
      * Performs and reports given step with given name and returns a contextual
      * steps chain of the new context.
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <U>      the context type
-     * @param <E>      the {@code step} exception type
+     * @param name   the step name
+     * @param action the step action
+     * @param <U>    the context type
+     * @param <E>    the {@code action} exception type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
-        String stepName,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> BaseCtxSC<?> stepToCtx(
+        String name,
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
      * Performs and reports given step with given name and description and returns
      * a contextual steps chain of the new context.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <U>             the context type
-     * @param <E>             the {@code step} exception type
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <U>    the context type
+     * @param <E>    the {@code action} exception type
      * @return contextual steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
-    <U, E extends Throwable> BaseCtxSC<?> stepToContext(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends U, ? extends E> step
+    <U, E extends Throwable> BaseCtxSC<?> stepToCtx(
+        String name,
+        String desc,
+        ThrowingSupplier<? extends U, ? extends E> action
     ) throws E;
 
     /**
@@ -310,55 +365,85 @@ public interface BaseSC<S extends BaseSC<S>> {
     ) throws E;
 
     /**
-     * Performs and reports given step with given name and returns the step result.
+     * Performs and reports given step with empty name and returns the step result.
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <R>      the result type
-     * @param <E>      the {@code step} exception type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code step} is null
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
+     * @throws XtepsException if {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     <R, E extends Throwable> R stepTo(
-        String stepName,
-        ThrowingSupplier<? extends R, ? extends E> step
+        ThrowingSupplier<? extends R, ? extends E> action
+    ) throws E;
+
+    /**
+     * Performs and reports given step with given name and returns the step result.
+     *
+     * @param name   the step name
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
+     * @throws XtepsException if {@code name} or {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code action} threw exception
+     */
+    <R, E extends Throwable> R stepTo(
+        String name,
+        ThrowingSupplier<? extends R, ? extends E> action
     ) throws E;
 
     /**
      * Performs and reports given step with given name and description and returns the step result.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <R>             the result type
-     * @param <E>             the {@code step} exception type
-     * @return {@code step} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code step} is null
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
+     * @throws XtepsException if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     <R, E extends Throwable> R stepTo(
-        String stepName,
-        String stepDescription,
-        ThrowingSupplier<? extends R, ? extends E> step
+        String name,
+        String desc,
+        ThrowingSupplier<? extends R, ? extends E> action
+    ) throws E;
+
+    /**
+     * Performs and reports the step with empty name and nested steps chain and returns
+     * this steps chain.
+     *
+     * @param stepsChain the nested steps chain
+     * @param <E>        the {@code stepsChain} exception type
+     * @return this steps chain
+     * @throws XtepsException if {@code stepsChain} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code stepsChain} threw exception
+     */
+    <E extends Throwable> S nestedSteps(
+        ThrowingConsumer<S, ? extends E> stepsChain
     ) throws E;
 
     /**
      * Performs and reports the step with given name and nested steps chain and returns
      * this steps chain.
      *
-     * @param stepName   the step name
+     * @param name       the step name
      * @param stepsChain the nested steps chain
      * @param <E>        the {@code stepsChain} exception type
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
+     * @throws XtepsException if {@code name} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
      */
     <E extends Throwable> S nestedSteps(
-        String stepName,
+        String name,
         ThrowingConsumer<S, ? extends E> stepsChain
     ) throws E;
 
@@ -366,35 +451,50 @@ public interface BaseSC<S extends BaseSC<S>> {
      * Performs and reports the step with given name and description and nested steps chain
      * and returns this steps chain.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param stepsChain      the nested steps chain
-     * @param <E>             the {@code stepsChain} exception type
+     * @param name       the step name
+     * @param desc       the step description
+     * @param stepsChain the nested steps chain
+     * @param <E>        the {@code stepsChain} exception type
      * @return this steps chain
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
      */
     <E extends Throwable> S nestedSteps(
-        String stepName,
-        String stepDescription,
+        String name,
+        String desc,
         ThrowingConsumer<S, ? extends E> stepsChain
+    ) throws E;
+
+    /**
+     * Performs and reports given step with empty name and returns the steps chain result.
+     *
+     * @param stepsChain the nested steps chain
+     * @param <R>        the result type
+     * @param <E>        the {@code stepsChain} exception type
+     * @return {@code stepsChain} result
+     * @throws XtepsException if {@code stepsChain} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code stepsChain} threw exception
+     */
+    <R, E extends Throwable> R nestedStepsTo(
+        ThrowingFunction<S, ? extends R, ? extends E> stepsChain
     ) throws E;
 
     /**
      * Performs and reports given step with given name and returns the steps chain result.
      *
-     * @param stepName   the step name
+     * @param name       the step name
      * @param stepsChain the nested steps chain
      * @param <R>        the result type
      * @param <E>        the {@code stepsChain} exception type
      * @return {@code stepsChain} result
-     * @throws XtepsException if {@code stepName} or {@code stepsChain} is null
+     * @throws XtepsException if {@code name} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
      */
     <R, E extends Throwable> R nestedStepsTo(
-        String stepName,
+        String name,
         ThrowingFunction<S, ? extends R, ? extends E> stepsChain
     ) throws E;
 
@@ -402,19 +502,19 @@ public interface BaseSC<S extends BaseSC<S>> {
      * Performs and reports given step with given name and description and returns
      * the steps chain result.
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param stepsChain      the nested steps chain
-     * @param <R>             the result type
-     * @param <E>             the {@code stepsChain} exception type
+     * @param name       the step name
+     * @param desc       the step description
+     * @param stepsChain the nested steps chain
+     * @param <R>        the result type
+     * @param <E>        the {@code stepsChain} exception type
      * @return {@code stepsChain} result
-     * @throws XtepsException if {@code stepName} or {@code stepDescription} or {@code stepsChain} is null
+     * @throws XtepsException if {@code name} or {@code desc} or {@code stepsChain} is null
      *                        or if it's impossible to correctly report the step
      * @throws E              if {@code stepsChain} threw exception
      */
     <R, E extends Throwable> R nestedStepsTo(
-        String stepName,
-        String stepDescription,
+        String name,
+        String desc,
         ThrowingFunction<S, ? extends R, ? extends E> stepsChain
     ) throws E;
 

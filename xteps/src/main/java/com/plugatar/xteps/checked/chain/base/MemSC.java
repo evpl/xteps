@@ -16,16 +16,16 @@
 package com.plugatar.xteps.checked.chain.base;
 
 /**
- * Steps chain memorizing a previous context steps chain.
+ * Steps chain memorizing a previous steps chain.
  *
- * @param <PS> the previous context steps chain type
+ * @param <PS> the previous steps chain type
  */
-public interface MemSC<PS extends BaseCtxSC<?>> {
+public interface MemSC<PS extends BaseSC<PS>> {
 
     /**
-     * Returns the previous context steps chain.
+     * Returns the previous steps chain.
      *
-     * @return previous context steps chain
+     * @return previous steps chain
      */
-    PS previousContextStepsChain();
+    PS previousStepsChain();
 }

@@ -15,17 +15,23 @@
  */
 package com.plugatar.xteps.checked;
 
+import com.plugatar.xteps.base.ExceptionHandler;
+import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
 import com.plugatar.xteps.base.hook.ThreadHooks;
 import com.plugatar.xteps.base.hook.container.FakeHookContainer;
+import com.plugatar.xteps.checked.chain.Ctx2SC;
+import com.plugatar.xteps.checked.chain.Ctx3SC;
 import com.plugatar.xteps.checked.chain.CtxSC;
-import com.plugatar.xteps.checked.chain.Mem2CtxSC;
-import com.plugatar.xteps.checked.chain.Mem3CtxSC;
 import com.plugatar.xteps.checked.chain.NoCtxSC;
-import com.plugatar.xteps.checked.chain.impl.NoCtxSCImpl;
+import com.plugatar.xteps.checked.chain.impl.Ctx2SCOf;
+import com.plugatar.xteps.checked.chain.impl.Ctx3SCOf;
+import com.plugatar.xteps.checked.chain.impl.CtxSCOf;
+import com.plugatar.xteps.checked.chain.impl.NoCtxSCOf;
 import com.plugatar.xteps.checked.stepobject.RunnableStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
@@ -33,66 +39,89 @@ import java.util.function.Supplier;
 
 /**
  * Xteps API.
+ * <p>
+ * Step methods:
+ * <ul>
+ * <li>{@link #step(String)}</li>
+ * <li>{@link #step(String, String)}</li>
+ * <li>{@link #step(RunnableStep)}</li>
+ * <li>{@link #step(String, RunnableStep)}</li>
+ * <li>{@link #step(SupplierStep)}</li>
+ * <li>{@link #step(String, SupplierStep)}</li>
+ * <li>{@link #step(ThrowingRunnable)}</li>
+ * <li>{@link #step(String, ThrowingRunnable)}</li>
+ * <li>{@link #step(String, String, ThrowingRunnable)}</li>
+ * <li>{@link #stepTo(SupplierStep)}</li>
+ * <li>{@link #stepTo(String, SupplierStep)}</li>
+ * <li>{@link #stepTo(ThrowingSupplier)}</li>
+ * <li>{@link #stepTo(String, ThrowingSupplier)}</li>
+ * <li>{@link #stepTo(String, String, ThrowingSupplier)}</li>
+ * </ul>
+ * <p>
+ * Steps chain methods:
+ * <ul>
+ * <li>{@link #stepsChain()}</li>
+ * <li>{@link #stepsChainOf()}</li>
+ * <li>{@link #stepsChainOf(Object)}</li>
+ * <li>{@link #stepsChainOf(Object, Object)}</li>
+ * <li>{@link #stepsChainOf(Object, Object, Object)}</li>
+ * </ul>
+ * <p>
+ * Other methods:
+ * <ul>
+ * <li>{@link #threadHook(ThrowingRunnable)}</li>
+ * </ul>
  *
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
  */
 public final class Xteps {
 
     /**
-     * Adds given hook for the current thread. This hook will be called after current
-     * thread is finished.
-     *
-     * @param hook the hook
-     * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code hook} is null
+     * Utility class ctor.
      */
-    public static void threadHook(final ThrowingRunnable<?> hook) {
-        ThreadHooks.add(hook);
+    private Xteps() {
     }
 
     /**
      * Performs and reports empty step with given name.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * step("Step 1");
      * }</pre>
      *
-     * @param stepName the step name
+     * @param name the step name
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} is null
+     *                        or if {@code name} is null
      *                        or if it's impossible to correctly report the step
      */
-    public static void step(final String stepName) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName);
+    public static void step(final String name) {
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(name);
     }
 
     /**
      * Performs and reports empty step with given name and description.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * step("Step 1", "Description");
      * }</pre>
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
+     * @param name the step name
+     * @param desc the step description
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} or {@code stepDescription} is null
+     *                        or if {@code name} or {@code desc} is null
      *                        or if it's impossible to correctly report the step
      */
-    public static void step(final String stepName,
-                            final String stepDescription) {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription);
+    public static void step(final String name,
+                            final String desc) {
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(name, desc);
     }
 
     /**
      * Performs and reports given step.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * public class CustomStep extends RunnableStep<RuntimeException> {
      *
@@ -116,14 +145,13 @@ public final class Xteps {
     public static <E extends Throwable> void step(
         final RunnableStep<? extends E> step
     ) throws E {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(step);
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(step);
     }
 
     /**
      * Performs and reports given step with given keyword in the step name.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * public class CustomStep extends RunnableStep<RuntimeException> {
      *
@@ -149,14 +177,106 @@ public final class Xteps {
         final String keyword,
         final RunnableStep<? extends E> step
     ) throws E {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(keyword, step);
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(keyword, step);
+    }
+
+    /**
+     * Performs and reports given step.
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *             return "result";
+     *         });
+     *     }
+     * }
+     *
+     * step(new CustomStep());
+     * }</pre>
+     *
+     * @param step the step
+     * @param <E>  the {@code step} exception type
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    public static <E extends Throwable> void step(
+        final SupplierStep<?, ? extends E> step
+    ) throws E {
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(step);
+    }
+
+    /**
+     * Reports given step with given keyword in the step name.
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * public class CustomStep extends SupplierStep<String, RuntimeException> {
+     *
+     *     public CustomStep() {
+     *         super("Custom step", () -> {
+     *             //...
+     *             return "result";
+     *         });
+     *     }
+     * }
+     *
+     * step("When", new CustomStep());
+     * }</pre>
+     *
+     * @param keyword the keyword
+     * @param step    the step
+     * @param <E>     the {@code step} exception type
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code keyword} or {@code step} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code step} threw exception
+     */
+    public static <E extends Throwable> void step(
+        final String keyword,
+        final SupplierStep<?, ? extends E> step
+    ) throws E {
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(keyword, step);
+    }
+
+    /**
+     * Performs and reports given step with empty name.
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * step(() -> {
+     *     //...
+     * });
+     * step(() -> {
+     *     //...
+     *     step(() -> {
+     *         //...
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code action} threw exception
+     */
+    public static <E extends Throwable> void step(
+        final ThrowingRunnable<? extends E> action
+    ) throws E {
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(action);
     }
 
     /**
      * Performs and reports given step with given name.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * step("Step 1", () -> {
      *     //...
@@ -169,26 +289,25 @@ public final class Xteps {
      * });
      * }</pre>
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <E>      the {@code step} exception type
+     * @param name   the step name
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} or {@code step} is null
+     *                        or if {@code name} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     public static <E extends Throwable> void step(
-        final String stepName,
-        final ThrowingRunnable<? extends E> step
+        final String name,
+        final ThrowingRunnable<? extends E> action
     ) throws E {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, step);
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(name, action);
     }
 
     /**
      * Performs and reports given step with given name and description.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * step("Step 1", "Description", () -> {
      *     //...
@@ -201,28 +320,27 @@ public final class Xteps {
      * });
      * }</pre>
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <E>             the {@code step} exception type
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <E>    the {@code action} exception type
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     public static <E extends Throwable> void step(
-        final String stepName,
-        final String stepDescription,
-        final ThrowingRunnable<? extends E> step
+        final String name,
+        final String desc,
+        final ThrowingRunnable<? extends E> action
     ) throws E {
-        CHECKED_XTEPS_BASE.get().simpleNoCtxSC().step(stepName, stepDescription, step);
+        CACHED_FAKE_HOOKS_NO_CTX_SC.get().step(name, desc, action);
     }
 
     /**
      * Performs and reports given step and returns the step result.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * public class CustomStep extends SupplierStep<String, RuntimeException> {
      *
@@ -249,14 +367,13 @@ public final class Xteps {
     public static <R, E extends Throwable> R stepTo(
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(step);
+        return CACHED_FAKE_HOOKS_NO_CTX_SC.get().stepTo(step);
     }
 
     /**
      * Reports given step with given keyword in the step name and returns the step result.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * public class CustomStep extends SupplierStep<String, RuntimeException> {
      *
@@ -285,14 +402,46 @@ public final class Xteps {
         final String keyword,
         final SupplierStep<? extends R, ? extends E> step
     ) throws E {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(keyword, step);
+        return CACHED_FAKE_HOOKS_NO_CTX_SC.get().stepTo(keyword, step);
+    }
+
+    /**
+     * Performs and reports given step with empty name and returns the step result.
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * String step1Result = stepTo(() -> {
+     *     //...
+     *     return "result1";
+     * });
+     * String step2Result = stepTo(() -> {
+     *     //...
+     *     return stepTo(() -> {
+     *         //...
+     *         return "result2";
+     *     });
+     * });
+     * }</pre>
+     *
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code action} is null
+     *                        or if it's impossible to correctly report the step
+     * @throws E              if {@code action} threw exception
+     */
+    public static <R, E extends Throwable> R stepTo(
+        final ThrowingSupplier<? extends R, ? extends E> action
+    ) throws E {
+        return CACHED_FAKE_HOOKS_NO_CTX_SC.get().stepTo(action);
     }
 
     /**
      * Performs and reports given step with given name and returns the step result.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * String step1Result = stepTo("Step 1", () -> {
      *     //...
@@ -307,28 +456,27 @@ public final class Xteps {
      * });
      * }</pre>
      *
-     * @param stepName the step name
-     * @param step     the step
-     * @param <R>      the result type
-     * @param <E>      the {@code step} exception type
-     * @return {@code step} result
+     * @param name   the step name
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} or {@code step} is null
+     *                        or if {@code name} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     public static <R, E extends Throwable> R stepTo(
-        final String stepName,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final String name,
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, step);
+        return CACHED_FAKE_HOOKS_NO_CTX_SC.get().stepTo(name, action);
     }
 
     /**
      * Performs and reports given step with given name and description and returns the step result.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * String step1Result = stepTo("Step 1", "Description", () -> {
      *     //...
@@ -343,30 +491,29 @@ public final class Xteps {
      * });
      * }</pre>
      *
-     * @param stepName        the step name
-     * @param stepDescription the step description
-     * @param step            the step
-     * @param <R>             the result type
-     * @param <E>             the {@code step} exception type
-     * @return {@code step} result
+     * @param name   the step name
+     * @param desc   the step description
+     * @param action the step action
+     * @param <R>    the result type
+     * @param <E>    the {@code action} exception type
+     * @return {@code action} result
      * @throws XtepsException if Xteps configuration is incorrect
-     *                        or if {@code stepName} or {@code stepDescription} or {@code step} is null
+     *                        or if {@code name} or {@code desc} or {@code action} is null
      *                        or if it's impossible to correctly report the step
-     * @throws E              if {@code step} threw exception
+     * @throws E              if {@code action} threw exception
      */
     public static <R, E extends Throwable> R stepTo(
-        final String stepName,
-        final String stepDescription,
-        final ThrowingSupplier<? extends R, ? extends E> step
+        final String name,
+        final String desc,
+        final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        return CHECKED_XTEPS_BASE.get().simpleNoCtxSC().stepTo(stepName, stepDescription, step);
+        return CACHED_FAKE_HOOKS_NO_CTX_SC.get().stepTo(name, desc, action);
     }
 
     /**
      * Returns no context steps chain.
-     *
-     * <p>Code example:</p>
-     *
+     * <p>
+     * Code example:
      * <pre>{@code
      * stepsChain()
      *     .step("Step 1", () -> {
@@ -380,7 +527,7 @@ public final class Xteps {
      *             //...
      *         })
      *     );
-     * stepsChain().withContext("context")
+     * stepsChain().withCtx("context")
      *     .step("Step 3", ctx -> {
      *         //...
      *     })
@@ -391,20 +538,42 @@ public final class Xteps {
      *         .step("Nested step 2", "Description", ctx -> {
      *             //...
      *         })
-     *     );
+     *     )
+     *     .stepToCtx("Step 5", ctx -> "context 2")
+     *     .step("Step 6", (ctx1, ctx2) -> {
+     *         //...
+     *     });
      * }</pre>
      *
      * @return no context steps chain
      * @throws XtepsException if Xteps configuration is incorrect
      */
     public static NoCtxSC stepsChain() {
-        return CHECKED_XTEPS_BASE.get().newNoCtxSC();
+        final XtepsBase xb = XtepsBase.cached();
+        return new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), xb.hookContainerGenerator().get());
+    }
+
+    /**
+     * Returns no context steps chain. Alias for {@link #stepsChain()} method.
+     *
+     * @return no context steps chain
+     * @throws XtepsException if Xteps configuration is incorrect
+     * @see #stepsChain()
+     */
+    public static NoCtxSC stepsChainOf() {
+        return stepsChain();
     }
 
     /**
      * Returns a contextual steps chain with given context.
-     * <p>Alias for</p>
-     * <pre>{@code stepsChain().withContext(context)}</pre>
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * stepsChainOf("context")
+     *     .step("Step", ctx -> {
+     *         //...
+     *     });
+     * }</pre>
      *
      * @param context the context
      * @param <C>     the context type
@@ -412,15 +581,28 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      * @see #stepsChain()
      */
-    public static <C> CtxSC<C> stepsChainOf(final C context) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
-            .withContext(context);
+    public static <C> CtxSC<C, NoCtxSC> stepsChainOf(final C context) {
+        final XtepsBase xb = XtepsBase.cached();
+        final StepReporter stepReporter = xb.stepReporter();
+        final ExceptionHandler exceptionHandler = xb.exceptionHandler();
+        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        return new CtxSCOf<>(
+            stepReporter, exceptionHandler, hookContainer,
+            context,
+            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+        );
     }
 
     /**
      * Returns a contextual steps chain with given contexts.
-     * <p>Alias for</p>
-     * <pre>{@code stepsChain().withContext(context2).withContext(context)}</pre>
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * stepsChainOf("context1", "context2")
+     *     .step("Step", (ctx1, ctx2) -> {
+     *         //...
+     *     });
+     * }</pre>
      *
      * @param context  the context
      * @param context2 the second context
@@ -430,18 +612,31 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      * @see #stepsChain()
      */
-    public static <C, C2> Mem2CtxSC<C, C2, CtxSC<C2>> stepsChainOf(
+    public static <C, C2> Ctx2SC<C, C2, NoCtxSC> stepsChainOf(
         final C context,
         final C2 context2
     ) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
-            .withContext(context2).withContext(context);
+        final XtepsBase xb = XtepsBase.cached();
+        final StepReporter stepReporter = xb.stepReporter();
+        final ExceptionHandler exceptionHandler = xb.exceptionHandler();
+        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        return new Ctx2SCOf<>(
+            stepReporter, exceptionHandler, hookContainer,
+            context, context2,
+            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+        );
     }
 
     /**
      * Returns a contextual steps chain with given contexts.
-     * <p>Alias for</p>
-     * <pre>{@code stepsChain().withContext(context3).withContext(context2).withContext(context)}</pre>
+     * <p>
+     * Code example:
+     * <pre>{@code
+     * stepsChainOf("context1", "context2", "context3")
+     *     .step("Step", (ctx1, ctx2, ctx3) -> {
+     *         //...
+     *     });
+     * }</pre>
      *
      * @param context  the context
      * @param context2 the second context
@@ -453,26 +648,45 @@ public final class Xteps {
      * @throws XtepsException if Xteps configuration is incorrect
      * @see #stepsChain()
      */
-    public static <C, C2, C3> Mem3CtxSC<C, C2, C3, Mem2CtxSC<C2, C3, CtxSC<C3>>> stepsChainOf(
+    public static <C, C2, C3> Ctx3SC<C, C2, C3, NoCtxSC> stepsChainOf(
         final C context,
         final C2 context2,
         final C3 context3
     ) {
-        return CHECKED_XTEPS_BASE.get().newNoCtxSC()
-            .withContext(context3).withContext(context2).withContext(context);
+        final XtepsBase xb = XtepsBase.cached();
+        final StepReporter stepReporter = xb.stepReporter();
+        final ExceptionHandler exceptionHandler = xb.exceptionHandler();
+        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        return new Ctx3SCOf<>(
+            stepReporter, exceptionHandler, hookContainer,
+            context, context2, context3,
+            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+        );
     }
 
-    private static final Supplier<CheckedXtepsBase> CHECKED_XTEPS_BASE = new Supplier<CheckedXtepsBase>() {
-        private volatile CheckedXtepsBase instance = null;
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param hook the hook
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code hook} is null
+     */
+    public static void threadHook(final ThrowingRunnable<?> hook) {
+        ThreadHooks.add(hook);
+    }
+
+    private static final Supplier<NoCtxSC> CACHED_FAKE_HOOKS_NO_CTX_SC = new Supplier<NoCtxSC>() {
+        private volatile NoCtxSC instance = null;
 
         @Override
-        public CheckedXtepsBase get() {
-            CheckedXtepsBase result;
+        public NoCtxSC get() {
+            NoCtxSC result;
             if ((result = this.instance) == null) {
                 synchronized (this) {
                     if ((result = this.instance) == null) {
-                        final XtepsBase xtepsBase = XtepsBase.cached();
-                        result = new CheckedXtepsBase(xtepsBase);
+                        final XtepsBase xb = XtepsBase.cached();
+                        result = new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), new FakeHookContainer());
                         this.instance = result;
                     }
                     return result;
@@ -481,34 +695,4 @@ public final class Xteps {
             return result;
         }
     };
-
-    /**
-     * Utility class ctor.
-     */
-    private Xteps() {
-    }
-
-    private static final class CheckedXtepsBase {
-        private final XtepsBase xtepsBase;
-        private final NoCtxSC simpleNoCtxSC;
-
-        private CheckedXtepsBase(final XtepsBase xtepsBase) {
-            this.xtepsBase = xtepsBase;
-            this.simpleNoCtxSC = new NoCtxSCImpl(
-                xtepsBase.stepReporter(), xtepsBase.exceptionHandler(), new FakeHookContainer()
-            );
-        }
-
-        private NoCtxSC simpleNoCtxSC() {
-            return this.simpleNoCtxSC;
-        }
-
-        private NoCtxSC newNoCtxSC() {
-            return new NoCtxSCImpl(
-                this.xtepsBase.stepReporter(),
-                this.xtepsBase.exceptionHandler(),
-                this.xtepsBase.hookContainerGenerator().get()
-            );
-        }
-    }
 }
