@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.base.qase;
+package com.plugatar.xteps.base.testit;
 
 import com.plugatar.xteps.base.StepListener;
-import io.qase.api.StepStorage;
-import io.qase.api.utils.IntegrationUtils;
-import io.qase.client.model.ResultCreateStepsInner;
+import ru.testit.models.ItemStatus;
+import ru.testit.models.StepResult;
+import ru.testit.services.Adapter;
+import ru.testit.services.AdapterManager;
 
 import java.util.Map;
 
@@ -26,9 +27,9 @@ import static com.plugatar.xteps.base.util.StepListenerUtils.paramArrayAsMap;
 import static com.plugatar.xteps.base.util.StepListenerUtils.processedTemplate;
 
 /**
- * {@link StepListener} implementation for Qase.
+ * {@link StepListener} implementation for TestIT.
  */
-public class QaseStepListener implements StepListener {
+public class TestITStepListener implements StepListener {
     private final String emptyNameReplacement;
     private final char leftReplacementBorder;
     private final char rightReplacementBorder;
@@ -36,19 +37,19 @@ public class QaseStepListener implements StepListener {
     /**
      * Zero-argument public ctor.
      */
-    public QaseStepListener() {
+    public TestITStepListener() {
         this("Step", '{', '}');
     }
 
     /**
-     * @param emptyNameReplacement   the empty step name replacement
-     * @param leftReplacementBorder  the left replacement border
-     * @param rightReplacementBorder the right replacement border
+     * Ctor.
+     *
+     * @param emptyNameReplacement the empty step name replacement
      */
-    public QaseStepListener(final String emptyNameReplacement,
-                            final char leftReplacementBorder,
-                            final char rightReplacementBorder) {
-        final Class<StepStorage> dependencyCheck = StepStorage.class;
+    public TestITStepListener(final String emptyNameReplacement,
+                              final char leftReplacementBorder,
+                              final char rightReplacementBorder) {
+        final Class<Adapter> dependencyCheck = Adapter.class;
         if (emptyNameReplacement == null) {
             throw new NullPointerException("emptyNameReplacement arg is null");
         }
@@ -93,24 +94,27 @@ public class QaseStepListener implements StepListener {
             }
         }
         /* Reporting */
-        StepStorage.startStep();
-        StepStorage.getCurrentStep()
-            .action(processedName)
-            .comment(processedDescription);
+        Adapter.getAdapterManager().startStep(
+            uuid,
+            new StepResult().setName(processedName).setDescription(processedDescription)
+        );
     }
 
     @Override
     public final void stepPassed(final String uuid) {
-        StepStorage.getCurrentStep().status(ResultCreateStepsInner.StatusEnum.PASSED);
-        StepStorage.stopStep();
+        final AdapterManager adapterManager = Adapter.getAdapterManager();
+        adapterManager.updateStep(uuid, stepResult -> stepResult.setItemStatus(ItemStatus.PASSED));
+        adapterManager.stopStep(uuid);
     }
 
     @Override
     public final void stepFailed(final String uuid,
                                  final Throwable exception) {
-        StepStorage.getCurrentStep()
-            .status(ResultCreateStepsInner.StatusEnum.FAILED)
-            .addAttachmentsItem(IntegrationUtils.getStacktrace(exception));
-        StepStorage.stopStep();
+        final AdapterManager adapterManager = Adapter.getAdapterManager();
+        adapterManager.updateStep(
+            uuid,
+            stepResult -> stepResult.setItemStatus(ItemStatus.FAILED).setThrowable(exception)
+        );
+        adapterManager.stopStep(uuid);
     }
 }

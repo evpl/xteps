@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.8 (planned)
+
+* PR #86 added TestITStepListener
+
 ## 5.7 (07.12.2022)
 
 * PR #85 Step listeners refactoring
