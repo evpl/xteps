@@ -23,9 +23,9 @@ import io.qameta.allure.model.StepResult;
 import io.qameta.allure.util.NamingUtils;
 import io.qameta.allure.util.ResultsUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+
+import static com.plugatar.xteps.base.util.StepListenerUtils.paramArrayAsMap;
 
 /**
  * {@link StepListener} implementation for Allure.
@@ -80,7 +80,7 @@ public class AllureStepListener implements StepListener {
             if (params.length == 0) {
                 processedName = name;
             } else {
-                replacements = this.paramsMap(params);
+                replacements = paramArrayAsMap(params);
                 processedName = this.processedTemplate(name, replacements);
             }
         }
@@ -93,7 +93,7 @@ public class AllureStepListener implements StepListener {
                 processedDescription = description;
             } else {
                 if (replacements == null) {
-                    replacements = this.paramsMap(params);
+                    replacements = paramArrayAsMap(params);
                 }
                 processedDescription = this.processedTemplate(description, replacements);
             }
@@ -125,17 +125,6 @@ public class AllureStepListener implements StepListener {
                 .setStatusDetails(ResultsUtils.getStatusDetails(exception).orElse(null));
         });
         allureLifecycle.stopStep(uuid);
-    }
-
-    private Map<String, Object> paramsMap(final Object[] params) {
-        if (params.length != 0) {
-            final Map<String, Object> map = new HashMap<>(params.length, 1.0f);
-            for (int idx = 0; idx < params.length; ++idx) {
-                map.put(String.valueOf(idx), params[idx]);
-            }
-            return map;
-        }
-        return Collections.emptyMap();
     }
 
     private String processedTemplate(final String template,

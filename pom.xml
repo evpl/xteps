@@ -29,14 +29,17 @@
         <module>base-allure</module>
         <module>base-qase</module>
         <module>base-reportportal</module>
+        <module>base-testit</module>
         <module>unchecked-xteps</module>
         <module>unchecked-xteps-allure</module>
         <module>unchecked-xteps-qase</module>
         <module>unchecked-xteps-reportportal</module>
+        <module>unchecked-xteps-testit</module>
         <module>xteps</module>
         <module>xteps-allure</module>
         <module>xteps-qase</module>
         <module>xteps-reportportal</module>
+        <module>xteps-testit</module>
     </modules>
 
     <name>Parent</name>
@@ -102,6 +105,11 @@
             </dependency>
             <dependency>
                 <groupId>com.plugatar.xteps</groupId>
+                <artifactId>base-testit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.plugatar.xteps</groupId>
                 <artifactId>xteps</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -126,11 +134,21 @@
                 <artifactId>client-java</artifactId>
                 <version>5.1.14</version>
             </dependency>
+            <dependency>
+                <groupId>ru.testit</groupId>
+                <artifactId>testit-java-commons</artifactId>
+                <version>2.1.0</version>
+            </dependency>
             <!-- test dependencies -->
             <dependency>
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-junit5</artifactId>
                 <version>2.20.1</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.testit</groupId>
+                <artifactId>testit-adapter-junit5</artifactId>
+                <version>1.1.5</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
