@@ -83,16 +83,14 @@ final class XtepsBaseProvider {
         final ExceptionHandler exceptionHandler = booleanProperty(properties, "xteps.cleanStackTrace", true)
             ? new DefaultExceptionHandler()
             : new FakeExceptionHandler();
-        final HooksOrder chainHooksOrder = hooksOrderProperty(properties, "xteps.chainHooksOrder",
-            HooksOrder.FROM_LAST);
-        final HooksOrder threadHooksOrder = hooksOrderProperty(properties, "xteps.threadHooksOrder",
+        final HooksOrder defaultHooksOrder = hooksOrderProperty(properties, "xteps.defaultHooksOrder",
             HooksOrder.FROM_LAST);
         final long threadHookInterval = longPropertyInRange(properties, "xteps.threadHooksThreadInterval",
             0L, Long.MAX_VALUE, 100L);
         final int threadHookPriority = intPropertyInRange(properties, "xteps.threadHooksThreadPriority",
             Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY);
         final ThrowingSupplier<HooksContainer, RuntimeException> hooksContainerGenerator =
-            () -> new DefaultHooksContainer(chainHooksOrder);
+            () -> new DefaultHooksContainer(defaultHooksOrder);
         return new XtepsBase() {
             @Override
             public StepReporter stepReporter() {
@@ -110,13 +108,8 @@ final class XtepsBaseProvider {
             }
 
             @Override
-            public HooksOrder chainHooksOrder() {
-                return chainHooksOrder;
-            }
-
-            @Override
-            public HooksOrder threadHooksOrder() {
-                return threadHooksOrder;
+            public HooksOrder defaultHooksOrder() {
+                return defaultHooksOrder;
             }
 
             @Override

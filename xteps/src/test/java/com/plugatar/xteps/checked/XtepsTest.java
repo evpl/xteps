@@ -62,8 +62,7 @@ final class XtepsTest {
         System.clearProperty("xteps.spi");
         System.clearProperty("xteps.listeners");
         System.clearProperty("xteps.cleanStackTrace");
-        System.clearProperty("xteps.chainHooksOrder");
-        System.clearProperty("xteps.threadHooksOrder");
+        System.clearProperty("xteps.defaultHooksOrder");
         System.clearProperty("xteps.threadHooksThreadInterval");
         System.clearProperty("xteps.threadHooksThreadPriority");
     }

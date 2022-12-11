@@ -2,6 +2,7 @@
 
 ## 5.8 (planned)
 
+* PR #89 merged chainHooksOrder and threadHooksOrder properties to defaultHooksOrder
 * PR #88 added order and priority settings for chain and thread hooks
 * PR #86 added TestITStepListener, StepListenerUtils
 

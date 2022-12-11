@@ -42,18 +42,11 @@ public interface XtepsBase {
     ThrowingSupplier<HooksContainer, RuntimeException> hooksContainerGenerator();
 
     /**
-     * Returns chain hooks order.
+     * Returns default hooks order.
      *
-     * @return chain hooks order
+     * @return default hooks order
      */
-    HooksOrder chainHooksOrder();
-
-    /**
-     * Returns thread hooks order.
-     *
-     * @return thread hooks order
-     */
-    HooksOrder threadHooksOrder();
+    HooksOrder defaultHooksOrder();
 
     /**
      * Returns thread hooks thread interval in milliseconds.
