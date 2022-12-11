@@ -16,7 +16,8 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
+import com.plugatar.xteps.base.HooksOrder;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
@@ -33,6 +34,10 @@ import com.plugatar.xteps.checked.stepobject.FunctionStep;
 import com.plugatar.xteps.checked.stepobject.RunnableStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
+import static com.plugatar.xteps.base.HookPriority.MAX_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.MIN_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.NORM_HOOK_PRIORITY;
+
 /**
  * Contextual steps chain implementation.
  *
@@ -42,7 +47,7 @@ import com.plugatar.xteps.checked.stepobject.SupplierStep;
 public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
-    private final HookContainer hookContainer;
+    private final HooksContainer hooksContainer;
     private final C context;
     private final PS previousStepsChain;
 
@@ -51,24 +56,24 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
      *
      * @param stepReporter       the step reporter
      * @param exceptionHandler   the exception handler
-     * @param hookContainer      the hook container
+     * @param hooksContainer     the hooks container
      * @param context            the context
      * @param previousStepsChain the previous steps chain
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
-     *                              or {@code hookContainer} is null
+     *                              or {@code hooksContainer} is null
      */
     public CtxSCOf(final StepReporter stepReporter,
                    final ExceptionHandler exceptionHandler,
-                   final HookContainer hookContainer,
+                   final HooksContainer hooksContainer,
                    final C context,
                    final PS previousStepsChain) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
-        if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
+        if (hooksContainer == null) { throw new NullPointerException("hooksContainer arg is null"); }
         if (previousStepsChain == null) { throw new NullPointerException("previousStepsChain arg is null"); }
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
-        this.hookContainer = hookContainer;
+        this.hooksContainer = hooksContainer;
         this.context = context;
         this.previousStepsChain = previousStepsChain;
     }
@@ -76,7 +81,7 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     @Override
     public final CtxSC<C, PS> callChainHooks() {
         try {
-            this.hookContainer.callHooks();
+            this.hooksContainer.callHooks();
         } catch (final Throwable ex) {
             this.exceptionHandler.handle(ex);
             throw ex;
@@ -85,11 +90,34 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     }
 
     @Override
+    public final CtxSC<C, PS> chainHooksOrder(final HooksOrder order) {
+        if (order == null) { this.throwNullArgException("order"); }
+        this.hooksContainer.setOrder(order);
+        return this;
+    }
+
+    @Override
+    public final CtxSC<C, PS> threadHooksOrder(final HooksOrder order) {
+        if (order == null) { this.throwNullArgException("order"); }
+        ThreadHooks.setOrder(order);
+        return this;
+    }
+
+    @Override
     public final CtxSC<C, PS> chainHook(
         final ThrowingRunnable<?> hook
     ) {
+        return this.chainHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final CtxSC<C, PS> chainHook(
+        final int priority,
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        this.hookContainer.add(hook);
+        this.checkPriorityArg(priority);
+        this.hooksContainer.addHook(priority, hook);
         return this;
     }
 
@@ -97,8 +125,17 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     public final CtxSC<C, PS> chainHook(
         final ThrowingConsumer<? super C, ?> hook
     ) {
+        return this.chainHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final CtxSC<C, PS> chainHook(
+        final int priority,
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        this.hookContainer.add(() -> hook.accept(this.context));
+        this.checkPriorityArg(priority);
+        this.hooksContainer.addHook(priority, () -> hook.accept(this.context));
         return this;
     }
 
@@ -106,8 +143,17 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     public final CtxSC<C, PS> threadHook(
         final ThrowingRunnable<?> hook
     ) {
+        return this.threadHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final CtxSC<C, PS> threadHook(
+        final int priority,
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHooks.add(() -> ThrowingRunnable.unchecked(hook).run());
+        this.checkPriorityArg(priority);
+        ThreadHooks.addHook(priority, hook);
         return this;
     }
 
@@ -115,8 +161,17 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
     public final CtxSC<C, PS> threadHook(
         final ThrowingConsumer<? super C, ?> hook
     ) {
+        return this.threadHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final CtxSC<C, PS> threadHook(
+        final int priority,
+        final ThrowingConsumer<? super C, ?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHooks.add(() -> ThrowingConsumer.unchecked(hook).accept(this.context));
+        this.checkPriorityArg(priority);
+        ThreadHooks.addHook(priority, () -> hook.accept(this.context));
         return this;
     }
 
@@ -132,7 +187,7 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
 
     @Override
     public final MemNoCtxSC<CtxSC<C, PS>> withoutContext() {
-        return new MemNoCtxSCOf<>(this.stepReporter, this.exceptionHandler, this.hookContainer, this);
+        return new MemNoCtxSCOf<>(this.stepReporter, this.exceptionHandler, this.hooksContainer, this);
     }
 
     @Override
@@ -623,7 +678,7 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
         final String stepDescription,
         final ThrowingSupplier<R, E> step
     ) throws E {
-        return this.stepReporter.report(this.hookContainer, this.exceptionHandler, stepName, stepDescription,
+        return this.stepReporter.report(this.hooksContainer, this.exceptionHandler, stepName, stepDescription,
             new Object[]{this.context}, step);
     }
 
@@ -633,21 +688,31 @@ public class CtxSCOf<C, PS extends BaseSC<PS>> implements CtxSC<C, PS> {
         try {
             return action.get();
         } catch (final Throwable ex) {
-            this.hookContainer.callHooks(ex);
+            this.hooksContainer.callHooks(ex);
             this.exceptionHandler.handle(ex);
             throw ex;
         }
     }
 
     private <U> Ctx2SC<U, C, CtxSC<C, PS>> newMem1CtxStepsChain(final U newContext) {
-        return new Ctx2SCOf<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext,
+        return new Ctx2SCOf<>(this.stepReporter, this.exceptionHandler, this.hooksContainer, newContext,
             this.context, this);
     }
 
     private void throwNullArgException(final String argName) {
         final XtepsException baseEx = new XtepsException(argName + " arg is null");
-        this.hookContainer.callHooks(baseEx);
+        this.hooksContainer.callHooks(baseEx);
         this.exceptionHandler.handle(baseEx);
         throw baseEx;
+    }
+
+    private void checkPriorityArg(final int priority) {
+        if (priority < MIN_HOOK_PRIORITY || priority > MAX_HOOK_PRIORITY) {
+            final XtepsException baseEx = new XtepsException("priority arg not in the range " + MIN_HOOK_PRIORITY +
+                " to " + MAX_HOOK_PRIORITY);
+            this.hooksContainer.callHooks(baseEx);
+            this.exceptionHandler.handle(baseEx);
+            throw baseEx;
+        }
     }
 }

@@ -2,7 +2,8 @@
 
 ## 5.8 (planned)
 
-* PR #86 added TestITStepListener
+* PR #88 added order and priority settings for chain and thread hooks
+* PR #86 added TestITStepListener, StepListenerUtils
 
 ## 5.7 (07.12.2022)
 

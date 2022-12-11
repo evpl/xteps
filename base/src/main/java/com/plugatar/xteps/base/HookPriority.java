@@ -13,7 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.plugatar.xteps.base;
+
 /**
- * {@link com.plugatar.xteps.base.HookContainer} implementations.
+ * Hook priority.
  */
-package com.plugatar.xteps.base.hook.container;
+public final class HookPriority {
+
+    /**
+     * The minimum priority that a hook can have.
+     */
+    public static final int MIN_HOOK_PRIORITY = 0;
+
+    /**
+     * The default priority that is assigned to a hook.
+     */
+    public static final int NORM_HOOK_PRIORITY = 5;
+
+    /**
+     * The maximum priority that a hook can have.
+     */
+    public static final int MAX_HOOK_PRIORITY = 10;
+
+    /**
+     * Utility class ctor.
+     */
+    private HookPriority() {
+    }
+}

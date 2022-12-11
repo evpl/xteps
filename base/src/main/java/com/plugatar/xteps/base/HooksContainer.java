@@ -16,17 +16,29 @@
 package com.plugatar.xteps.base;
 
 /**
- * Hook container.
+ * Hooks container.
  */
-public interface HookContainer {
+public interface HooksContainer {
 
     /**
      * Adds given hook to this container.
      *
-     * @param hook the hook
+     * @param priority the priority
+     * @param hook     the hook
      * @throws XtepsException if {@code hook} is null
+     *                        or if {@code priority} is not in the range {@link HookPriority#MIN_HOOK_PRIORITY} to
+     *                        {@link HookPriority#MAX_HOOK_PRIORITY}
      */
-    void add(ThrowingRunnable<?> hook);
+    void addHook(int priority,
+                 ThrowingRunnable<?> hook);
+
+    /**
+     * Sets given hooks order.
+     *
+     * @param order the hooks order
+     * @throws XtepsException if {@code order} is null
+     */
+    void setOrder(HooksOrder order);
 
     /**
      * Calls all hooks in this container. Exceptions will be added to the

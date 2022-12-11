@@ -35,26 +35,40 @@ public interface XtepsBase {
     ExceptionHandler exceptionHandler();
 
     /**
-     * Returns HookContainer generator.
+     * Returns HooksContainer generator.
      *
-     * @return HookContainer generator
+     * @return HooksContainer generator
      */
-    ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator();
+    ThrowingSupplier<HooksContainer, RuntimeException> hooksContainerGenerator();
 
     /**
-     * Returns thread hook interval in milliseconds.
+     * Returns chain hooks order.
      *
-     * @return thread hook interval
+     * @return chain hooks order
      */
-    long threadHookInterval();
+    HooksOrder chainHooksOrder();
 
     /**
-     * Returns thread hook priority in the range {@link Thread#MIN_PRIORITY} to
+     * Returns thread hooks order.
+     *
+     * @return thread hooks order
+     */
+    HooksOrder threadHooksOrder();
+
+    /**
+     * Returns thread hooks thread interval in milliseconds.
+     *
+     * @return thread hooks thread interval
+     */
+    long threadHooksThreadInterval();
+
+    /**
+     * Returns thread hooks thread priority in the range {@link Thread#MIN_PRIORITY} to
      * {@link Thread#MAX_PRIORITY}.
      *
-     * @return thread hook priority
+     * @return thread hooks thread priority
      */
-    int threadHookPriority();
+    int threadHooksThreadPriority();
 
     /**
      * Returns cached XtepsBase instance.
