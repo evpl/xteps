@@ -78,11 +78,16 @@ public class ThreadHooks {
     }
 
     private static final class Internal {
-        private static final Map<Thread, ThreadItems> HOOKS = new ConcurrentHashMap<>();
-        private static final long INTERVAL_MILLIS = XtepsBase.cached().threadHooksThreadInterval();
-        private static final HooksOrder DEFAULT_HOOKS_ORDER = XtepsBase.cached().threadHooksOrder();
+        private static final Map<Thread, ThreadItems> HOOKS;
+        private static final long INTERVAL_MILLIS;
+        private static final HooksOrder DEFAULT_HOOKS_ORDER;
 
         static {
+            /* Field initialization */
+            final XtepsBase xtepsBase = XtepsBase.cached();
+            HOOKS = new ConcurrentHashMap<>();
+            INTERVAL_MILLIS = xtepsBase.threadHooksThreadInterval();
+            DEFAULT_HOOKS_ORDER = xtepsBase.defaultHooksOrder();
             /* Daemon thread */
             final Thread daemonThread = new Thread(() -> {
                 long lastStartMillis;
@@ -109,7 +114,7 @@ public class ThreadHooks {
                         break;
                     }
                 }
-            }, "xteps-hook-daemon-thread");
+            }, "xteps-thread-hooks-daemon-thread");
             daemonThread.setDaemon(true);
             daemonThread.setPriority(XtepsBase.cached().threadHooksThreadPriority());
             daemonThread.start();
