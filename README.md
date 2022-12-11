@@ -2,15 +2,15 @@
 
 *High-level contextual steps in your tests for any reporting tool*
 
-[![Maven Central](https://img.shields.io/badge/maven--central-5.7-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
-[![Javadoc](https://img.shields.io/badge/javadoc-5.7-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
+[![Maven Central](https://img.shields.io/badge/maven--central-5.8-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
+[![Javadoc](https://img.shields.io/badge/javadoc-5.8-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub Workflow Status (master)](https://img.shields.io/github/workflow/status/evpl/xteps/All%20tests/master)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
 ![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
 
-Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure, Qase and ReportPortal
-are ready, but you can write your own listener for another reporting system or just create an issue.
+Xteps is a facade that provides a convenient way to report test steps. Integrations with Allure, Qase, TestIT and
+ReportPortal are ready, but you can write your own listener for another reporting system or just create an issue.
 
 ## Table of Contents
 
@@ -37,7 +37,7 @@ Requires Java 8+ version or Kotlin JVM. Just add suitable dependency.
 | Allure                  | `xteps-allure`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-allure)                   | `unchecked-xteps-allure`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-allure) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-allure)                   |
 | Qase                    | `xteps-qase`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-qase)                         | `unchecked-xteps-qase`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-qase) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-qase)                         |
 | ReportPortal            | `xteps-reportportal`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-reportportal) | `unchecked-xteps-reportportal`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-reportportal) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-reportportal) |
-| TestIT                  | Soon                                                                                                                                                                                                                                                                                                                                                     | Soon                                                                                                                                                                                                                                                                                                                                                                                   |
+| TestIT                  | `xteps-testit`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps-testit) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps-testit)                   | `unchecked-xteps-testit`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps-testit) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps-testit)                   |
 | Custom reporting system | `xteps`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/xteps)                                        | `unchecked-xteps`<br><br>[![Maven Central](https://img.shields.io/badge/-maven--central-brightgreen?style=flat-square)](https://search.maven.org/search?q=g:com.plugatar.xteps%20AND%20a:unchecked-xteps) [![Javadoc](https://img.shields.io/badge/-javadoc-blue?style=flat-square)](https://javadoc.io/doc/com.plugatar.xteps/unchecked-xteps)                                        |
 
 Maven:
@@ -46,7 +46,7 @@ Maven:
 <dependency>
   <groupId>com.plugatar.xteps</groupId>
   <artifactId>{artifact name from table}</artifactId>
-  <version>5.7</version>
+  <version>5.8</version>
   <scope>test</scope>
 </dependency>
 ```
@@ -55,7 +55,7 @@ Gradle:
 
 ```groovy
 dependencies {
-    testImplementation 'com.plugatar.xteps:{artifact name from table}:5.7'
+    testImplementation 'com.plugatar.xteps:{artifact name from table}:5.8'
 }
 ```
 
@@ -63,7 +63,7 @@ Kotlin DSL:
 
 ```groovy
 dependencies {
-    testImplementation("com.plugatar.xteps:{artifact name from table}:5.7")
+    testImplementation("com.plugatar.xteps:{artifact name from table}:5.8")
 }
 ```
 
@@ -348,14 +348,15 @@ overridden by system properties.
 
 ### Properties list
 
-| Name                     | Type    | Required | Default value | Description                                                                                                                                                                                           |
-|--------------------------|---------|----------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| xteps.enabled            | Boolean | No       | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
-| xteps.spi                | Boolean | No       | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
-| xteps.listeners          | String  | No       |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
-| xteps.cleanStackTrace    | Boolean | No       | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
-| xteps.threadHookInterval | Long    | No       | `100`         | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
-| xteps.threadHookPriority | Integer | No       | `5`           | Thread hook daemon thread priority in the range `1` to `10`.                                                                                                                                          |
+| Name                            | Type    | Required | Default value | Description                                                                                                                                                                                           |
+|---------------------------------|---------|----------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| xteps.enabled                   | Boolean | No       | `true`        | Enable/disable steps logging.                                                                                                                                                                         |
+| xteps.spi                       | Boolean | No       | `true`        | Enable/disable Service Provider Interface mechanism to detect and instantiate `com.plugatar.xteps.base.StepListener` implementations. Implementations should have zero-argument public constructor.   |
+| xteps.listeners                 | String  | No       |               | List of `com.plugatar.xteps.base.StepListener` implementations names in `Class#getTypeName()` format. Names should be separated by `,`. Implementations should have zero-argument public constructor. |
+| xteps.cleanStackTrace           | Boolean | No       | `true`        | Removes all stack trace lines about Xteps from any exception except XtepsException.                                                                                                                   |
+| xteps.defaultHooksOrder         | Enum    | No       | `FROM_LAST`   | The order in which chain and thread hooks of the same priority will be called - `FROM_FIRST` / `FROM_LAST`.                                                                                           |
+| xteps.threadHooksThreadInterval | Long    | No       | `100`         | Interval between thread hooks daemon thread executions in milliseconds.                                                                                                                               |
+| xteps.threadHooksThreadPriority | Integer | No       | `5`           | Thread hooks daemon thread priority in the range `1` to `10`.                                                                                                                                         |
 
 ### Examples
 
@@ -366,8 +367,9 @@ xteps.enabled=true
 xteps.spi=true
 xteps.listeners=com.my.prj.StepListenerImpl1,com.my.prj.StepListenerImpl2
 xteps.cleanStackTrace=true
-xteps.threadHookInterval=100
-xteps.threadHookPriority=5
+xteps.defaultHooksOrder=FROM_LAST
+xteps.threadHooksThreadInterval=100
+xteps.threadHooksThreadPriority=5
 ```
 
 ## Additional features
@@ -480,7 +482,7 @@ void test() {
 
 Set up your project with Allure / Qase / ReportPortal and then just add suitable Xteps dependency.
 
-You can use step name or step description replacements by the way provided by Allure / Qase / ReportPortal.
+You can use step name or step description replacements by the way provided by Allure / Qase / TestIT / ReportPortal.
 
 ```java
 stepsChain()
@@ -493,8 +495,8 @@ stepsChain()
 
 This step will be reported with name "Step with context = 111 and second context = value".
 
-You can also use utility methods for Allure and Qase - `AllureStepUtils` and `QaseStepUtils`. It allows you to change
-the step name and other step attributes at runtime.
+You can also use utility methods for Allure, Qase and TestIT - `AllureStepUtils`, `QaseStepUtils`, `TestITStepUtils`.
+It allows you to change the step name and other step attributes at runtime.
 
 ## JDK 8 unreported exception bug
 

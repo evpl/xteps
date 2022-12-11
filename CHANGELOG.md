@@ -1,6 +1,6 @@
 # Changelog
 
-## 5.8 (planned)
+## 5.8 (11.12.2022)
 
 * PR #90 fixed javadoc for DefaultHooksContainer and TestITStepListener
 * PR #89 merged chainHooksOrder and threadHooksOrder properties to defaultHooksOrder
