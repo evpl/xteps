@@ -13,32 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.plugatar.xteps.base.hook.container;
+package com.plugatar.xteps.base.hook;
 
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.XtepsException;
 import org.junit.jupiter.api.Test;
 
+import static com.plugatar.xteps.base.HookPriority.MAX_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.MIN_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.NORM_HOOK_PRIORITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
- * Tests for {@link FakeHookContainer}.
+ * Tests for {@link FakeHooksContainer}.
  */
-final class FakeHookContainerTest {
+final class FakeHooksContainerTest {
 
     @Test
     void nullArgExceptionForAddMethod() {
-        final HookContainer container = new FakeHookContainer();
+        final HooksContainer container = new FakeHooksContainer();
 
-        assertThatCode(() -> container.add((ThrowingRunnable<?>) null))
+        assertThatCode(() -> container.addHook(NORM_HOOK_PRIORITY, (ThrowingRunnable<?>) null))
+            .isInstanceOf(XtepsException.class);
+    }
+
+    @Test
+    void illegalArgExceptionForAddMethod() {
+        final HooksContainer container = new FakeHooksContainer();
+
+        assertThatCode(() -> container.addHook(MIN_HOOK_PRIORITY - 1, () -> { }))
+            .isInstanceOf(XtepsException.class);
+        assertThatCode(() -> container.addHook(MAX_HOOK_PRIORITY + 1, () -> { }))
             .isInstanceOf(XtepsException.class);
     }
 
     @Test
     void nullArgExceptionForCallHooksMethod() {
-        final HookContainer container = new FakeHookContainer();
+        final HooksContainer container = new FakeHooksContainer();
 
         assertThatCode(() -> container.callHooks((Throwable) null))
             .isInstanceOf(XtepsException.class);
@@ -46,13 +59,13 @@ final class FakeHookContainerTest {
 
     @Test
     void callHooksMethod() {
-        final HookContainer container = new FakeHookContainer();
+        final HooksContainer container = new FakeHooksContainer();
         final Exception exception1 = new Exception("exception 1");
         final ThrowingRunnable<?> hook1 = () -> { throw exception1; };
         final Exception exception2 = new Exception("exception 2");
         final ThrowingRunnable<?> hook2 = () -> { throw exception2; };
-        container.add(hook1);
-        container.add(hook2);
+        container.addHook(NORM_HOOK_PRIORITY, hook1);
+        container.addHook(NORM_HOOK_PRIORITY, hook2);
 
         assertThatCode(() -> container.callHooks())
             .doesNotThrowAnyException();
@@ -60,14 +73,14 @@ final class FakeHookContainerTest {
 
     @Test
     void callHooksMethodWithBaseException() {
-        final HookContainer container = new FakeHookContainer();
+        final HooksContainer container = new FakeHooksContainer();
         final Exception exception1 = new Exception("exception 1");
         final ThrowingRunnable<?> hook1 = () -> { throw exception1; };
         final Exception exception2 = new Exception("exception 2");
         final ThrowingRunnable<?> hook2 = () -> { throw exception2; };
         final RuntimeException baseException = new RuntimeException();
-        container.add(hook1);
-        container.add(hook2);
+        container.addHook(NORM_HOOK_PRIORITY, hook1);
+        container.addHook(NORM_HOOK_PRIORITY, hook2);
 
         container.callHooks(baseException);
         assertThat(baseException)

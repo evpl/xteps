@@ -16,7 +16,8 @@
 package com.plugatar.xteps.checked.chain.impl;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
+import com.plugatar.xteps.base.HooksOrder;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
@@ -29,38 +30,42 @@ import com.plugatar.xteps.checked.chain.NoCtxSC;
 import com.plugatar.xteps.checked.stepobject.RunnableStep;
 import com.plugatar.xteps.checked.stepobject.SupplierStep;
 
+import static com.plugatar.xteps.base.HookPriority.MAX_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.MIN_HOOK_PRIORITY;
+import static com.plugatar.xteps.base.HookPriority.NORM_HOOK_PRIORITY;
+
 /**
  * No context steps chain implementation.
  */
 public class NoCtxSCOf implements NoCtxSC {
     private final StepReporter stepReporter;
     private final ExceptionHandler exceptionHandler;
-    private final HookContainer hookContainer;
+    private final HooksContainer hooksContainer;
 
     /**
      * Ctor.
      *
      * @param stepReporter     the step reporter
      * @param exceptionHandler the exception handler
-     * @param hookContainer    the hook container
+     * @param hooksContainer   the hooks container
      * @throws NullPointerException if {@code stepReporter} or {@code exceptionHandler}
-     *                              or {@code hookContainer} is null
+     *                              or {@code hooksContainer} is null
      */
     public NoCtxSCOf(final StepReporter stepReporter,
                      final ExceptionHandler exceptionHandler,
-                     final HookContainer hookContainer) {
+                     final HooksContainer hooksContainer) {
         if (stepReporter == null) { throw new NullPointerException("stepReporter arg is null"); }
         if (exceptionHandler == null) { throw new NullPointerException("exceptionHandler arg is null"); }
-        if (hookContainer == null) { throw new NullPointerException("hookContainer arg is null"); }
+        if (hooksContainer == null) { throw new NullPointerException("hooksContainer arg is null"); }
         this.stepReporter = stepReporter;
         this.exceptionHandler = exceptionHandler;
-        this.hookContainer = hookContainer;
+        this.hooksContainer = hooksContainer;
     }
 
     @Override
     public final NoCtxSC callChainHooks() {
         try {
-            this.hookContainer.callHooks();
+            this.hooksContainer.callHooks();
         } catch (final Throwable ex) {
             this.exceptionHandler.handle(ex);
             throw ex;
@@ -69,11 +74,34 @@ public class NoCtxSCOf implements NoCtxSC {
     }
 
     @Override
+    public final NoCtxSC chainHooksOrder(final HooksOrder order) {
+        if (order == null) { this.throwNullArgException("order"); }
+        this.hooksContainer.setOrder(order);
+        return this;
+    }
+
+    @Override
+    public final NoCtxSC threadHooksOrder(final HooksOrder order) {
+        if (order == null) { this.throwNullArgException("order"); }
+        ThreadHooks.setOrder(order);
+        return this;
+    }
+
+    @Override
     public final NoCtxSC chainHook(
         final ThrowingRunnable<?> hook
     ) {
+        return this.chainHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final NoCtxSC chainHook(
+        final int priority,
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        this.hookContainer.add(hook);
+        this.checkPriorityArg(priority);
+        this.hooksContainer.addHook(priority, hook);
         return this;
     }
 
@@ -81,8 +109,17 @@ public class NoCtxSCOf implements NoCtxSC {
     public final NoCtxSC threadHook(
         final ThrowingRunnable<?> hook
     ) {
+        return this.threadHook(NORM_HOOK_PRIORITY, hook);
+    }
+
+    @Override
+    public final NoCtxSC threadHook(
+        final int priority,
+        final ThrowingRunnable<?> hook
+    ) {
         if (hook == null) { this.throwNullArgException("hook"); }
-        ThreadHooks.add(() -> ThrowingRunnable.unchecked(hook).run());
+        this.checkPriorityArg(priority);
+        ThreadHooks.addHook(priority, hook);
         return this;
     }
 
@@ -377,7 +414,7 @@ public class NoCtxSCOf implements NoCtxSC {
         final String stepDescription,
         final ThrowingSupplier<R, E> step
     ) throws E {
-        return this.stepReporter.report(this.hookContainer, this.exceptionHandler, stepName, stepDescription,
+        return this.stepReporter.report(this.hooksContainer, this.exceptionHandler, stepName, stepDescription,
             new Object[]{}, step);
     }
 
@@ -393,12 +430,21 @@ public class NoCtxSCOf implements NoCtxSC {
     }
 
     private <U> CtxSC<U, NoCtxSC> newCtxStepsChain(final U newContext) {
-        return new CtxSCOf<>(this.stepReporter, this.exceptionHandler, this.hookContainer, newContext, this);
+        return new CtxSCOf<>(this.stepReporter, this.exceptionHandler, this.hooksContainer, newContext, this);
     }
 
     private void throwNullArgException(final String argName) {
         final XtepsException baseEx = new XtepsException(argName + " arg is null");
         this.exceptionHandler.handle(baseEx);
         throw baseEx;
+    }
+
+    private void checkPriorityArg(final int priority) {
+        if (priority < MIN_HOOK_PRIORITY || priority > MAX_HOOK_PRIORITY) {
+            final XtepsException baseEx = new XtepsException("priority arg not in the range " + MIN_HOOK_PRIORITY +
+                " to " + MAX_HOOK_PRIORITY);
+            this.exceptionHandler.handle(baseEx);
+            throw baseEx;
+        }
     }
 }

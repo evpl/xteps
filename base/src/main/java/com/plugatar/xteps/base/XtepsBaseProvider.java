@@ -17,7 +17,7 @@ package com.plugatar.xteps.base;
 
 import com.plugatar.xteps.base.handler.DefaultExceptionHandler;
 import com.plugatar.xteps.base.handler.FakeExceptionHandler;
-import com.plugatar.xteps.base.hook.container.DefaultHookContainer;
+import com.plugatar.xteps.base.hook.DefaultHooksContainer;
 import com.plugatar.xteps.base.reporter.DefaultStepReporter;
 import com.plugatar.xteps.base.reporter.FakeStepReporter;
 
@@ -83,12 +83,16 @@ final class XtepsBaseProvider {
         final ExceptionHandler exceptionHandler = booleanProperty(properties, "xteps.cleanStackTrace", true)
             ? new DefaultExceptionHandler()
             : new FakeExceptionHandler();
-        final long threadHookInterval = longPropertyInRange(
-            properties, "xteps.threadHookInterval", 0L, Long.MAX_VALUE, 100L
-        );
-        final int threadHookPriority = intPropertyInRange(
-            properties, "xteps.threadHookPriority", Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY
-        );
+        final HooksOrder chainHooksOrder = hooksOrderProperty(properties, "xteps.chainHooksOrder",
+            HooksOrder.FROM_LAST);
+        final HooksOrder threadHooksOrder = hooksOrderProperty(properties, "xteps.threadHooksOrder",
+            HooksOrder.FROM_LAST);
+        final long threadHookInterval = longPropertyInRange(properties, "xteps.threadHooksThreadInterval",
+            0L, Long.MAX_VALUE, 100L);
+        final int threadHookPriority = intPropertyInRange(properties, "xteps.threadHooksThreadPriority",
+            Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY);
+        final ThrowingSupplier<HooksContainer, RuntimeException> hooksContainerGenerator =
+            () -> new DefaultHooksContainer(chainHooksOrder);
         return new XtepsBase() {
             @Override
             public StepReporter stepReporter() {
@@ -101,17 +105,27 @@ final class XtepsBaseProvider {
             }
 
             @Override
-            public ThrowingSupplier<HookContainer, RuntimeException> hookContainerGenerator() {
-                return DefaultHookContainer::new;
+            public ThrowingSupplier<HooksContainer, RuntimeException> hooksContainerGenerator() {
+                return hooksContainerGenerator;
             }
 
             @Override
-            public long threadHookInterval() {
+            public HooksOrder chainHooksOrder() {
+                return chainHooksOrder;
+            }
+
+            @Override
+            public HooksOrder threadHooksOrder() {
+                return threadHooksOrder;
+            }
+
+            @Override
+            public long threadHooksThreadInterval() {
                 return threadHookInterval;
             }
 
             @Override
-            public int threadHookPriority() {
+            public int threadHooksThreadPriority() {
                 return threadHookPriority;
             }
         };
@@ -219,6 +233,25 @@ final class XtepsBaseProvider {
             return defaultValue;
         }
         return stringList;
+    }
+
+    private static HooksOrder hooksOrderProperty(final Properties properties,
+                                                 final String propertyName,
+                                                 final HooksOrder defaultValue) {
+        final String propertyValue = properties.getProperty(propertyName);
+        if (propertyValue == null) {
+            return defaultValue;
+        }
+        final String trimmedPropertyValue = propertyValue.trim();
+        if (trimmedPropertyValue.isEmpty()) {
+            return defaultValue;
+        }
+        for (HooksOrder currentOrder : HooksOrder.values()) {
+            if (trimmedPropertyValue.equalsIgnoreCase(currentOrder.name())) {
+                return currentOrder;
+            }
+        }
+        throw throwXtepsPropertyException(propertyName, propertyValue);
     }
 
     private static List<StepListener> listenersBySPI() {

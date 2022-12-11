@@ -62,8 +62,10 @@ final class UncheckedXtepsTest {
         System.clearProperty("xteps.spi");
         System.clearProperty("xteps.listeners");
         System.clearProperty("xteps.cleanStackTrace");
-        System.clearProperty("xteps.threadHookInterval");
-        System.clearProperty("xteps.threadHookPriority");
+        System.clearProperty("xteps.chainHooksOrder");
+        System.clearProperty("xteps.threadHooksOrder");
+        System.clearProperty("xteps.threadHooksThreadInterval");
+        System.clearProperty("xteps.threadHooksThreadPriority");
     }
 
     private static void assertThatStepPassed(final String stepName,

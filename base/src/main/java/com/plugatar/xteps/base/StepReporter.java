@@ -24,7 +24,7 @@ public interface StepReporter {
      * Reports given step and returns step result.
      *
      * @param exceptionHandler the exception handler
-     * @param hookContainer    the hook container
+     * @param hooksContainer   the hooks container
      * @param name             the step name
      * @param description      the step description
      * @param params           the step params array
@@ -37,7 +37,7 @@ public interface StepReporter {
      * @throws E              if {@code action} threw exception
      */
     <R, E extends Throwable> R report(
-        HookContainer hookContainer,
+        HooksContainer hooksContainer,
         ExceptionHandler exceptionHandler,
         String name,
         String description,

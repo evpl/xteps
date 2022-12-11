@@ -15,6 +15,7 @@
  */
 package com.plugatar.xteps.checked.chain.base;
 
+import com.plugatar.xteps.base.HookPriority;
 import com.plugatar.xteps.base.ThrowingConsumer;
 import com.plugatar.xteps.base.ThrowingFunction;
 import com.plugatar.xteps.base.XtepsException;
@@ -42,6 +43,22 @@ public interface Base1CtxSC<C, S extends Base1CtxSC<C, S>> {
     );
 
     /**
+     * Adds given hook to this steps chain. This hook will be called in case of any
+     * exception in steps chain or in case of {@link BaseSC#callChainHooks()} method call.
+     *
+     * @param priority the priority
+     * @param hook     the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     *                        or if {@code priority} is not in the range {@link HookPriority#MIN_HOOK_PRIORITY} to
+     *                        {@link HookPriority#MAX_HOOK_PRIORITY}
+     */
+    S chainHook(
+        int priority,
+        ThrowingConsumer<? super C, ?> hook
+    );
+
+    /**
      * Adds given hook for the current thread. This hook will be called after current
      * thread is finished.
      *
@@ -50,6 +67,22 @@ public interface Base1CtxSC<C, S extends Base1CtxSC<C, S>> {
      * @throws XtepsException if {@code hook} is null
      */
     S threadHook(
+        ThrowingConsumer<? super C, ?> hook
+    );
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param priority the priority
+     * @param hook     the hook
+     * @return this steps chain
+     * @throws XtepsException if {@code hook} is null
+     *                        or if {@code priority} is not in the range {@link HookPriority#MIN_HOOK_PRIORITY} to
+     *                        {@link HookPriority#MAX_HOOK_PRIORITY}
+     */
+    S threadHook(
+        int priority,
         ThrowingConsumer<? super C, ?> hook
     );
 

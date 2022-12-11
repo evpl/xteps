@@ -16,7 +16,7 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
 import com.plugatar.xteps.base.StepListener;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingSupplier;
@@ -52,14 +52,14 @@ public class DefaultStepReporter implements StepReporter {
     @Override
     @SuppressWarnings("unchecked")
     public final <R, E extends Throwable> R report(
-        final HookContainer hookContainer,
+        final HooksContainer hooksContainer,
         final ExceptionHandler exceptionHandler,
         final String name,
         final String description,
         final Object[] params,
         final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        if (hookContainer == null) { throwNullArgException("hookContainer"); }
+        if (hooksContainer == null) { throwNullArgException("hooksContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (name == null) { throwNullArgException("name"); }
         if (description == null) { throwNullArgException("description"); }
@@ -106,11 +106,11 @@ public class DefaultStepReporter implements StepReporter {
             if (stepException != null) {
                 listenerException.addSuppressed(stepException);
             }
-            hookContainer.callHooks(listenerException);
+            hooksContainer.callHooks(listenerException);
             exceptionHandler.handle(listenerException);
             throw listenerException;
         } else if (stepException != null) {
-            hookContainer.callHooks(stepException);
+            hooksContainer.callHooks(stepException);
             exceptionHandler.handle(stepException);
             throw stepException;
         } else {

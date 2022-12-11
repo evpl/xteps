@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.plugatar.xteps.base;
+
 /**
- * Tests for {@link com.plugatar.xteps.base.hook.container} package.
+ * Hooks order.
  */
-package com.plugatar.xteps.base.hook.container;
+public enum HooksOrder {
+
+    /**
+     * From the first added hook.
+     */
+    FROM_FIRST,
+
+    /**
+     * From the last added hook.
+     */
+    FROM_LAST
+}

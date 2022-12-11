@@ -16,14 +16,16 @@
 package com.plugatar.xteps.checked;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HookPriority;
+import com.plugatar.xteps.base.HooksContainer;
+import com.plugatar.xteps.base.HooksOrder;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingRunnable;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsBase;
 import com.plugatar.xteps.base.XtepsException;
+import com.plugatar.xteps.base.hook.FakeHooksContainer;
 import com.plugatar.xteps.base.hook.ThreadHooks;
-import com.plugatar.xteps.base.hook.container.FakeHookContainer;
 import com.plugatar.xteps.checked.chain.Ctx2SC;
 import com.plugatar.xteps.checked.chain.Ctx3SC;
 import com.plugatar.xteps.checked.chain.CtxSC;
@@ -67,9 +69,11 @@ import java.util.function.Supplier;
  * <li>{@link #stepsChainOf(Object, Object, Object)}</li>
  * </ul>
  * <p>
- * Other methods:
+ * Thread hooks methods:
  * <ul>
  * <li>{@link #threadHook(ThrowingRunnable)}</li>
+ * <li>{@link #threadHook(int, ThrowingRunnable)}</li>
+ * <li>{@link #threadHookOrder(HooksOrder)}</li>
  * </ul>
  *
  * @see <a href="https://github.com/evpl/xteps/blob/master/README.md">README</a>
@@ -550,7 +554,7 @@ public final class Xteps {
      */
     public static NoCtxSC stepsChain() {
         final XtepsBase xb = XtepsBase.cached();
-        return new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), xb.hookContainerGenerator().get());
+        return new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), xb.hooksContainerGenerator().get());
     }
 
     /**
@@ -585,11 +589,11 @@ public final class Xteps {
         final XtepsBase xb = XtepsBase.cached();
         final StepReporter stepReporter = xb.stepReporter();
         final ExceptionHandler exceptionHandler = xb.exceptionHandler();
-        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        final HooksContainer hooksContainer = xb.hooksContainerGenerator().get();
         return new CtxSCOf<>(
-            stepReporter, exceptionHandler, hookContainer,
+            stepReporter, exceptionHandler, hooksContainer,
             context,
-            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+            new NoCtxSCOf(stepReporter, exceptionHandler, hooksContainer)
         );
     }
 
@@ -619,11 +623,11 @@ public final class Xteps {
         final XtepsBase xb = XtepsBase.cached();
         final StepReporter stepReporter = xb.stepReporter();
         final ExceptionHandler exceptionHandler = xb.exceptionHandler();
-        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        final HooksContainer hooksContainer = xb.hooksContainerGenerator().get();
         return new Ctx2SCOf<>(
-            stepReporter, exceptionHandler, hookContainer,
+            stepReporter, exceptionHandler, hooksContainer,
             context, context2,
-            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+            new NoCtxSCOf(stepReporter, exceptionHandler, hooksContainer)
         );
     }
 
@@ -656,11 +660,11 @@ public final class Xteps {
         final XtepsBase xb = XtepsBase.cached();
         final StepReporter stepReporter = xb.stepReporter();
         final ExceptionHandler exceptionHandler = xb.exceptionHandler();
-        final HookContainer hookContainer = xb.hookContainerGenerator().get();
+        final HooksContainer hooksContainer = xb.hooksContainerGenerator().get();
         return new Ctx3SCOf<>(
-            stepReporter, exceptionHandler, hookContainer,
+            stepReporter, exceptionHandler, hooksContainer,
             context, context2, context3,
-            new NoCtxSCOf(stepReporter, exceptionHandler, hookContainer)
+            new NoCtxSCOf(stepReporter, exceptionHandler, hooksContainer)
         );
     }
 
@@ -673,7 +677,34 @@ public final class Xteps {
      *                        or if {@code hook} is null
      */
     public static void threadHook(final ThrowingRunnable<?> hook) {
-        ThreadHooks.add(hook);
+        ThreadHooks.addHook(HookPriority.NORM_HOOK_PRIORITY, hook);
+    }
+
+    /**
+     * Adds given hook for the current thread. This hook will be called after current
+     * thread is finished.
+     *
+     * @param priority the priority
+     * @param hook     the hook
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code hook} is null
+     *                        or if {@code priority} is not in the range {@link HookPriority#MIN_HOOK_PRIORITY} to
+     *                        {@link HookPriority#MAX_HOOK_PRIORITY}
+     */
+    public static void threadHook(final int priority,
+                                  final ThrowingRunnable<?> hook) {
+        ThreadHooks.addHook(priority, hook);
+    }
+
+    /**
+     * Sets given hooks order for the current thread.
+     *
+     * @param order the hooks order
+     * @throws XtepsException if Xteps configuration is incorrect
+     *                        or if {@code hook} is null
+     */
+    public static void threadHookOrder(final HooksOrder order) {
+        ThreadHooks.setOrder(order);
     }
 
     private static final Supplier<NoCtxSC> CACHED_FAKE_HOOKS_NO_CTX_SC = new Supplier<NoCtxSC>() {
@@ -686,7 +717,7 @@ public final class Xteps {
                 synchronized (this) {
                     if ((result = this.instance) == null) {
                         final XtepsBase xb = XtepsBase.cached();
-                        result = new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), new FakeHookContainer());
+                        result = new NoCtxSCOf(xb.stepReporter(), xb.exceptionHandler(), new FakeHooksContainer());
                         this.instance = result;
                     }
                     return result;

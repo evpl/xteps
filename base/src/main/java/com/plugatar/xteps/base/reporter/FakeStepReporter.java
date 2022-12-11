@@ -16,7 +16,7 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
 import com.plugatar.xteps.base.StepReporter;
 import com.plugatar.xteps.base.ThrowingSupplier;
 import com.plugatar.xteps.base.XtepsException;
@@ -34,14 +34,14 @@ public class FakeStepReporter implements StepReporter {
 
     @Override
     public final <R, E extends Throwable> R report(
-        final HookContainer hookContainer,
+        final HooksContainer hooksContainer,
         final ExceptionHandler exceptionHandler,
         final String name,
         final String description,
         final Object[] params,
         final ThrowingSupplier<? extends R, ? extends E> action
     ) throws E {
-        if (hookContainer == null) { throwNullArgException("hookContainer"); }
+        if (hooksContainer == null) { throwNullArgException("hooksContainer"); }
         if (exceptionHandler == null) { throwNullArgException("exceptionHandler"); }
         if (name == null) { throwNullArgException("name"); }
         if (description == null) { throwNullArgException("description"); }
@@ -50,7 +50,7 @@ public class FakeStepReporter implements StepReporter {
         try {
             return action.get();
         } catch (final Throwable stepEx) {
-            hookContainer.callHooks(stepEx);
+            hooksContainer.callHooks(stepEx);
             exceptionHandler.handle(stepEx);
             throw stepEx;
         }

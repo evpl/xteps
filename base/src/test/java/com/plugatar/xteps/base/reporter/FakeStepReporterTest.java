@@ -16,7 +16,7 @@
 package com.plugatar.xteps.base.reporter;
 
 import com.plugatar.xteps.base.ExceptionHandler;
-import com.plugatar.xteps.base.HookContainer;
+import com.plugatar.xteps.base.HooksContainer;
 import com.plugatar.xteps.base.StepReporter;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +35,7 @@ final class FakeStepReporterTest {
     @Test
     void reportStepWithoutException() {
         final StepReporter reporter = new FakeStepReporter();
-        final HookContainer container = mock(HookContainer.class);
+        final HooksContainer container = mock(HooksContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
         final Object[] contexts = new Object[]{};
         final Object expectedResult = new Object();
@@ -50,7 +50,7 @@ final class FakeStepReporterTest {
     @Test
     void reportStepWithException() {
         final StepReporter reporter = new FakeStepReporter();
-        final HookContainer container = mock(HookContainer.class);
+        final HooksContainer container = mock(HooksContainer.class);
         final ExceptionHandler handler = mock(ExceptionHandler.class);
         final Object[] contexts = new Object[]{};
         final RuntimeException expectedException = new RuntimeException();
