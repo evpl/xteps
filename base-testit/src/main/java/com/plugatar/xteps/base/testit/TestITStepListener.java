@@ -44,7 +44,9 @@ public class TestITStepListener implements StepListener {
     /**
      * Ctor.
      *
-     * @param emptyNameReplacement the empty step name replacement
+     * @param emptyNameReplacement   the empty step name replacement
+     * @param leftReplacementBorder  the left replacement border
+     * @param rightReplacementBorder the right replacement border
      */
     public TestITStepListener(final String emptyNameReplacement,
                               final char leftReplacementBorder,

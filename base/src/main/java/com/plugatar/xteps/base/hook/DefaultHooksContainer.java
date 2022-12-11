@@ -39,6 +39,8 @@ public class DefaultHooksContainer implements HooksContainer {
 
     /**
      * Ctor.
+     *
+     * @param order the hooks order
      */
     public DefaultHooksContainer(final HooksOrder order) {
         if (order == null) { throw new NullPointerException("order arg is null"); }
