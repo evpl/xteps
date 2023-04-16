@@ -1,11 +1,12 @@
 # Xteps
 
+# This project is archived. New version - https://github.com/evpl/xteps2
+
 *High-level contextual steps in your tests for any reporting tool*
 
 [![Maven Central](https://img.shields.io/badge/maven--central-5.8-brightgreen?style=flat)](https://search.maven.org/search?q=com.plugatar.xteps)
 [![Javadoc](https://img.shields.io/badge/javadoc-5.8-blue?style=flat)](https://javadoc.io/doc/com.plugatar.xteps)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![GitHub Workflow Status (master)](https://img.shields.io/github/workflow/status/evpl/xteps/All%20tests/master)
 [![Hits-of-Code](https://hitsofcode.com/github/evpl/xteps?branch=master)](https://hitsofcode.com/github/evpl/xteps/view?branch=master)
 ![Lines of code](https://img.shields.io/tokei/lines/github/evpl/xteps?label=Total%20lines)
 
